@@ -1,14 +1,20 @@
 "use client";
 
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
 import TrainingTab from "@/components/TrainingTab";
+import ProgressTab from "@/components/ProgressTab";
 import InstallPrompt from "@/components/InstallPrompt";
 import AuthScreen from "@/components/AuthScreen";
 import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/context/AuthContext";
 
+type Tab = "training" | "progress";
+
 export default function Home() {
   const { user, loading } = useAuth();
+  const [activeTab, setActiveTab] = useState<Tab>("training");
 
   if (loading) {
     return (
@@ -42,14 +48,25 @@ export default function Home() {
         <UserAvatar />
       </header>
 
-      {/* Training content */}
-      <TrainingTab />
+      {/* Tab content */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.15 }}
+        >
+          {activeTab === "training" && <TrainingTab />}
+          {activeTab === "progress" && <ProgressTab />}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Install prompt */}
       <InstallPrompt />
 
       {/* Bottom nav */}
-      <BottomNav activeTab="training" onTabChange={() => {}} />
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </main>
   );
 }
