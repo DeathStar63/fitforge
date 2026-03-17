@@ -39,6 +39,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="dns-prefetch" href="https://static.exercisedb.dev" />
+        <link rel="preconnect" href="https://static.exercisedb.dev" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <PWARegister />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
 import { Exercise, SetLog } from "@/lib/workouts";
@@ -15,7 +15,7 @@ interface ExerciseCardProps {
   allSetsCompleted: boolean;
 }
 
-export default function ExerciseCard({
+const ExerciseCard = memo(function ExerciseCard({
   exercise,
   index,
   sets,
@@ -109,8 +109,11 @@ export default function ExerciseCard({
                   <img
                     src={exercise.gifUrl}
                     alt={exercise.name}
+                    width={320}
+                    height={160}
                     className="w-full h-40 object-contain"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
               )}
@@ -196,4 +199,6 @@ export default function ExerciseCard({
       </AnimatePresence>
     </motion.div>
   );
-}
+});
+
+export default ExerciseCard;

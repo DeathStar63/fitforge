@@ -1,14 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
 import TrainingTab from "@/components/TrainingTab";
-import ProgressTab from "@/components/ProgressTab";
 import InstallPrompt from "@/components/InstallPrompt";
 import AuthScreen from "@/components/AuthScreen";
 import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/context/AuthContext";
+
+// Lazy load ProgressTab — it pulls in recharts which is heavy (~200kb)
+const ProgressTab = lazy(() => import("@/components/ProgressTab"));
+
+function ProgressFallback() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="w-8 h-8 rounded-xl bg-bg-surface animate-pulse" />
+    </div>
+  );
+}
 
 type Tab = "training" | "progress";
 
@@ -58,7 +68,11 @@ export default function Home() {
           transition={{ duration: 0.15 }}
         >
           {activeTab === "training" && <TrainingTab />}
-          {activeTab === "progress" && <ProgressTab />}
+          {activeTab === "progress" && (
+            <Suspense fallback={<ProgressFallback />}>
+              <ProgressTab />
+            </Suspense>
+          )}
         </motion.div>
       </AnimatePresence>
 
