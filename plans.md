@@ -30,12 +30,12 @@
 - [x] Build weight history list
 - [x] Integrate Gemini AI for transformation analysis/feedback
 
-## Phase 5: Polish [PARTIAL]
+## Phase 5: Polish [COMPLETE]
 - [x] Add Framer Motion animations (page transitions, card animations, progress bar, nav indicator)
 - [x] Optimize for mobile (touch targets, safe areas, no scroll bars, number inputs)
 - [x] Add offline support via service worker
-- [ ] Add proper PNG icons for PWA homescreen
-- [ ] Add ExerciseDB API GIFs for exercise demonstrations
-- [ ] Add progress charts (weight over time with chart library)
-- [ ] Sync localStorage to Supabase for cloud persistence
-- [ ] Add workout volume trends to Stats tab
+- [x] Add proper PNG icons for PWA homescreen
+- [x] Add ExerciseDB API GIFs for exercise demonstrations
+- [x] Add progress charts (weight over time with Recharts)
+- [x] Sync localStorage to Supabase for cloud persistence
+- [x] Add workout volume trends to Stats tab

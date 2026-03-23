@@ -9,8 +9,9 @@ import AuthScreen from "@/components/AuthScreen";
 import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/context/AuthContext";
 
-// Lazy load ProgressTab — it pulls in recharts which is heavy (~200kb)
+// Lazy load heavy tabs — they pull in recharts which is heavy (~200kb)
 const ProgressTab = lazy(() => import("@/components/ProgressTab"));
+const StatsTab = lazy(() => import("@/components/StatsTab"));
 
 function ProgressFallback() {
   return (
@@ -20,7 +21,7 @@ function ProgressFallback() {
   );
 }
 
-type Tab = "training" | "progress";
+type Tab = "training" | "progress" | "stats";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -71,6 +72,11 @@ export default function Home() {
           {activeTab === "progress" && (
             <Suspense fallback={<ProgressFallback />}>
               <ProgressTab />
+            </Suspense>
+          )}
+          {activeTab === "stats" && (
+            <Suspense fallback={<ProgressFallback />}>
+              <StatsTab />
             </Suspense>
           )}
         </motion.div>

@@ -105,18 +105,18 @@ export default function VolumeChart() {
             <LineChart data={data} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#1A1A2E"
+                stroke="#E5E7EB"
                 vertical={false}
               />
               <XAxis
                 dataKey="label"
-                tick={{ fill: "#6B6B80", fontSize: 10 }}
+                tick={{ fill: "#6B7280", fontSize: 10 }}
                 tickLine={false}
-                axisLine={{ stroke: "#1A1A2E" }}
+                axisLine={{ stroke: "#E5E7EB" }}
                 interval="preserveStartEnd"
               />
               <YAxis
-                tick={{ fill: "#6B6B80", fontSize: 10 }}
+                tick={{ fill: "#6B7280", fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v: number) =>
@@ -126,12 +126,13 @@ export default function VolumeChart() {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#16162A",
-                  border: "1px solid #2A2A3E",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
                   borderRadius: "12px",
                   fontSize: "12px",
+                  color: "#1A1A2E",
                 }}
-                labelStyle={{ color: "#A1A1B5" }}
+                labelStyle={{ color: "#6B7280" }}
                 itemStyle={{ padding: "2px 0" }}
                 formatter={(value: unknown, name: unknown) => [
                   `${Number(value).toLocaleString()} kg`,

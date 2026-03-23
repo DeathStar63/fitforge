@@ -28,12 +28,26 @@
   - Page transitions, exercise card animations, progress bar animations
   - Bottom nav active indicator spring animation
 
-### Pending
-- [ ] Add proper PNG icons for PWA (currently SVG)
-- [ ] User needs to add Supabase credentials to .env.local
-- [ ] User needs to add Gemini API key to .env.local
-- [ ] Sync localStorage data to Supabase (currently local-only)
-- [ ] Add ExerciseDB API GIFs (currently placeholder paths)
+### Session 2 — 2026-03-17
+- [x] Added proper PNG icons (192px + 512px) for PWA
+- [x] Fixed ExerciseDB GIFs — all 27 exercises have real animated GIF URLs
+- [x] Added Progress tab with lifting tracker + Recharts line charts
+- [x] Performance optimizations (lazy loading, React.memo, service worker caching, preconnect)
+- [x] Supabase credentials configured in .env.local
+- [x] Gemini API key configured in .env.local
+- [x] Supabase cloud sync implemented (lib/sync.ts + SyncContext)
+- [x] Auth flow implemented (AuthContext + AuthScreen)
+
+### Session 3 — 2026-03-23
+- [x] Added Stats tab to bottom navigation (was built but not wired in)
+- [x] Stats tab includes: body stats, BMI, weight chart, InBody reports, volume trends
+- [x] VolumeChart shows Legs/Push/Pull volume trends over time
+- [x] Updated chart themes from dark to white to match design language
+- [x] Lazy-loaded StatsTab for performance
+- [x] Updated plans.md to reflect actual completion status
+
+### All Clear
+All phases complete — MVP is feature-complete with cloud sync + stats.
 
 ### Notes
 - Using localStorage for all data (works offline in gym)

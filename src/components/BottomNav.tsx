@@ -1,16 +1,17 @@
 "use client";
 
-import { Dumbbell, TrendingUp, ExternalLink, Activity } from "lucide-react";
+import { Dumbbell, TrendingUp, ExternalLink, Activity, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface BottomNavProps {
-  activeTab: "training" | "progress";
-  onTabChange: (tab: "training" | "progress") => void;
+  activeTab: "training" | "progress" | "stats";
+  onTabChange: (tab: "training" | "progress" | "stats") => void;
 }
 
 const tabs = [
   { id: "training" as const, label: "Training", icon: Dumbbell },
   { id: "progress" as const, label: "Progress", icon: TrendingUp },
+  { id: "stats" as const, label: "Stats", icon: BarChart3 },
 ];
 
 export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {

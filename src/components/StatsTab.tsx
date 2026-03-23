@@ -398,9 +398,9 @@ export default function StatsTab() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-[#1A1A28] rounded-2xl border border-[#2A2A3E] p-4 mb-6 shadow-[var(--shadow-card)]"
+          className="bg-bg-card rounded-2xl border border-border p-4 mb-6 shadow-[var(--shadow-card)]"
         >
-          <h3 className="text-sm font-semibold text-[#F0F0F0] mb-4">
+          <h3 className="text-sm font-semibold text-text-primary mb-4">
             Weight Progress
           </h3>
           <div className="h-48">
@@ -417,17 +417,17 @@ export default function StatsTab() {
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#2A2A3E"
+                  stroke="#E5E7EB"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 11, fill: "#5C5C72" }}
-                  axisLine={{ stroke: "#2A2A3E" }}
+                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  axisLine={{ stroke: "#E5E7EB" }}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#5C5C72" }}
+                  tick={{ fontSize: 11, fill: "#6B7280" }}
                   axisLine={false}
                   tickLine={false}
                   domain={["dataMin - 1", "dataMax + 1"]}
@@ -435,13 +435,13 @@ export default function StatsTab() {
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1A1A28",
-                    border: "1px solid #2A2A3E",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
                     borderRadius: "12px",
                     fontSize: "12px",
-                    color: "#F0F0F0",
+                    color: "#1A1A2E",
                   }}
-                  labelStyle={{ color: "#9CA3AF" }}
+                  labelStyle={{ color: "#6B7280" }}
                   itemStyle={{ color: "#22C55E" }}
                 />
                 <Line
@@ -450,7 +450,7 @@ export default function StatsTab() {
                   stroke="#22C55E"
                   strokeWidth={2}
                   dot={{ r: 4, fill: "#22C55E", strokeWidth: 0 }}
-                  activeDot={{ r: 6, fill: "#22C55E", strokeWidth: 2, stroke: "#1A1A28" }}
+                  activeDot={{ r: 6, fill: "#22C55E", strokeWidth: 2, stroke: "#FFFFFF" }}
                 />
               </LineChart>
             </ResponsiveContainer>
