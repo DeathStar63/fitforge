@@ -2,7 +2,7 @@
 
 import { useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, TrendingUp, Trophy } from "lucide-react";
 import { Exercise, SetLog } from "@/lib/workouts";
 
 interface ExerciseCardProps {
@@ -10,6 +10,7 @@ interface ExerciseCardProps {
   index: number;
   sets: SetLog[];
   previousSets?: SetLog[];
+  bestSet: SetLog | null;
   onSetUpdate: (setIndex: number, field: "reps" | "weight", value: number) => void;
   onSetToggle: (setIndex: number) => void;
   allSetsCompleted: boolean;
@@ -20,6 +21,7 @@ const ExerciseCard = memo(function ExerciseCard({
   index,
   sets,
   previousSets,
+  bestSet,
   onSetUpdate,
   onSetToggle,
   allSetsCompleted,
@@ -125,6 +127,19 @@ const ExerciseCard = memo(function ExerciseCard({
                     <TrendingUp size={14} />
                     You hit {exercise.targetRepsMax} reps on all sets last time — increase the weight!
                   </p>
+                </div>
+              )}
+
+              {/* Personal Best */}
+              {bestSet && bestSet.weight > 0 && (
+                <div className="mb-3 px-3 py-2 bg-orange/5 rounded-xl border border-orange/10">
+                  <p className="text-[10px] text-orange uppercase tracking-wider mb-1 flex items-center gap-1">
+                    <Trophy size={10} />
+                    Personal Best
+                  </p>
+                  <span className="text-xs font-semibold text-orange">
+                    {bestSet.weight}kg x {bestSet.reps}
+                  </span>
                 </div>
               )}
 

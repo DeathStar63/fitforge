@@ -61,6 +61,33 @@ export function initExerciseLog(
   };
 }
 
+export function getBestSet(exerciseId: string): SetLog | null {
+  const logs: Record<string, DayWorkoutLog> = JSON.parse(
+    localStorage.getItem(WORKOUT_LOG_KEY) || "{}"
+  );
+  let best: SetLog | null = null;
+  for (const log of Object.values(logs)) {
+    const exercise = log.exercises.find((e) => e.exerciseId === exerciseId);
+    if (!exercise) continue;
+    for (const set of exercise.sets) {
+      if (set.completed && set.weight > 0) {
+        if (
+          !best ||
+          set.weight > best.weight ||
+          (set.weight === best.weight && set.reps > best.reps)
+        ) {
+          best = { ...set };
+        }
+      }
+    }
+  }
+  return best;
+}
+
+export function getAllWorkoutLogs(): Record<string, DayWorkoutLog> {
+  return JSON.parse(localStorage.getItem(WORKOUT_LOG_KEY) || "{}");
+}
+
 // ---- Nutrition Logs ----
 export interface NutritionEntry {
   id: string;

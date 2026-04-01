@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Flame, Moon } from "lucide-react";
+import { Calendar, Clock, Flame } from "lucide-react";
 import ExerciseCard from "./ExerciseCard";
 import {
   workoutDays,
-  getTodaysWorkout,
   dayNames,
   WorkoutDay,
 } from "@/lib/workouts";
@@ -14,37 +13,32 @@ import {
   getWorkoutLog,
   saveWorkoutLog,
   getLastWorkoutLog,
+  getBestSet,
   initExerciseLog,
   getDateKey,
   DayWorkoutLog,
 } from "@/lib/storage";
 import { useSync } from "@/context/SyncContext";
-import type { ExerciseLog } from "@/lib/workouts";
+import type { ExerciseLog, SetLog } from "@/lib/workouts";
+
+// Determine suggested workout index based on day of week
+function getSuggestedWorkoutIdx(): number {
+  const day = new Date().getDay();
+  // Mon/Thu → Legs(0), Tue/Fri → Push(1), Wed/Sat → Pull(2), Sun → Legs(0)
+  const idx = workoutDays.findIndex((w) => w.dayNumbers.includes(day));
+  return idx >= 0 ? idx : 0;
+}
 
 export default function TrainingTab() {
   const { syncAfterSave } = useSync();
-  const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
+  const [selectedDayIdx, setSelectedDayIdx] = useState<number>(getSuggestedWorkoutIdx);
   const [workoutLog, setWorkoutLog] = useState<DayWorkoutLog | null>(null);
   const [previousLog, setPreviousLog] = useState<DayWorkoutLog | null>(null);
+  const [bestSets, setBestSets] = useState<Record<string, SetLog | null>>({});
   const today = new Date().getDay();
 
-  const currentWorkout: WorkoutDay | null =
-    selectedDayIdx !== null
-      ? workoutDays[selectedDayIdx]
-      : getTodaysWorkout();
-
-  // Determine which workout day tab index maps to today
-  const todayWorkoutIdx = workoutDays.findIndex((w) =>
-    w.dayNumbers.includes(today)
-  );
-
-  useEffect(() => {
-    if (selectedDayIdx === null && todayWorkoutIdx >= 0) {
-      setSelectedDayIdx(todayWorkoutIdx);
-    } else if (selectedDayIdx === null) {
-      setSelectedDayIdx(0);
-    }
-  }, [selectedDayIdx, todayWorkoutIdx]);
+  const currentWorkout: WorkoutDay = workoutDays[selectedDayIdx];
+  const scheduledIdx = workoutDays.findIndex((w) => w.dayNumbers.includes(today));
 
   // Load workout log
   useEffect(() => {
@@ -66,6 +60,13 @@ export default function TrainingTab() {
     // Get previous session for same workout type
     const prev = getLastWorkoutLog(currentWorkout.id);
     setPreviousLog(prev);
+
+    // Get personal bests for all exercises
+    const bests: Record<string, SetLog | null> = {};
+    for (const ex of currentWorkout.exercises) {
+      bests[ex.id] = getBestSet(ex.id);
+    }
+    setBestSets(bests);
   }, [currentWorkout]);
 
   const handleSetUpdate = useCallback(
@@ -122,76 +123,51 @@ export default function TrainingTab() {
   const completedCount =
     workoutLog?.exercises.filter((e) => e.completed).length || 0;
   const totalExercises = currentWorkout?.exercises.length || 0;
-  const isRestDay = today === 0;
 
   return (
     <div className="px-4 pt-2 pb-safe">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary">
-          {isRestDay ? "Rest Day" : "Today's Workout"}
-        </h1>
+        <h1 className="text-2xl font-bold text-text-primary">Training</h1>
         <p className="text-sm text-text-muted mt-1 flex items-center gap-1.5">
           <Calendar size={14} />
           {dayNames[today]}
-          {currentWorkout && (
-            <>
-              <span className="text-text-subtle mx-1">|</span>
-              <Clock size={14} />
-              90 min + 30 min cardio
-            </>
-          )}
+          <span className="text-text-subtle mx-1">|</span>
+          <Clock size={14} />
+          90 min + 30 min cardio
         </p>
       </div>
 
-      {/* Rest day card */}
-      {isRestDay && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-bg-card rounded-2xl border border-border p-6 text-center shadow-[var(--shadow-card)]"
-        >
-          <Moon size={48} className="text-accent mx-auto mb-4" />
-          <h2 className="text-lg font-semibold mb-2">Active Recovery</h2>
-          <p className="text-sm text-text-muted">
-            Rest from the gym today. Light walking, stretching, and let your
-            body rebuild from 12 hours of weekly training.
-          </p>
-        </motion.div>
-      )}
-
-      {/* Day selector — underline style like reference */}
-      {!isRestDay && (
-        <div className="flex gap-1 mb-6 overflow-x-auto no-scrollbar border-b border-border">
-          {workoutDays.map((day, idx) => {
-            const isSelected = selectedDayIdx === idx;
-            const isToday = day.dayNumbers.includes(today);
-            return (
-              <button
-                key={day.id}
-                onClick={() => setSelectedDayIdx(idx)}
-                className={`relative shrink-0 px-4 py-2.5 text-sm font-medium transition-colors ${
-                  isSelected
-                    ? "text-text-primary"
-                    : "text-text-subtle"
-                }`}
-              >
-                {day.emoji} {day.name}
-                {isToday && !isSelected && (
-                  <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-orange inline-block" />
-                )}
-                {isSelected && (
-                  <motion.div
-                    layoutId="dayTab"
-                    className="absolute bottom-0 left-2 right-2 h-[2px] bg-text-primary rounded-full"
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
+      {/* Day selector — pick any workout */}
+      <div className="flex gap-1 mb-6 overflow-x-auto no-scrollbar border-b border-border">
+        {workoutDays.map((day, idx) => {
+          const isSelected = selectedDayIdx === idx;
+          const isScheduled = scheduledIdx === idx;
+          return (
+            <button
+              key={day.id}
+              onClick={() => setSelectedDayIdx(idx)}
+              className={`relative shrink-0 px-4 py-2.5 text-sm font-medium transition-colors ${
+                isSelected
+                  ? "text-text-primary"
+                  : "text-text-subtle"
+              }`}
+            >
+              {day.emoji} {day.name}
+              {isScheduled && !isSelected && (
+                <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-orange inline-block" />
+              )}
+              {isSelected && (
+                <motion.div
+                  layoutId="dayTab"
+                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-text-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Progress bar */}
       {currentWorkout && workoutLog && (
@@ -246,6 +222,7 @@ export default function TrainingTab() {
                 index={idx}
                 sets={exerciseLog?.sets || []}
                 previousSets={prevExerciseLog?.sets}
+                bestSet={bestSets[exercise.id] || null}
                 onSetUpdate={(setIdx, field, value) =>
                   handleSetUpdate(idx, setIdx, field, value)
                 }
