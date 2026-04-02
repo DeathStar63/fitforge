@@ -79,10 +79,31 @@ export default function TrainingTab() {
           ...updated.exercises[exerciseIdx],
           sets: [...updated.exercises[exerciseIdx].sets],
         };
-        updated.exercises[exerciseIdx].sets[setIdx] = {
-          ...updated.exercises[exerciseIdx].sets[setIdx],
-          [field]: value,
+        const currentSet = updated.exercises[exerciseIdx].sets[setIdx];
+        const newSet = { ...currentSet, [field]: value };
+
+        // Auto-complete when both weight and reps are filled
+        const w = field === "weight" ? value : currentSet.weight;
+        const r = field === "reps" ? value : currentSet.reps;
+        if (w > 0 && r > 0) {
+          newSet.completed = true;
+        } else {
+          newSet.completed = false;
+        }
+
+        updated.exercises[exerciseIdx].sets[setIdx] = newSet;
+        updated.exercises[exerciseIdx] = {
+          ...updated.exercises[exerciseIdx],
+          completed: updated.exercises[exerciseIdx].sets.every((s) => s.completed),
         };
+
+        // Check if whole workout is done
+        if (updated.exercises.every((e) => e.completed)) {
+          updated.completedAt = new Date().toISOString();
+        } else {
+          updated.completedAt = undefined;
+        }
+
         saveWorkoutLog(updated);
         syncAfterSave("workout_logs");
         return updated;
