@@ -174,9 +174,9 @@ export const workoutDays: WorkoutDay[] = [
       },
       {
         id: "front-db-raise",
-        name: "Front Dumbbell Raises",
-        muscle: "Front Delts",
-        gifUrl: "https://static.exercisedb.dev/media/3eGE2JC.gif",
+        name: "Dumbbell Shoulder Shrugs",
+        muscle: "Traps",
+        gifUrl: "https://fitnessprogramer.com/wp-content/uploads/2021/04/Dumbbell-Shrug.gif",
         sets: 3,
         targetRepsMin: 8,
         targetRepsMax: 12,
