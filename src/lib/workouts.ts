@@ -183,9 +183,9 @@ export const workoutDays: WorkoutDay[] = [
       },
       {
         id: "cable-overhead-tricep",
-        name: "Cable Overhead Tricep Ext.",
+        name: "Rope Tricep Extension",
         muscle: "Tricep Long Head",
-        gifUrl: "https://static.exercisedb.dev/media/2IxROQ1.gif",
+        gifUrl: "https://fitnessprogramer.com/wp-content/uploads/2021/04/Cable-Rope-Overhead-Triceps-Extension.gif",
         sets: 3,
         targetRepsMin: 8,
         targetRepsMax: 12,
