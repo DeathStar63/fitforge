@@ -266,7 +266,7 @@ export const workoutDays: WorkoutDay[] = [
         id: "single-arm-db-row",
         name: "Rear Delt Fly",
         muscle: "Rear Delts",
-        gifUrl: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Bent-Over-Dumbbell-Rear-Delt-Fly.gif",
+        gifUrl: "https://gymvisual.com/img/p/1/8/3/6/8/18368.gif",
         sets: 3,
         targetRepsMin: 8,
         targetRepsMax: 12,

@@ -36,6 +36,7 @@ const ExerciseCard = memo(function ExerciseCard({
 }: ExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [unit, setUnitState] = useState<WeightUnit>("kg");
+  const [weightInputs, setWeightInputs] = useState<Record<number, string>>({});
 
   useEffect(() => {
     setUnitState(getUnitPref(exercise.id));
@@ -44,6 +45,7 @@ const ExerciseCard = memo(function ExerciseCard({
   const setUnit = (u: WeightUnit) => {
     setUnitState(u);
     saveUnitPref(exercise.id, u);
+    setWeightInputs({});
   };
 
   const toDisplay = (kg: number) => (unit === "lbs" ? kgToLbs(kg) : kg);
@@ -215,13 +217,21 @@ const ExerciseCard = memo(function ExerciseCard({
                       <input
                         type="number"
                         inputMode="decimal"
-                        value={set.weight ? formatWeight(toDisplay(set.weight)) : ""}
-                        onChange={(e) =>
-                          onSetUpdate(
-                            setIdx,
-                            "weight",
-                            fromInput(parseFloat(e.target.value) || 0)
-                          )
+                        value={weightInputs[setIdx] ?? (set.weight ? formatWeight(toDisplay(set.weight)) : "")}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          setWeightInputs((prev) => ({ ...prev, [setIdx]: raw }));
+                          const num = parseFloat(raw);
+                          if (!isNaN(num)) {
+                            onSetUpdate(setIdx, "weight", fromInput(num));
+                          }
+                        }}
+                        onBlur={() =>
+                          setWeightInputs((prev) => {
+                            const next = { ...prev };
+                            delete next[setIdx];
+                            return next;
+                          })
                         }
                         placeholder={unit}
                         className="w-full text-center bg-bg-input rounded-lg py-2 text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-accent/10"
