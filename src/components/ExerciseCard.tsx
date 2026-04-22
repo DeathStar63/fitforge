@@ -1,9 +1,17 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, useEffect, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronDown, ChevronUp, TrendingUp, Trophy } from "lucide-react";
 import { Exercise, SetLog } from "@/lib/workouts";
+import {
+  WeightUnit,
+  getUnitPref,
+  saveUnitPref,
+  kgToLbs,
+  lbsToKg,
+  formatWeight,
+} from "@/lib/storage";
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -27,6 +35,19 @@ const ExerciseCard = memo(function ExerciseCard({
   allSetsCompleted,
 }: ExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [unit, setUnitState] = useState<WeightUnit>("kg");
+
+  useEffect(() => {
+    setUnitState(getUnitPref(exercise.id));
+  }, [exercise.id]);
+
+  const setUnit = (u: WeightUnit) => {
+    setUnitState(u);
+    saveUnitPref(exercise.id, u);
+  };
+
+  const toDisplay = (kg: number) => (unit === "lbs" ? kgToLbs(kg) : kg);
+  const fromInput = (val: number) => (unit === "lbs" ? lbsToKg(val) : val);
 
   const shouldIncreaseWeight =
     previousSets &&
@@ -130,6 +151,25 @@ const ExerciseCard = memo(function ExerciseCard({
                 </div>
               )}
 
+              {/* Unit toggle */}
+              <div className="mb-3 flex justify-end">
+                <div className="inline-flex rounded-lg bg-bg-surface p-0.5">
+                  {(["kg", "lbs"] as WeightUnit[]).map((u) => (
+                    <button
+                      key={u}
+                      onClick={() => setUnit(u)}
+                      className={`px-2.5 py-0.5 text-[11px] font-medium rounded-md transition-colors ${
+                        unit === u
+                          ? "bg-bg-card text-text-primary shadow-[var(--shadow-card)]"
+                          : "text-text-subtle"
+                      }`}
+                    >
+                      {u}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Personal Best */}
               {bestSet && bestSet.weight > 0 && (
                 <div className="mb-3 px-3 py-2 bg-orange/5 rounded-xl border border-orange/10">
@@ -138,7 +178,7 @@ const ExerciseCard = memo(function ExerciseCard({
                     Personal Best
                   </p>
                   <span className="text-xs font-semibold text-orange">
-                    {bestSet.weight}kg x {bestSet.reps}
+                    {formatWeight(toDisplay(bestSet.weight))}{unit} x {bestSet.reps}
                   </span>
                 </div>
               )}
@@ -152,7 +192,7 @@ const ExerciseCard = memo(function ExerciseCard({
                   <div className="flex gap-3">
                     {previousSets.map((ps, i) => (
                       <span key={i} className="text-xs text-text-muted">
-                        {ps.weight}kg x {ps.reps}
+                        {formatWeight(toDisplay(ps.weight))}{unit} x {ps.reps}
                       </span>
                     ))}
                   </div>
@@ -175,11 +215,15 @@ const ExerciseCard = memo(function ExerciseCard({
                       <input
                         type="number"
                         inputMode="decimal"
-                        value={set.weight || ""}
+                        value={set.weight ? formatWeight(toDisplay(set.weight)) : ""}
                         onChange={(e) =>
-                          onSetUpdate(setIdx, "weight", parseFloat(e.target.value) || 0)
+                          onSetUpdate(
+                            setIdx,
+                            "weight",
+                            fromInput(parseFloat(e.target.value) || 0)
+                          )
                         }
-                        placeholder="kg"
+                        placeholder={unit}
                         className="w-full text-center bg-bg-input rounded-lg py-2 text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-accent/10"
                       />
                     </div>

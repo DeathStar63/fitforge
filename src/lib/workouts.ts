@@ -264,9 +264,9 @@ export const workoutDays: WorkoutDay[] = [
       },
       {
         id: "single-arm-db-row",
-        name: "Single Arm DB Row",
-        muscle: "Back (Thickness)",
-        gifUrl: "https://static.exercisedb.dev/media/C0MA9bC.gif",
+        name: "Rear Delt Fly",
+        muscle: "Rear Delts",
+        gifUrl: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Bent-Over-Dumbbell-Rear-Delt-Fly.gif",
         sets: 3,
         targetRepsMin: 8,
         targetRepsMax: 12,

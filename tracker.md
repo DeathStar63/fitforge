@@ -66,6 +66,9 @@
 - [x] Reconciled documentation drift between CLAUDE.md, tracker.md, and decisions.md
 - [x] Updated ADR-004 in decisions.md — now reflects the current clean white theme (#FFFFFF / #1A1A2E dark navy / pastel macro colors) instead of the superseded dark + lime green direction. Original ADR noted as superseded for historical context.
 - [x] Confirmed CLAUDE.md design language section is the source of truth for the active design system.
+- [x] **Per-exercise kg/lbs toggle** — ExerciseCard now has a small segmented kg/lbs switch that applies to Personal Best, Last Session, and the set weight input. Weights are always stored in kg (canonical); conversion only happens on display and input. Pref persisted per exercise id under `fitforge_unit_prefs` so it's not synced to Supabase (device/gym-local preference).
+- [x] Added `kgToLbs`, `lbsToKg`, `formatWeight`, `getUnitPref`, `saveUnitPref` helpers + `WeightUnit` type in `src/lib/storage.ts`.
+- [x] **Exercise swap:** Single Arm DB Row → Rear Delt Fly (muscle: Rear Delts, new GIF). Kept `id: "single-arm-db-row"` so all previously-logged sets remain attached to this exercise slot.
 
 ### Notes
 - Using localStorage for all data (works offline in gym)

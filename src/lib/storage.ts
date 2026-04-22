@@ -5,6 +5,38 @@ const WORKOUT_LOG_KEY = "fitforge_workout_logs";
 const NUTRITION_LOG_KEY = "fitforge_nutrition_logs";
 const BODY_STATS_KEY = "fitforge_body_stats";
 const INBODY_REPORTS_KEY = "fitforge_inbody_reports";
+const UNIT_PREFS_KEY = "fitforge_unit_prefs";
+
+// ---- Weight Units ----
+// Weights are always stored in kg (canonical). The unit pref only controls
+// per-exercise display + input, so logs remain comparable across gyms.
+export type WeightUnit = "kg" | "lbs";
+const LBS_PER_KG = 2.20462;
+
+export function kgToLbs(kg: number): number {
+  return kg * LBS_PER_KG;
+}
+
+export function lbsToKg(lbs: number): number {
+  return lbs / LBS_PER_KG;
+}
+
+export function formatWeight(w: number): string {
+  if (!w) return "0";
+  const rounded = Math.round(w * 10) / 10;
+  return rounded % 1 === 0 ? String(Math.round(rounded)) : rounded.toFixed(1);
+}
+
+export function getUnitPref(exerciseId: string): WeightUnit {
+  const prefs = JSON.parse(localStorage.getItem(UNIT_PREFS_KEY) || "{}");
+  return (prefs[exerciseId] as WeightUnit) || "kg";
+}
+
+export function saveUnitPref(exerciseId: string, unit: WeightUnit): void {
+  const prefs = JSON.parse(localStorage.getItem(UNIT_PREFS_KEY) || "{}");
+  prefs[exerciseId] = unit;
+  localStorage.setItem(UNIT_PREFS_KEY, JSON.stringify(prefs));
+}
 
 // Date helper
 export function getDateKey(date?: Date): string {
