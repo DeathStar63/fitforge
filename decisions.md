@@ -13,9 +13,10 @@
 **Decision:** Use Supabase over Firebase
 **Why:** User preference. PostgreSQL gives us relational data (exercises → sets → reps), generous free tier, built-in auth if needed later
 
-## ADR-004: Dark Theme with Lime Green Accents
-**Decision:** Dark UI (#0F0F1A background) with #BAFF39 lime green primary accent
-**Why:** Based on Figma "Fitness Tracking Mobile App Template". Dark theme is better for gym use (less eye strain), lime green provides high contrast for actionable elements
+## ADR-004: Clean White Theme with Dark Navy Accents
+**Decision:** White UI (#FFFFFF background, #F5F6FA surface) with #1A1A2E dark navy primary accent. Category colors: orange (calories), blue (protein), green (carbs/success), pink (fats). Inter font, 16px card radius.
+**Why:** Redesigned in Session 3 (2026-03-23) away from the original dark/lime-green direction toward a cleaner, modern fitness-app aesthetic. The white theme reads better in daylight (most workout logging happens at the gym during the day), pastel category colors provide clearer at-a-glance differentiation between macro types, and the dark-navy CTA stands out without the high-contrast harshness of neon accents.
+**Superseded:** Original dark theme (#0F0F1A bg, #BAFF39 lime accent) used in Sessions 1-2.
 
 ## ADR-005: Legs/Push/Pull Day Order
 **Decision:** Mon/Thu=Legs, Tue/Fri=Push, Wed/Sat=Pull

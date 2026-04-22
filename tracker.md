@@ -62,8 +62,14 @@
 - [x] **Apple Health activity section** — steps, active calories, exercise minutes, resting HR with manual logging. Note about native Capacitor wrapper for auto-sync.
 - [x] Updated plans.md and tracker.md
 
+### Session 5 — 2026-04-22
+- [x] Reconciled documentation drift between CLAUDE.md, tracker.md, and decisions.md
+- [x] Updated ADR-004 in decisions.md — now reflects the current clean white theme (#FFFFFF / #1A1A2E dark navy / pastel macro colors) instead of the superseded dark + lime green direction. Original ADR noted as superseded for historical context.
+- [x] Confirmed CLAUDE.md design language section is the source of truth for the active design system.
+
 ### Notes
 - Using localStorage for all data (works offline in gym)
 - next-pwa removed due to Turbopack incompatibility in Next.js 16; using manual service worker
 - Gemini API calls happen client-side (API key in NEXT_PUBLIC env var)
 - Apple Health auto-sync requires native iOS wrapper (Capacitor) — manual logging for now
+- Session 1-2 tracker entries reference the original dark/lime theme (historically accurate); the white redesign landed in Session 3 (2026-03-23)
