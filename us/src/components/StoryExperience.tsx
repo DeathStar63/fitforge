@@ -74,7 +74,7 @@ export default function StoryExperience() {
           onClick={goBack}
           disabled={index === 0}
           aria-label="Back"
-          className="flex h-8 w-8 items-center justify-center rounded-full text-[#C7A] transition disabled:opacity-0"
+          className="flex h-8 w-8 items-center justify-center rounded-full text-[#C99BA0] transition disabled:opacity-0"
         >
           <ChevronLeft className="h-5 w-5" strokeWidth={2} />
         </button>
@@ -93,7 +93,7 @@ export default function StoryExperience() {
           <button
             onClick={toggleMusic}
             aria-label={musicOn ? "Mute music" : "Play music"}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-[#C7A] transition"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[#C99BA0] transition"
           >
             {musicOn ? (
               <Music className="h-4 w-4" strokeWidth={2} />
@@ -130,7 +130,7 @@ export default function StoryExperience() {
         </AnimatePresence>
       </div>
 
-      {/* Continue button (hidden on finale and reveal/choice/input which advance themselves) */}
+      {/* Continue button (hidden on finale + reveal, which advance themselves) */}
       {!isLast && interaction.kind !== "finale" && interaction.kind !== "reveal" && (
         <div className="px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2">
           <button
@@ -303,6 +303,8 @@ function InputView({
   useEffect(() => {
     const existing = loadAnswer(storageKey);
     if (existing) {
+      // Client-only restore from localStorage (avoids hydration mismatch).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setValue(existing);
       onTyped();
     }

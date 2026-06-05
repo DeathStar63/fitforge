@@ -1,21 +1,19 @@
 // ───────────────────────────────────────────────────────────────────────────
-//  "Us" — an interactive photo + story experience
+//  US ♥ — an interactive photo + story experience
 // ───────────────────────────────────────────────────────────────────────────
 //
 //  HOW TO MAKE THIS YOURS (read me!):
 //
 //  1. Set the names + a couple of options in STORY_CONFIG just below.
-//  2. Drop your photos into:  /public/us/   (e.g. /public/us/beach.jpg)
-//     Then point a scene's `image` at it, e.g. image: "/us/beach.jpg".
-//     Any scene whose image starts with "/us/placeholder" shows a soft
+//  2. Drop your photos into:  /public/photos/   (e.g. /public/photos/pune.jpg)
+//     Then point a scene's `image` at it, e.g. image: "/photos/pune.jpg".
+//     Any scene whose image starts with "/photos/placeholder" shows a soft
 //     pink photo frame instead — so it still looks intentional before you
 //     add the real pictures.
 //  3. Edit the `body` paragraphs and headings to say exactly what YOU want.
-//     Everything here is placeholder text written to match the feeling you
-//     described (gentle, honest, about giving her space + boundaries). Swap
-//     it for your own words — that's the whole point.
-//  4. Add, remove, or reorder scenes freely. The experience just plays them
-//     top to bottom.
+//     The text already uses your real words — keep editing it freely.
+//  4. Add, remove, or reorder scenes however you like. The experience just
+//     plays them top to bottom.
 //
 //  Her typed answers (the "input" scenes) are saved on her device and shown
 //  back to her — and to you — on the final screen.
@@ -26,14 +24,14 @@ export const STORY_CONFIG = {
   herName: "Love",
   // Your name — shown in the closing signature.
   yourName: "Me",
-  // Optional ambient music. Drop an mp3 into /public/us/ and set the path,
-  // e.g. "/us/song.mp3". Leave as null to hide the music toggle entirely.
+  // Optional ambient music. Drop an mp3 into /public/ and set the path,
+  // e.g. "/song.mp3". Leave as null to hide the music toggle entirely.
   musicSrc: null as string | null,
 } as const;
 
 // ── Scene model ──────────────────────────────────────────────────────────────
 // Every scene can mix a photo, a heading, body paragraphs, and ONE interaction.
-// Leave any field out that you don't need.
+// Leave out any field you don't need.
 
 export type Interaction =
   // A simple "tap to continue" (this is the default if you omit `interaction`).
@@ -66,9 +64,6 @@ export interface Scene {
 }
 
 // ── The story ────────────────────────────────────────────────────────────────
-// Placeholder words below — written in the spirit of what you described.
-// Make them yours.
-
 export const SCENES: Scene[] = [
   {
     id: "open",
@@ -100,7 +95,7 @@ export const SCENES: Scene[] = [
   },
   {
     id: "pune",
-    image: "/us/placeholder-1.jpg",
+    image: "/photos/placeholder-1.jpg",
     imageAlt: "Us, back in Pune",
     heading: "Remember Pune, in the beginning?",
     body: [
@@ -112,7 +107,7 @@ export const SCENES: Scene[] = [
   },
   {
     id: "me",
-    image: "/us/placeholder-2.jpg",
+    image: "/photos/placeholder-2.jpg",
     imageAlt: "Me, being honest",
     heading: "And I have to be honest about me too.",
     body: [
@@ -157,7 +152,7 @@ export const SCENES: Scene[] = [
   },
   {
     id: "input-you",
-    image: "/us/placeholder-3.jpg",
+    image: "/photos/placeholder-3.jpg",
     imageAlt: "You, being completely you",
     heading: "And one more.",
     body: ["What's something that's just yours — that makes you feel like you, with or without me?"],

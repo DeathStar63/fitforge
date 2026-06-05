@@ -21,8 +21,8 @@ export default function PhotoFrame({ src, alt }: { src: string; alt?: string }) 
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[14px] bg-[#F6E9E6]">
         {showFallback ? (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#F8E4E1] to-[#EFD9D2] text-[#C99] ">
-            <ImageIcon className="h-7 w-7 opacity-60" strokeWidth={1.5} />
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#F8E4E1] to-[#EFD9D2]">
+            <ImageIcon className="h-7 w-7 text-[#D9A8A0]" strokeWidth={1.5} />
             <span className="px-4 text-center text-[11px] font-medium tracking-wide text-[#B98A82]">
               {alt || "Your photo here"}
             </span>
