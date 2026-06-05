@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // "US <3" is a separate standalone project — not part of FitForge.
-    "us/**",
   ]),
 ]);
 
