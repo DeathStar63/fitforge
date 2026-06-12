@@ -44,10 +44,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const isNetworkError = (msg: string) =>
+    /fetch|network|load failed|failed to fetch/i.test(msg);
+
   const signIn = async (email: string, password: string) => {
     if (!supabase) return { error: { message: "Supabase not configured" } as AuthError };
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error && isNetworkError(error.message)) {
+        return { error: { message: "Connection failed. Check your internet and try again." } as AuthError };
+      }
       return { error };
     } catch {
       return { error: { message: "Connection failed. Check your internet and try again." } as AuthError };
@@ -58,6 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!supabase) return { error: { message: "Supabase not configured" } as AuthError };
     try {
       const { error } = await supabase.auth.signUp({ email, password });
+      if (error && isNetworkError(error.message)) {
+        return { error: { message: "Connection failed. Check your internet and try again." } as AuthError };
+      }
       return { error };
     } catch {
       return { error: { message: "Connection failed. Check your internet and try again." } as AuthError };
