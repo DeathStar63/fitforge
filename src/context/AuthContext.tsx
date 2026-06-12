@@ -46,14 +46,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     if (!supabase) return { error: { message: "Supabase not configured" } as AuthError };
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      return { error };
+    } catch {
+      return { error: { message: "Connection failed. Check your internet and try again." } as AuthError };
+    }
   };
 
   const signUp = async (email: string, password: string) => {
     if (!supabase) return { error: { message: "Supabase not configured" } as AuthError };
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error };
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      return { error };
+    } catch {
+      return { error: { message: "Connection failed. Check your internet and try again." } as AuthError };
+    }
   };
 
   const signOut = async () => {
