@@ -2,7 +2,7 @@
 
 import { useState, useEffect, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronDown, ChevronUp, TrendingUp, Trophy } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Pencil, TrendingUp, Trophy, X } from "lucide-react";
 import { Exercise, SetLog } from "@/lib/workouts";
 import {
   WeightUnit,
@@ -21,6 +21,7 @@ interface ExerciseCardProps {
   bestSet: SetLog | null;
   onSetUpdate: (setIndex: number, field: "reps" | "weight", value: number) => void;
   onSetToggle: (setIndex: number) => void;
+  onBestEdit: (weight: number, reps: number) => void;
   allSetsCompleted: boolean;
 }
 
@@ -32,11 +33,15 @@ const ExerciseCard = memo(function ExerciseCard({
   bestSet,
   onSetUpdate,
   onSetToggle,
+  onBestEdit,
   allSetsCompleted,
 }: ExerciseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [unit, setUnitState] = useState<WeightUnit>("kg");
   const [weightInputs, setWeightInputs] = useState<Record<number, string>>({});
+  const [editingBest, setEditingBest] = useState(false);
+  const [editWeight, setEditWeight] = useState("");
+  const [editReps, setEditReps] = useState("");
 
   useEffect(() => {
     setUnitState(getUnitPref(exercise.id));
@@ -175,13 +180,75 @@ const ExerciseCard = memo(function ExerciseCard({
               {/* Personal Best */}
               {bestSet && bestSet.weight > 0 && (
                 <div className="mb-3 px-3 py-2 bg-orange/5 rounded-xl border border-orange/10">
-                  <p className="text-[10px] text-orange uppercase tracking-wider mb-1 flex items-center gap-1">
-                    <Trophy size={10} />
-                    Personal Best
-                  </p>
-                  <span className="text-xs font-semibold text-orange">
-                    {formatWeight(toDisplay(bestSet.weight))}{unit} x {bestSet.reps}
-                  </span>
+                  {editingBest ? (
+                    <>
+                      <p className="text-[10px] text-orange uppercase tracking-wider mb-2 flex items-center gap-1">
+                        <Trophy size={10} />
+                        Edit Personal Best
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          value={editWeight}
+                          onChange={(e) => setEditWeight(e.target.value)}
+                          placeholder={unit}
+                          className="flex-1 text-center bg-white/60 border border-orange/20 rounded-lg py-1.5 text-xs text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-orange/20"
+                        />
+                        <span className="text-xs text-orange font-medium">×</span>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          value={editReps}
+                          onChange={(e) => setEditReps(e.target.value)}
+                          placeholder="reps"
+                          className="flex-1 text-center bg-white/60 border border-orange/20 rounded-lg py-1.5 text-xs text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-orange/20"
+                        />
+                        <button
+                          onClick={() => {
+                            const w = parseFloat(editWeight);
+                            const r = parseInt(editReps);
+                            if (w > 0 && r > 0) {
+                              onBestEdit(fromInput(w), r);
+                            }
+                            setEditingBest(false);
+                          }}
+                          className="px-2.5 py-1.5 bg-orange text-white text-xs font-semibold rounded-lg"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditingBest(false)}
+                          className="p-1.5 text-orange/60 hover:text-orange"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] text-orange uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <Trophy size={10} />
+                          Personal Best
+                        </p>
+                        <span className="text-xs font-semibold text-orange">
+                          {formatWeight(toDisplay(bestSet.weight))}{unit} x {bestSet.reps}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setEditWeight(String(formatWeight(toDisplay(bestSet.weight))));
+                          setEditReps(String(bestSet.reps));
+                          setEditingBest(true);
+                        }}
+                        className="p-1.5 text-orange/50 hover:text-orange transition-colors"
+                        title="Edit personal best"
+                      >
+                        <Pencil size={13} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 

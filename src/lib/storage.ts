@@ -6,6 +6,7 @@ const NUTRITION_LOG_KEY = "fitforge_nutrition_logs";
 const BODY_STATS_KEY = "fitforge_body_stats";
 const INBODY_REPORTS_KEY = "fitforge_inbody_reports";
 const UNIT_PREFS_KEY = "fitforge_unit_prefs";
+const BEST_OVERRIDES_KEY = "fitforge_best_overrides";
 
 // ---- Weight Units ----
 // Weights are always stored in kg (canonical). The unit pref only controls
@@ -93,7 +94,27 @@ export function initExerciseLog(
   };
 }
 
+export function getBestOverride(exerciseId: string): SetLog | null {
+  const overrides = JSON.parse(localStorage.getItem(BEST_OVERRIDES_KEY) || "{}");
+  return overrides[exerciseId] || null;
+}
+
+export function saveBestOverride(exerciseId: string, set: Pick<SetLog, "weight" | "reps">): void {
+  const overrides = JSON.parse(localStorage.getItem(BEST_OVERRIDES_KEY) || "{}");
+  overrides[exerciseId] = { weight: set.weight, reps: set.reps, completed: true };
+  localStorage.setItem(BEST_OVERRIDES_KEY, JSON.stringify(overrides));
+}
+
+export function clearBestOverride(exerciseId: string): void {
+  const overrides = JSON.parse(localStorage.getItem(BEST_OVERRIDES_KEY) || "{}");
+  delete overrides[exerciseId];
+  localStorage.setItem(BEST_OVERRIDES_KEY, JSON.stringify(overrides));
+}
+
 export function getBestSet(exerciseId: string): SetLog | null {
+  const override = getBestOverride(exerciseId);
+  if (override) return override;
+
   const logs: Record<string, DayWorkoutLog> = JSON.parse(
     localStorage.getItem(WORKOUT_LOG_KEY) || "{}"
   );

@@ -14,6 +14,7 @@ import {
   saveWorkoutLog,
   getLastWorkoutLog,
   getBestSet,
+  saveBestOverride,
   initExerciseLog,
   getDateKey,
   DayWorkoutLog,
@@ -248,6 +249,13 @@ export default function TrainingTab() {
                   handleSetUpdate(idx, setIdx, field, value)
                 }
                 onSetToggle={(setIdx) => handleSetToggle(idx, setIdx)}
+                onBestEdit={(weight, reps) => {
+                  saveBestOverride(exercise.id, { weight, reps });
+                  setBestSets((prev) => ({
+                    ...prev,
+                    [exercise.id]: { weight, reps, completed: true },
+                  }));
+                }}
                 allSetsCompleted={exerciseLog?.completed || false}
               />
             );
