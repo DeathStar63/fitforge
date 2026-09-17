@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import { Lightbulb, Plus, RotateCcw, Target } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Lightbulb, Play, Plus, RotateCcw, Target } from "lucide-react";
 import BodyMap from "./BodyMap";
+import QuickWorkoutSheet from "./QuickWorkoutSheet";
 import {
   MUSCLE_GROUPS,
   MUSCLE_BY_ID,
@@ -22,21 +23,25 @@ import {
 import { exercisesForMuscle } from "@/lib/exerciseLibrary";
 import { getAllWorkoutLogs, type DayWorkoutLog } from "@/lib/storage";
 import { usePlan } from "@/context/PlanContext";
-import { getRoutineForDay } from "@/lib/plan";
+import { getRoutineForDay, upsertQuickRoutine, QUICK_ROUTINE_ID } from "@/lib/plan";
 import { dayNames } from "@/lib/workouts";
 
 const STATE_ORDER: MuscleState[] = ["worked", "ready", "due"];
 
 export default function BodyTab({
   onAddExercise,
+  onStartWorkout,
 }: {
   /** Opens the plan editor with this exercise queued to be added. */
   onAddExercise?: (exerciseId: string) => void;
+  /** Jumps to the training screen with this workout open. */
+  onStartWorkout?: (workoutId: string) => void;
 }) {
   const { plan, updatePlan } = usePlan();
   const [view, setView] = useState<BodyView>("front");
   const [selected, setSelected] = useState<MuscleId[]>([]);
   const [logs, setLogs] = useState<Record<string, DayWorkoutLog>>({});
+  const [builderOpen, setBuilderOpen] = useState(false);
 
   useEffect(() => {
     setLogs(getAllWorkoutLogs());
@@ -96,6 +101,12 @@ export default function BodyTab({
           : r
       ),
     }));
+  };
+
+  const startQuickWorkout = (exerciseIds: string[]) => {
+    updatePlan((prev) => upsertQuickRoutine(prev, exerciseIds, selected));
+    setBuilderOpen(false);
+    onStartWorkout?.(QUICK_ROUTINE_ID);
   };
 
   const counts = useMemo(() => {
@@ -247,6 +258,19 @@ export default function BodyTab({
         )}
       </section>
 
+      {/* Start a session from whatever is selected */}
+      {selected.length > 0 && (
+        <button
+          onClick={() => setBuilderOpen(true)}
+          className="w-full mb-4 py-3 rounded-2xl bg-accent text-bg-primary text-sm font-semibold flex items-center justify-center gap-2"
+        >
+          <Play size={15} />
+          Start workout for {selected.length === 1
+            ? muscleLabel(selected[0])
+            : `${selected.length} muscles`}
+        </button>
+      )}
+
       {/* Per-muscle detail for the current selection */}
       {selected.length > 0 && (
         <section className="mb-4">
@@ -333,6 +357,16 @@ export default function BodyTab({
           </p>
         </section>
       )}
+
+      <AnimatePresence>
+        {builderOpen && (
+          <QuickWorkoutSheet
+            muscles={selected}
+            onStart={startQuickWorkout}
+            onClose={() => setBuilderOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

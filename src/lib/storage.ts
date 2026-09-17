@@ -53,16 +53,54 @@ export interface DayWorkoutLog {
   completedAt?: string;
 }
 
-export function getWorkoutLog(date?: string): DayWorkoutLog | null {
-  const key = date || getDateKey();
-  const logs = JSON.parse(localStorage.getItem(WORKOUT_LOG_KEY) || "{}");
-  return logs[key] || null;
+/**
+ * Logs are keyed `${date}__${workoutId}` so more than one session can share a
+ * day — a planned workout in the morning and a quick muscle-targeted session
+ * later, say. They used to be keyed by date alone, which meant saving the
+ * second session silently destroyed the first.
+ *
+ * Entries written under the old scheme are still keyed by bare date. Every
+ * reader that iterates `Object.values()` is unaffected because each entry
+ * carries its own `date` and `workoutId`; `getWorkoutLog` falls back to the
+ * legacy key, and `saveWorkoutLog` re-keys an entry the first time it is
+ * touched so nothing is counted twice.
+ */
+function workoutLogKey(date: string, workoutId: string): string {
+  return `${date}__${workoutId}`;
+}
+
+export function getWorkoutLog(
+  date: string,
+  workoutId: string
+): DayWorkoutLog | null {
+  const logs: Record<string, DayWorkoutLog> = JSON.parse(
+    localStorage.getItem(WORKOUT_LOG_KEY) || "{}"
+  );
+  const current = logs[workoutLogKey(date, workoutId)];
+  if (current) return current;
+  const legacy = logs[date];
+  return legacy && legacy.workoutId === workoutId ? legacy : null;
 }
 
 export function saveWorkoutLog(log: DayWorkoutLog): void {
-  const logs = JSON.parse(localStorage.getItem(WORKOUT_LOG_KEY) || "{}");
-  logs[log.date] = log;
+  const logs: Record<string, DayWorkoutLog> = JSON.parse(
+    localStorage.getItem(WORKOUT_LOG_KEY) || "{}"
+  );
+  logs[workoutLogKey(log.date, log.workoutId)] = log;
+  // Retire the legacy date-keyed copy of this same session, otherwise it would
+  // be double-counted by volume and muscle-status readers.
+  if (logs[log.date] && logs[log.date].workoutId === log.workoutId) {
+    delete logs[log.date];
+  }
   localStorage.setItem(WORKOUT_LOG_KEY, JSON.stringify(logs));
+}
+
+/** Every session logged on a given date, newest workout id order-independent. */
+export function getWorkoutLogsForDate(date: string): DayWorkoutLog[] {
+  const logs: Record<string, DayWorkoutLog> = JSON.parse(
+    localStorage.getItem(WORKOUT_LOG_KEY) || "{}"
+  );
+  return Object.values(logs).filter((l) => l?.date === date);
 }
 
 export function getLastWorkoutLog(

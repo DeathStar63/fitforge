@@ -40,7 +40,9 @@ exercises from the library in `src/lib/exerciseLibrary.ts` (131 exercises).
 3. **Body Tab:** Interactive front/back muscle map over 21 muscle groups,
    coloured by recovery state. Each view shows only the muscles visible from
    it, while a selection spans both. Tap a muscle for a name callout and the
-   exercises that train it, plus suggestions for what to train next
+   exercises that train it, plus suggestions for what to train next.
+   "Start workout" builds a session from the selected muscles and opens it on
+   the Training tab
 4. **Stats Tab:** BMI/body stats input, transformation progress, Gemini AI analysis
 5. **Plan Editor:** Reachable from the Training tab header — assign workouts to
    days, build routines, set per-exercise sets/reps, attach custom exercise GIFs

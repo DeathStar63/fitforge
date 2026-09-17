@@ -116,3 +116,17 @@
       region by 5 units in each direction — the side delt swallowed the front
       delt, the front delt swallowed the trap and the pec. Narrowed to 3 and
       moved three anchors; all 26 regions across both views now verified
+
+### Session 6 — 2026-09-17
+- [x] Start a workout from the body map
+  - Select muscles -> "Start workout" -> a proposed session you can tweak
+  - `buildSessionForMuscles` in `lib/exerciseLibrary.ts` ranks by directness,
+    overlap with the other selected muscles, and specificity
+  - The session is written into the plan as a routine with the reserved id
+    `quick`, so it syncs, tabs and logs through the existing machinery
+- [x] Data-loss fix: workout logs were keyed by date alone, so `saveWorkoutLog`
+      overwrote any earlier session that day. Now keyed `date__workoutId`, with
+      legacy entries read and re-keyed transparently
+  - Verified: two sessions on one day both persist; a seeded legacy log reads
+    back, re-keys on save without duplicating, and untouched old entries remain
+    visible to the volume and muscle-status readers

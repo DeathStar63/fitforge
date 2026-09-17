@@ -30,6 +30,8 @@ export default function Home() {
   const [planOpen, setPlanOpen] = useState(false);
   // An exercise sent from the body map to the plan editor.
   const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null);
+  // A workout the body map asked the training screen to open.
+  const [openWorkoutId, setOpenWorkoutId] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -73,7 +75,10 @@ export default function Home() {
           transition={{ duration: 0.15 }}
         >
           {activeTab === "training" && (
-            <TrainingTab onOpenPlan={() => setPlanOpen(true)} />
+            <TrainingTab
+              onOpenPlan={() => setPlanOpen(true)}
+              openWorkoutId={openWorkoutId}
+            />
           )}
           {activeTab === "body" && (
             <Suspense fallback={<ProgressFallback />}>
@@ -81,6 +86,10 @@ export default function Home() {
                 onAddExercise={(id) => {
                   setPendingExerciseId(id);
                   setPlanOpen(true);
+                }}
+                onStartWorkout={(workoutId) => {
+                  setOpenWorkoutId(workoutId);
+                  setActiveTab("training");
                 }}
               />
             </Suspense>
@@ -117,7 +126,15 @@ export default function Home() {
       <InstallPrompt />
 
       {/* Bottom nav */}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          // Leaving training drops the forced selection, so coming back later
+          // lands on today's scheduled workout rather than an old quick one.
+          if (tab !== "training") setOpenWorkoutId(null);
+          setActiveTab(tab);
+        }}
+      />
     </main>
   );
 }
