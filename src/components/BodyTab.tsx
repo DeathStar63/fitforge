@@ -116,7 +116,7 @@ export default function BodyTab({
   }, [statuses]);
 
   return (
-    <div className="px-4 pt-2 pb-safe">
+    <div className={selected.length > 0 ? "px-4 pt-2 pb-[10rem]" : "px-4 pt-2 pb-safe"}>
       <div className="mb-4">
         <h1 className="text-2xl font-bold text-text-primary">Body Map</h1>
         <p className="text-sm text-text-muted mt-1">
@@ -258,19 +258,6 @@ export default function BodyTab({
         )}
       </section>
 
-      {/* Start a session from whatever is selected */}
-      {selected.length > 0 && (
-        <button
-          onClick={() => setBuilderOpen(true)}
-          className="w-full mb-4 py-3 rounded-2xl bg-accent text-bg-primary text-sm font-semibold flex items-center justify-center gap-2"
-        >
-          <Play size={15} />
-          Start workout for {selected.length === 1
-            ? muscleLabel(selected[0])
-            : `${selected.length} muscles`}
-        </button>
-      )}
-
       {/* Per-muscle detail for the current selection */}
       {selected.length > 0 && (
         <section className="mb-4">
@@ -357,6 +344,31 @@ export default function BodyTab({
           </p>
         </section>
       )}
+
+      {/* Sticky action bar — the selection is made at the top of a long
+          screen, so the way to act on it has to follow you down. */}
+      <AnimatePresence>
+        {selected.length > 0 && !builderOpen && (
+          <motion.div
+            initial={{ y: 70, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 70, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 420, damping: 36 }}
+            className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-3 right-3 z-40 max-w-md mx-auto"
+          >
+            <button
+              onClick={() => setBuilderOpen(true)}
+              className="w-full py-3.5 rounded-2xl bg-accent text-bg-primary text-sm font-semibold flex items-center justify-center gap-2 shadow-[var(--shadow-card-lg)]"
+            >
+              <Play size={15} />
+              Start workout ·{" "}
+              {selected.length === 1
+                ? muscleLabel(selected[0])
+                : `${selected.length} muscles`}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {builderOpen && (

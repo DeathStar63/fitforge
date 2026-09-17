@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Menu } from "lucide-react";
 import BottomNav, { type NavTab } from "@/components/BottomNav";
 import TrainingTab from "@/components/TrainingTab";
-import InstallPrompt from "@/components/InstallPrompt";
+import SideDrawer from "@/components/SideDrawer";
 import AuthScreen from "@/components/AuthScreen";
-import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/context/AuthContext";
 
 // Lazy load heavy tabs — they pull in recharts which is heavy (~200kb)
@@ -32,6 +32,13 @@ export default function Home() {
   const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null);
   // A workout the body map asked the training screen to open.
   const [openWorkoutId, setOpenWorkoutId] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Each tab is its own screen — arriving part-way down the previous one is
+  // disorienting, so start every switch at the top.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [activeTab]);
 
   if (loading) {
     return (
@@ -62,7 +69,13 @@ export default function Home() {
             FitForge
           </span>
         </div>
-        <UserAvatar />
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="w-9 h-9 rounded-xl bg-bg-surface flex items-center justify-center"
+          aria-label="Open menu"
+        >
+          <Menu size={17} className="text-text-muted" />
+        </button>
       </header>
 
       {/* Tab content */}
@@ -122,8 +135,12 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Install prompt */}
-      <InstallPrompt />
+      {/* Menu: account, plan, sync, companion apps, install */}
+      <SideDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onOpenPlan={() => setPlanOpen(true)}
+      />
 
       {/* Bottom nav */}
       <BottomNav
