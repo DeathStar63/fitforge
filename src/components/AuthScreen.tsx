@@ -2,13 +2,36 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Loader2, Eye, EyeOff, CheckCircle2, MailCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-type Mode = "signin" | "signup" | "forgot" | "new-password";
+type Mode = "signin" | "signup" | "forgot" | "new-password" | "check-email";
+
+/** Turn raw Supabase/network errors into something a human can act on. */
+function friendlyError(message: string) {
+  const m = message.toLowerCase();
+  // Safari says "Load failed", Chrome "Failed to fetch" — both mean the
+  // request never reached Supabase (offline, flaky mobile data, blocked).
+  if (
+    m.includes("load failed") ||
+    m.includes("failed to fetch") ||
+    m.includes("networkerror") ||
+    m.includes("network request failed")
+  ) {
+    return "Couldn't reach the server. Check your connection and try again.";
+  }
+  if (m.includes("email rate limit") || m.includes("rate limit")) {
+    return "Too many attempts. Wait a minute and try again.";
+  }
+  if (m.includes("error sending confirmation email") || m.includes("error sending")) {
+    return "We couldn't send the confirmation email. Try again in a minute.";
+  }
+  return message;
+}
 
 export default function AuthScreen() {
-  const { signIn, signUp, resetPassword, updatePassword, isPasswordRecovery } = useAuth();
+  const { signIn, signUp, resetPassword, updatePassword, resendConfirmation, isPasswordRecovery } =
+    useAuth();
   const [mode, setMode] = useState<Mode>(isPasswordRecovery ? "new-password" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,13 +39,32 @@ export default function AuthScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [resetSent, setResetSent] = useState(false);
+  // Sign-in failed because the account exists but was never confirmed.
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resent, setResent] = useState(false);
 
   const currentMode: Mode = isPasswordRecovery ? "new-password" : mode;
+
+  const handleResend = async () => {
+    if (resending || !email.trim()) return;
+    setResending(true);
+    setError("");
+    const { error } = await resendConfirmation(email.trim());
+    setResending(false);
+    if (error) {
+      setError(friendlyError(error.message));
+    } else {
+      setResent(true);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setNotice("");
 
     if (currentMode === "forgot") {
       if (!email.trim() || loading) return;
@@ -30,7 +72,7 @@ export default function AuthScreen() {
       const { error } = await resetPassword(email.trim());
       setLoading(false);
       if (error) {
-        setError(error.message);
+        setError(friendlyError(error.message));
       } else {
         setResetSent(true);
       }
@@ -51,33 +93,71 @@ export default function AuthScreen() {
       const { error } = await updatePassword(password);
       setLoading(false);
       if (error) {
-        setError(error.message);
+        setError(friendlyError(error.message));
       }
       return;
     }
 
     if (!email.trim() || !password.trim() || loading) return;
-    setLoading(true);
 
-    const { error } =
-      currentMode === "signin"
-        ? await signIn(email.trim(), password)
-        : await signUp(email.trim(), password);
+    if (currentMode === "signup" && password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
+    setNeedsConfirmation(false);
+
+    if (currentMode === "signin") {
+      const { error } = await signIn(email.trim(), password);
+      setLoading(false);
+      if (error) {
+        // Account exists but the confirmation link was never clicked — give
+        // them a way out instead of a dead end.
+        if (error.message.toLowerCase().includes("not confirmed")) {
+          setNeedsConfirmation(true);
+          setError("Your email hasn't been confirmed yet.");
+        } else {
+          setError(friendlyError(error.message));
+        }
+      }
+      return;
+    }
+
+    const { error, needsConfirmation: mustConfirm, alreadyRegistered } = await signUp(
+      email.trim(),
+      password
+    );
+    setLoading(false);
 
     if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else if (currentMode === "signup") {
-      setError("");
-      setMode("signin");
-      setLoading(false);
+      setError(friendlyError(error.message));
+      return;
     }
+
+    if (alreadyRegistered) {
+      setMode("signin");
+      setPassword("");
+      setNotice("That email already has an account. Sign in instead.");
+      return;
+    }
+
+    if (mustConfirm) {
+      setResent(false);
+      setMode("check-email");
+      return;
+    }
+
+    // Confirmations are off — the session is live and <Home> swaps us out.
   };
 
   const switchMode = (next: Mode) => {
     setMode(next);
     setError("");
+    setNotice("");
     setResetSent(false);
+    setNeedsConfirmation(false);
+    setResent(false);
     setPassword("");
     setConfirmPassword("");
   };
@@ -102,6 +182,44 @@ export default function AuthScreen() {
         </div>
 
         <AnimatePresence mode="wait">
+          {/* ── Account created, waiting on email confirmation ── */}
+          {currentMode === "check-email" && (
+            <motion.div
+              key="check-email"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="text-center space-y-4"
+            >
+              <MailCheck size={48} className="text-success mx-auto" />
+              <h2 className="text-lg font-semibold text-text-primary">Confirm your email</h2>
+              <p className="text-sm text-text-muted">
+                We sent a confirmation link to{" "}
+                <span className="font-medium text-text-primary">{email}</span>. Click it to
+                activate your account, then sign in.
+              </p>
+              {error && <p className="text-sm text-error">{error}</p>}
+              {resent && (
+                <p className="text-sm text-success">Confirmation email sent again.</p>
+              )}
+              <button
+                onClick={handleResend}
+                disabled={resending}
+                className="w-full py-3.5 rounded-xl bg-bg-input border border-border text-sm font-semibold text-text-primary disabled:opacity-40 flex items-center justify-center gap-2"
+              >
+                {resending && <Loader2 size={16} className="animate-spin" />}
+                Resend email
+              </button>
+              <button
+                onClick={() => switchMode("signin")}
+                className="text-sm text-accent font-semibold"
+              >
+                Back to Sign In
+              </button>
+            </motion.div>
+          )}
+
           {/* ── Set New Password (after clicking reset email link) ── */}
           {currentMode === "new-password" && (
             <motion.div
@@ -281,10 +399,36 @@ export default function AuthScreen() {
                   </div>
                 </div>
 
+                {notice && (
+                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-text-muted">
+                    {notice}
+                  </motion.p>
+                )}
+
                 {error && (
                   <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-error">
                     {error}
                   </motion.p>
+                )}
+
+                {needsConfirmation && (
+                  <div className="space-y-2">
+                    {resent ? (
+                      <p className="text-sm text-success">
+                        Confirmation email sent — check your inbox and spam folder.
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResend}
+                        disabled={resending}
+                        className="w-full py-3 rounded-xl bg-bg-input border border-border text-sm font-semibold text-text-primary disabled:opacity-40 flex items-center justify-center gap-2"
+                      >
+                        {resending && <Loader2 size={16} className="animate-spin" />}
+                        Resend confirmation email
+                      </button>
+                    )}
+                  </div>
                 )}
 
                 <button
