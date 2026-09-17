@@ -32,7 +32,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
       <div className="max-w-md mx-auto px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <div className="ink rounded-[24px] flex items-stretch px-1.5 py-1.5 shadow-[var(--glow-ink)] pointer-events-auto">
+        <div className="glass rounded-[24px] flex items-stretch px-1.5 py-1.5 shadow-[var(--shadow-card-lg)] pointer-events-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -52,13 +52,13 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               <tab.icon
                 size={20}
                 className={`relative z-10 ${
-                  isActive ? "text-[#14151A]" : "text-white/55"
+                  isActive ? "text-[#14151A]" : "text-text-subtle"
                 }`}
                 strokeWidth={isActive ? 2.4 : 1.8}
               />
               <span
                 className={`relative z-10 text-[10.5px] font-semibold tracking-tight ${
-                  isActive ? "text-[#14151A]" : "text-white/55"
+                  isActive ? "text-[#14151A]" : "text-text-subtle"
                 }`}
               >
                 {tab.label}

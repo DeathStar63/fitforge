@@ -24,10 +24,10 @@ const STATE_GRADIENTS: Record<MuscleState | "none", [string, string]> = {
   // Lime for trained, warm amber for recovered, and plain grey for dormant.
   // "You have not trained this in five days" does not deserve an alarm colour
   // on a dozen muscles at once, and grey lets the trained ones lead the eye.
-  worked: ["#DCF64F", "#93B81C"],
-  ready: ["#FDBA4A", "#D97706"],
-  due: ["#C7CBD4", "#A3A8B4"],
-  none: ["#D7DAE1", "#BFC3CC"],
+  worked: ["#E2FA5B", "#93B81C"],
+  ready: ["#FBBF24", "#B45309"],
+  due: ["#4C505C", "#31343D"],
+  none: ["#3E414B", "#282B33"],
 };
 
 interface BodyMapProps {
@@ -50,12 +50,12 @@ const LABEL_X = BODY_VIEWBOX.width + 16; // where the text sits
 const LABEL_MIN_GAP = 21; // smallest vertical gap between two stacked labels
 
 /** Untrained muscle and the body itself, as gradient stops. */
-const SILHOUETTE_TOP = "#E6E8ED";
-const SILHOUETTE_BOTTOM = "#D2D6DE";
-const NEUTRAL_STROKE = "rgba(20,21,26,0.10)";
+const SILHOUETTE_TOP = "#1E2029";
+const SILHOUETTE_BOTTOM = "#101219";
+const NEUTRAL_STROKE = "rgba(255,255,255,0.10)";
 /** Separator between neighbouring muscles — without it, a row of muscles in
  *  the same state reads as one undifferentiated blob. */
-const SEPARATOR = "#FFFFFF";
+const SEPARATOR = "#08080C";
 
 /**
  * Draws a region plus, when `mirror` is set, its x-flipped twin.
@@ -218,12 +218,12 @@ const BodyMap = memo(function BodyMap({
                 regions={groupRegions}
                 fill={fill}
                 filter={lit ? `url(#${clipId}-glow)` : undefined}
-                stroke={isSelected ? "#16171D" : SEPARATOR}
+                stroke={isSelected ? "#FFFFFF" : SEPARATOR}
                 // A heavy outline on every selection turns a dozen picks into
                 // armour plating; the callout already names what is selected,
                 // so the outline only has to read as "this one".
-                strokeWidth={isSelected ? 1.6 : 1}
-                strokeOpacity={isSelected ? 0.9 : 0.8}
+                strokeWidth={isSelected ? 1.5 : 0.9}
+                strokeOpacity={isSelected ? 0.95 : 0.7}
                 strokeLinejoin="round"
               />
             </motion.g>
@@ -242,8 +242,8 @@ const BodyMap = memo(function BodyMap({
               key={id}
               regions={groupRegions}
               fill="none"
-              stroke="#16171D"
-              strokeWidth={1.4}
+              stroke="#DCF64F"
+              strokeWidth={1.5}
               strokeDasharray="3.5 3"
               strokeLinejoin="round"
             />
@@ -256,7 +256,7 @@ const BodyMap = memo(function BodyMap({
         <g pointerEvents="none">
           {callouts.map(({ id, anchor, labelY }) => {
             const status = statuses?.[id];
-            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#9DA1AB";
+            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#62655F";
             const elbowX = BODY_VIEWBOX.width + 4;
             return (
               <motion.g
@@ -282,7 +282,7 @@ const BodyMap = memo(function BodyMap({
                   x={LABEL_X}
                   y={labelY}
                   dominantBaseline="middle"
-                  fill="#14151A"
+                  fill="#F4F5F0"
                   fontSize={12}
                   fontWeight={600}
                   letterSpacing="-0.01em"

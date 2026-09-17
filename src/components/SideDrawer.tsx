@@ -91,7 +91,7 @@ export default function SideDrawer({ open, onClose, onOpenPlan }: SideDrawerProp
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[85] bg-[#14151A]/35 backdrop-blur-[3px]"
+            className="fixed inset-0 z-[85] bg-black/60 backdrop-blur-[2px]"
           />
           <motion.aside
             initial={{ x: "100%" }}
@@ -104,7 +104,7 @@ export default function SideDrawer({ open, onClose, onOpenPlan }: SideDrawerProp
             onDragEnd={(_, info) => {
               if (info.offset.x > 80 || info.velocity.x > 500) onClose();
             }}
-            className="fixed top-0 right-0 bottom-0 z-[86] w-[82%] max-w-[320px] bg-bg-card border-l border-border flex flex-col shadow-[var(--shadow-card-lg)]"
+            className="fixed top-0 right-0 bottom-0 z-[86] w-[82%] max-w-[320px] glass border-y-0 border-r-0 flex flex-col"
           >
             <div className="h-[env(safe-area-inset-top)]" />
 

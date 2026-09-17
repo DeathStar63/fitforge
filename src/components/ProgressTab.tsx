@@ -224,19 +224,19 @@ export default function ProgressTab() {
 
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={selectedProgress}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(20,21,26,0.07)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" vertical={false} />
               <XAxis
                 dataKey="date"
                 tickFormatter={(d: string) => {
                   const date = new Date(d);
                   return `${date.getDate()}/${date.getMonth() + 1}`;
                 }}
-                tick={{ fontSize: 10, fill: "#9DA1AB" }}
+                tick={{ fontSize: 10, fill: "#62655F" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: "#9DA1AB" }}
+                tick={{ fontSize: 10, fill: "#62655F" }}
                 axisLine={false}
                 tickLine={false}
                 width={35}
@@ -245,7 +245,7 @@ export default function ProgressTab() {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#FFFFFF",
+                  backgroundColor: "#15151C",
                   border: "1px solid #2A2A3E",
                   borderRadius: "12px",
                   fontSize: "12px",
@@ -260,10 +260,10 @@ export default function ProgressTab() {
               <Line
                 type="monotone"
                 dataKey="maxWeight"
-                stroke="#9BC61A"
+                stroke="#DCF64F"
                 strokeWidth={2}
-                dot={{ fill: "#9BC61A", r: 4 }}
-                activeDot={{ fill: "#9BC61A", r: 6 }}
+                dot={{ fill: "#DCF64F", r: 4 }}
+                activeDot={{ fill: "#DCF64F", r: 6 }}
               />
             </LineChart>
           </ResponsiveContainer>

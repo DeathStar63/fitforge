@@ -132,12 +132,12 @@ type VolumeDataPoint = {
 
 /** Series colours, cycled when a plan has more routines than colours. */
 const SERIES_COLORS = [
-  "#9BC61A",
-  "#2563EB",
-  "#F97316",
-  "#7C3AED",
-  "#DB2777",
-  "#0D9488",
+  "#DCF64F",
+  "#60A5FA",
+  "#FB923C",
+  "#A78BFA",
+  "#F472B6",
+  "#2DD4BF",
 ];
 
 function buildVolumeData(
@@ -440,35 +440,35 @@ export default function VolumeChart() {
                   >
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="rgba(20,21,26,0.07)"
+                      stroke="rgba(255,255,255,0.07)"
                       horizontal={false}
                     />
                     <XAxis
                       type="number"
-                      tick={{ fill: "#9DA1AB", fontSize: 10 }}
+                      tick={{ fill: "#62655F", fontSize: 10 }}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis
                       type="category"
                       dataKey="name"
-                      tick={{ fill: "#9DA1AB", fontSize: 10 }}
+                      tick={{ fill: "#62655F", fontSize: 10 }}
                       tickLine={false}
                       axisLine={false}
                       width={100}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid rgba(20,21,26,0.08)",
+                        backgroundColor: "#15151C",
+                        border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: "12px",
                         fontSize: "12px",
-                        color: "#14151A",
+                        color: "#F4F5F0",
                       }}
                     />
                     <Bar
                       dataKey="target"
-                      fill="rgba(20,21,26,0.08)"
+                      fill="rgba(255,255,255,0.08)"
                       radius={[0, 4, 4, 0]}
                       name="Target"
                     />
@@ -525,18 +525,18 @@ export default function VolumeChart() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="rgba(20,21,26,0.07)"
+                    stroke="rgba(255,255,255,0.07)"
                     vertical={false}
                   />
                   <XAxis
                     dataKey="label"
-                    tick={{ fill: "#9DA1AB", fontSize: 10 }}
+                    tick={{ fill: "#62655F", fontSize: 10 }}
                     tickLine={false}
-                    axisLine={{ stroke: "rgba(20,21,26,0.1)" }}
+                    axisLine={{ stroke: "rgba(255,255,255,0.09)" }}
                     interval="preserveStartEnd"
                   />
                   <YAxis
-                    tick={{ fill: "#9DA1AB", fontSize: 10 }}
+                    tick={{ fill: "#62655F", fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(v: number) =>
@@ -546,13 +546,13 @@ export default function VolumeChart() {
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid rgba(20,21,26,0.08)",
+                      backgroundColor: "#15151C",
+                      border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: "12px",
                       fontSize: "12px",
-                      color: "#14151A",
+                      color: "#F4F5F0",
                     }}
-                    labelStyle={{ color: "#6B6F78" }}
+                    labelStyle={{ color: "#9A9C94" }}
                     formatter={(value: unknown, name: unknown) => [
                       `${Number(value).toLocaleString()} kg`,
                       routineNames[String(name)] ?? String(name),
