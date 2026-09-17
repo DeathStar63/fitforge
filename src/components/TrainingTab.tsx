@@ -21,12 +21,16 @@ import type { ExerciseLog, SetLog } from "@/lib/workouts";
 
 export default function TrainingTab({
   onOpenPlan,
+  openWorkoutId,
 }: {
   onOpenPlan?: () => void;
+  /** A workout to open on arrival, e.g. a quick session just started from
+   *  the body map. Takes precedence until the user picks another tab. */
+  openWorkoutId?: string | null;
 }) {
   const { syncAfterSave } = useSync();
   const { workoutDays, ready } = usePlan();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(openWorkoutId ?? null);
   const [workoutLog, setWorkoutLog] = useState<DayWorkoutLog | null>(null);
   const [previousLog, setPreviousLog] = useState<DayWorkoutLog | null>(null);
   const [bestSets, setBestSets] = useState<Record<string, SetLog | null>>({});
@@ -54,9 +58,8 @@ export default function TrainingTab({
   useEffect(() => {
     if (!currentWorkout) return;
     const dateKey = getDateKey();
-    const existing = getWorkoutLog(dateKey);
-    const previousEntries =
-      existing && existing.workoutId === currentWorkout.id ? existing.exercises : [];
+    const existing = getWorkoutLog(dateKey, currentWorkout.id);
+    const previousEntries = existing ? existing.exercises : [];
 
     const exercises = currentWorkout.exercises.map((ex) => {
       const logged = previousEntries.find((e) => e.exerciseId === ex.id);

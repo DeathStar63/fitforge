@@ -1489,3 +1489,64 @@ export function searchExercises(opts: {
     return true;
   });
 }
+
+/**
+ * Propose a session for a set of selected muscles.
+ *
+ * Ranking, per target muscle: an exercise that trains it directly scores
+ * highest, and gets a bonus for every *other* selected muscle it also covers —
+ * so picking chest and triceps favours a close-grip bench over two unrelated
+ * isolation movements. Compounds break ties, on the theory that if you have
+ * picked several muscles you would rather not do nine single-joint exercises.
+ */
+export function buildSessionForMuscles(
+  muscles: MuscleId[],
+  opts: { perMuscle?: number; max?: number } = {}
+): string[] {
+  if (muscles.length === 0) return [];
+  // One muscle wants a few angles on it; several want fewer each, or the
+  // session runs to fifteen exercises.
+  const perMuscle =
+    opts.perMuscle ?? (muscles.length === 1 ? 4 : muscles.length === 2 ? 3 : 2);
+  const max = opts.max ?? 8;
+  const multi = muscles.length > 1;
+
+  const selected = new Set(muscles);
+  const chosen: string[] = [];
+
+  const score = (ex: LibraryExercise, target: MuscleId): number => {
+    if (!ex.primary.includes(target)) return -1;
+    let n = 4;
+    // Cover as many of the other selected muscles as one movement can.
+    for (const m of selected) {
+      if (m === target) continue;
+      if (ex.primary.includes(m)) n += 2;
+      else if (ex.secondary.includes(m)) n += 1;
+    }
+    // Specificity: an exercise whose only primary mover is the target beats one
+    // that splits its effort. Without this, asking for triceps alone returns
+    // chest compounds that happen to involve them.
+    n += 2 / ex.primary.length;
+    // Only lean toward compounds when several muscles are in play.
+    if (multi) n += Math.min(ex.primary.length + ex.secondary.length, 4) * 0.1;
+    return n;
+  };
+
+  // Round-robin, so every selected muscle is covered before any gets seconds.
+  for (let round = 0; round < perMuscle; round++) {
+    for (const target of muscles) {
+      if (chosen.length >= max) break;
+      const best = EXERCISE_LIBRARY.filter((e) => !chosen.includes(e.id))
+        .map((e) => ({ e, s: score(e, target) }))
+        .filter((c) => c.s > 0)
+        .sort((a, b) => b.s - a.s)[0];
+      if (best) chosen.push(best.e.id);
+    }
+  }
+
+  // Compounds first, isolation last — the order you would actually train in.
+  return chosen.sort((a, b) => {
+    const load = (e: LibraryExercise) => e.primary.length + e.secondary.length;
+    return load(EXERCISE_BY_ID[b]) - load(EXERCISE_BY_ID[a]);
+  });
+}

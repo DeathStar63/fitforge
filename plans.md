@@ -71,6 +71,14 @@
 - [x] Fixed hit targets: an over-wide stroke let the delts swallow neighbouring
       muscles; every region in both views is now click-verified
 
+## Phase 8: Start a Workout From the Body Map [COMPLETE]
+- [x] Select muscles -> "Start workout" builds a session targeting them
+- [x] Proposed exercises are tweakable before starting, with every other
+      movement for those muscles one tap away
+- [x] Starting jumps to the training screen with the session open and loggable
+- [x] Fixed: workout logs were keyed by date alone, so a second session on the
+      same day destroyed the first
+
 ## Future
 - [ ] Native iOS wrapper (Capacitor) for automatic Apple Health sync
 - [ ] Workout history calendar view

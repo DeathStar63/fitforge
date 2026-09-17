@@ -9,6 +9,7 @@
 
 import type { Exercise } from "./workouts";
 import { EXERCISE_BY_ID, getLibraryExercise } from "./exerciseLibrary";
+import { muscleLabel, type MuscleId } from "./muscles";
 
 const PLAN_KEY = "fitforge_plan";
 const CUSTOM_GIF_KEY = "fitforge_custom_gifs";
@@ -220,4 +221,54 @@ export function resolveRoutine(routine: Routine): Exercise[] {
   return routine.exercises
     .map(resolveExercise)
     .filter((e): e is Exercise => e !== null);
+}
+
+// ---------------------------------------------------------------------------
+// Quick sessions
+// ---------------------------------------------------------------------------
+
+/**
+ * A muscle-targeted session started from the body map lives in the plan as an
+ * ordinary routine with a reserved id. Reusing a routine rather than inventing
+ * a parallel "ad-hoc workout" concept means it already syncs, already appears
+ * as a tab on the training screen, already logs against a workout id, and can
+ * be edited or scheduled like anything else. Starting a new one replaces its
+ * contents.
+ */
+export const QUICK_ROUTINE_ID = "quick";
+
+export function isQuickRoutine(routine: Routine): boolean {
+  return routine.id === QUICK_ROUTINE_ID;
+}
+
+export function upsertQuickRoutine(
+  plan: WeekPlan,
+  exerciseIds: string[],
+  muscles: MuscleId[]
+): WeekPlan {
+  const names = muscles.map(muscleLabel);
+  const subtitle =
+    names.length === 0
+      ? "Muscle-targeted session"
+      : names.length <= 3
+        ? names.join(", ")
+        : `${names.slice(0, 3).join(", ")} +${names.length - 3}`;
+
+  const routine: Routine = {
+    id: QUICK_ROUTINE_ID,
+    name: "Quick Session",
+    subtitle,
+    emoji: "⚡",
+    exercises: exerciseIds
+      .filter((id) => Boolean(EXERCISE_BY_ID[id]))
+      .map((exerciseId) => ({ exerciseId })),
+  };
+
+  const existing = plan.routines.some((r) => r.id === QUICK_ROUTINE_ID);
+  return {
+    ...plan,
+    routines: existing
+      ? plan.routines.map((r) => (r.id === QUICK_ROUTINE_ID ? routine : r))
+      : [...plan.routines, routine],
+  };
 }
