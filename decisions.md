@@ -57,3 +57,19 @@
 ## ADR-013: Exercise GIFs Degrade Instead of Breaking
 **Decision:** `gifUrl` is optional in the library. When it is missing or the image fails to load, the card renders the body map with that exercise's muscles highlighted, and the user can attach their own GIF URL per exercise from the plan editor.
 **Why:** The new library entries have no verified static GIF URLs, and hotlinked GIFs can disappear or block referrers. Showing which muscles the movement trains is a useful answer rather than an empty box, and a user-supplied link is a permanent fix for any individual exercise.
+
+## ADR-014: Muscle Groups Modelled, and Ones Deliberately Merged
+**Decision:** 21 selectable groups. Added over the original 17: **adductors** (own machine and its own squat variations), **neck** (serious lifters train it directly), **serratus anterior** (pullovers, protraction work) and **tibialis anterior** (raises, now commonly programmed for knee health).
+**Deliberately merged rather than split:**
+- *Gastrocnemius and soleus* stay one "calves" group — the distinction lives in the exercise names (seated = soleus, standing = gastroc) where it is actionable, rather than as two tap targets on the same 20-pixel shape.
+- *Rhomboids and mid-traps* sit inside "upper back"; nothing in a program targets them separately from rows.
+- *Brachialis* sits inside "biceps"; hammer and reverse curls carry the distinction.
+- *Glute medius* sits inside "glutes", with hip abduction tagged there.
+**Why the line is here:** a group earns its own region when a lifter would program for it directly and could ask "have I trained this recently". Anything finer makes the map harder to tap without telling them anything they would act on.
+
+## ADR-015: Callout Labels over an Adjacent Legend
+**Decision:** A selected muscle gets a name in a column to the right of the figure, joined by a thin leader line from a hand-placed anchor point (`LABEL_ANCHORS` in `lib/muscles.ts`). Anchors are on the right-hand half only, so no line crosses the body. The viewBox widens by a fixed gutter to make room; the figure itself is height-constrained so it does not shrink.
+**Why hand-placed:** path centroids land in the wrong place for curved shapes — the centroid of the lat sweep sits off the muscle entirely.
+**Why a stacked column:** labels are sorted head-to-toe and pushed apart to a minimum gap, so a dozen selections stay legible instead of piling up on one another.
+**Related fix:** the transparent hit targets were widened by a 10-unit stroke, which grows each region by half that in every direction — enough for the side delt to swallow the front delt, and the front delt to swallow both the trap and the pec. Narrowed to 3, and three anchors were moved off ground that a neighbouring delt legitimately covers. Verified by driving a browser and clicking every anchor in both views, asserting the right name came back: 26 of 26.
+**Guard:** `npm run check:muscles` (`scripts/check-muscle-map.mjs`) cross-checks the five structures that have to agree — the group list, the two region maps, the anchors and the paint order — plus that every muscle has at least one exercise naming it as primary. A mismatch there fails silently at runtime: a muscle declared visible but missing its path simply never draws. That is how `adductors` and `tibialis` were briefly declared but undrawn while this was being built.

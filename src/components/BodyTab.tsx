@@ -6,6 +6,7 @@ import { Lightbulb, Plus, RotateCcw, Target } from "lucide-react";
 import BodyMap from "./BodyMap";
 import {
   MUSCLE_GROUPS,
+  MUSCLE_BY_ID,
   muscleLabel,
   type BodyView,
   type MuscleId,
@@ -53,6 +54,12 @@ export default function BodyTab({
         : [],
     [todaysRoutine]
   );
+
+  // A muscle can only be selected from the view it appears on, so show how
+  // many are selected on each side — otherwise a selection made on the back
+  // is invisible while the front is showing.
+  const countForView = (v: BodyView) =>
+    selected.filter((m) => MUSCLE_BY_ID[m]?.views.includes(v)).length;
 
   const toggleMuscle = (m: MuscleId) =>
     setSelected((prev) =>
@@ -110,19 +117,31 @@ export default function BodyTab({
       {/* Front / back toggle */}
       <div className="flex items-center justify-between mb-3">
         <div className="inline-flex rounded-xl bg-bg-surface p-1">
-          {(["front", "back"] as BodyView[]).map((v) => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-lg capitalize transition-colors ${
-                view === v
-                  ? "bg-bg-card text-text-primary shadow-[var(--shadow-card)]"
-                  : "text-text-subtle"
-              }`}
-            >
-              {v}
-            </button>
-          ))}
+          {(["front", "back"] as BodyView[]).map((v) => {
+            const count = countForView(v);
+            return (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-lg capitalize transition-colors flex items-center gap-1.5 ${
+                  view === v
+                    ? "bg-bg-card text-text-primary shadow-[var(--shadow-card)]"
+                    : "text-text-subtle"
+                }`}
+              >
+                {v}
+                {count > 0 && (
+                  <span
+                    className={`px-1.5 rounded-full text-[10px] font-bold ${
+                      view === v ? "bg-accent text-bg-primary" : "bg-accent/25 text-accent"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
         {selected.length > 0 && (
           <button
@@ -137,13 +156,14 @@ export default function BodyTab({
 
       {/* The figure */}
       <div className="bg-bg-card border border-border rounded-2xl p-3 mb-4 shadow-[var(--shadow-card)]">
-        <div className="h-[380px] mx-auto">
+        <div className="h-[460px] mx-auto">
           <BodyMap
             view={view}
             statuses={statuses}
             selected={selected}
             highlighted={todaysMuscles}
             onToggleMuscle={toggleMuscle}
+            showLabels
           />
         </div>
 
@@ -233,31 +253,48 @@ export default function BodyTab({
           <h2 className="text-sm font-semibold text-text-primary mb-2">
             Selected
           </h2>
-          <div className="flex flex-col gap-2 mb-3">
-            {selected.map((m) => {
-              const s = statuses[m];
+          <div className="flex flex-col gap-3 mb-4">
+            {(["front", "back"] as BodyView[]).map((v) => {
+              const inView = selected.filter((m) =>
+                MUSCLE_BY_ID[m]?.views.includes(v)
+              );
+              if (inView.length === 0) return null;
               return (
-                <div
-                  key={m}
-                  className="flex items-center gap-3 px-3 py-2 bg-bg-card border border-border rounded-2xl"
-                >
-                  <span
-                    className="w-2.5 h-2.5 rounded-full shrink-0"
-                    style={{ backgroundColor: MUSCLE_STATE_COLORS[s.state] }}
-                  />
-                  <span className="text-sm font-medium text-text-primary flex-1">
-                    {muscleLabel(m)}
-                  </span>
-                  <span className="text-[11px] text-text-muted">
-                    {s.lastTrained
-                      ? s.daysSince === 0
-                        ? "Trained today"
-                        : `${s.daysSince}d ago`
-                      : "Never trained"}
-                  </span>
-                  <span className="text-[11px] text-text-subtle">
-                    {s.weeklySets}/{s.weeklyTarget}
-                  </span>
+                <div key={v}>
+                  <p className="text-[10px] uppercase tracking-wider text-text-subtle mb-1.5 px-1">
+                    {v}
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {inView.map((m) => {
+                      const st = statuses[m];
+                      return (
+                        <div
+                          key={m}
+                          className="flex items-center gap-3 px-3 py-2 bg-bg-card border border-border rounded-2xl"
+                        >
+                          <span
+                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{
+                              backgroundColor: MUSCLE_STATE_COLORS[st.state],
+                            }}
+                          />
+                          <span className="text-sm font-medium text-text-primary flex-1">
+                            {muscleLabel(m)}
+                          </span>
+                          <span className="text-[11px] text-text-muted">
+                            {st.lastTrained
+                              ? st.daysSince === 0
+                                ? "Trained today"
+                                : `${st.daysSince}d ago`
+                              : "Never trained"}
+                          </span>
+                          <span className="text-[11px] text-text-subtle">
+                            {st.weeklySets}/{st.weeklyTarget}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               );
             })}

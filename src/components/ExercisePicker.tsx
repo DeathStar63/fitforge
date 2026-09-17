@@ -20,13 +20,15 @@ interface ExercisePickerProps {
   title?: string;
 }
 
-const GROUPS: ExerciseGroup[] = ["legs", "push", "pull", "core", "cardio"];
+const GROUPS: ExerciseGroup[] = ["legs", "push", "pull", "core", "neck", "cardio"];
 const EQUIPMENT: Equipment[] = [
   "barbell",
   "dumbbell",
   "machine",
   "cable",
   "bodyweight",
+  "band",
+  "smith",
 ];
 
 export default function ExercisePicker({
@@ -78,7 +80,7 @@ export default function ExercisePicker({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search 100+ exercises"
+            placeholder="Search exercises"
             className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-bg-input border border-border text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-accent/20"
           />
         </div>

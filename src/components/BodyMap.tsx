@@ -6,6 +6,7 @@ import {
   BODY_VIEWBOX,
   SILHOUETTE,
   regionsForView,
+  LABEL_ANCHORS,
   PAINT_ORDER,
   muscleLabel,
   type BodyView,
@@ -26,8 +27,15 @@ interface BodyMapProps {
   onToggleMuscle?: (muscle: MuscleId) => void;
   /** Rendered at a smaller size with no interaction, for use inside cards. */
   compact?: boolean;
+  /** Draw a name callout beside each selected muscle. */
+  showLabels?: boolean;
   className?: string;
 }
+
+/** Callout geometry, in viewBox units. */
+const LABEL_GUTTER = 96; // extra width on the right for the name column
+const LABEL_X = BODY_VIEWBOX.width + 16; // where the text sits
+const LABEL_MIN_GAP = 21; // smallest vertical gap between two stacked labels
 
 const NEUTRAL_FILL = "#2A2A3E";
 const NEUTRAL_STROKE = "#3A3A52";
@@ -70,6 +78,7 @@ const BodyMap = memo(function BodyMap({
   highlighted = [],
   onToggleMuscle,
   compact = false,
+  showLabels = false,
   className = "",
 }: BodyMapProps) {
   // useId keeps the clipPath unique when several maps are on screen at once.
@@ -80,9 +89,32 @@ const BodyMap = memo(function BodyMap({
   const highlightedSet = new Set(highlighted);
   const interactive = Boolean(onToggleMuscle) && !compact;
 
+  // Callouts for the selected muscles that this view actually shows. Sorted
+  // head-to-toe, then pushed apart so two labels never overlap.
+  const anchors = LABEL_ANCHORS[view];
+  const callouts = showLabels
+    ? selected
+        .filter((id) => regions[id] && anchors[id])
+        .map((id) => ({ id, anchor: anchors[id]! }))
+        .sort((a, b) => a.anchor.y - b.anchor.y)
+        .map((c, i, all) => {
+          // Walk down the stack, nudging each label below the previous one.
+          const prev = i > 0 ? all[i - 1] : null;
+          const y = prev
+            ? Math.max(c.anchor.y, (prev as typeof c & { labelY: number }).labelY + LABEL_MIN_GAP)
+            : c.anchor.y;
+          (c as typeof c & { labelY: number }).labelY = y;
+          return c as typeof c & { labelY: number };
+        })
+    : [];
+
+  const viewBox = showLabels
+    ? `0 0 ${BODY_VIEWBOX.width + LABEL_GUTTER} ${BODY_VIEWBOX.height}`
+    : `0 0 ${BODY_VIEWBOX.width} ${BODY_VIEWBOX.height}`;
+
   return (
     <svg
-      viewBox={`0 0 ${BODY_VIEWBOX.width} ${BODY_VIEWBOX.height}`}
+      viewBox={viewBox}
       className={`w-full h-full ${className}`}
       role="img"
       aria-label={`${view === "front" ? "Front" : "Back"} view muscle map`}
@@ -136,8 +168,11 @@ const BodyMap = memo(function BodyMap({
                 regions={groupRegions}
                 fill={fill}
                 stroke={isSelected ? "#F0F0F0" : SEPARATOR}
-                strokeWidth={isSelected ? 2.5 : 0.9}
-                strokeOpacity={isSelected ? 1 : 0.55}
+                // A heavy outline on every selection turns a dozen picks into
+                // armour plating; the callout already names what is selected,
+                // so the outline only has to read as "this one".
+                strokeWidth={isSelected ? 1.3 : 0.9}
+                strokeOpacity={isSelected ? 0.9 : 0.55}
                 strokeLinejoin="round"
               />
             </motion.g>
@@ -165,8 +200,53 @@ const BodyMap = memo(function BodyMap({
         })}
       </g>
 
+      {/* Name callouts for the current selection */}
+      {callouts.length > 0 && (
+        <g pointerEvents="none">
+          {callouts.map(({ id, anchor, labelY }) => {
+            const status = statuses?.[id];
+            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#9CA3AF";
+            const elbowX = BODY_VIEWBOX.width + 4;
+            return (
+              <motion.g
+                key={id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                {/* Leader: out from the muscle, then a short horizontal run
+                    into the text so the type always sits on a flat line. */}
+                <path
+                  d={`M${anchor.x} ${anchor.y} L${elbowX - 10} ${labelY} L${elbowX} ${labelY}`}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={1.1}
+                  strokeOpacity={0.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx={anchor.x} cy={anchor.y} r={2.4} fill={color} />
+                <text
+                  x={LABEL_X}
+                  y={labelY}
+                  dominantBaseline="middle"
+                  fill="#F0F0F0"
+                  fontSize={12}
+                  fontWeight={500}
+                >
+                  {muscleLabel(id)}
+                </text>
+              </motion.g>
+            );
+          })}
+        </g>
+      )}
+
       {/* Transparent hit targets on top — muscle fills are thin in places and
-          a bare fill is fiddly to tap on a phone. */}
+          a bare fill is fiddly to tap on a phone. The stroke that widens them
+          stays narrow: at 10 units the delts swallowed the traps and the pec,
+          because each region grows by half the stroke in every direction. */}
       {interactive && (
         <g>
           {PAINT_ORDER.map((id) => {
@@ -182,7 +262,7 @@ const BodyMap = memo(function BodyMap({
                   regions={groupRegions}
                   fill="transparent"
                   stroke="transparent"
-                  strokeWidth={10}
+                  strokeWidth={3}
                 />
               </g>
             );
