@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Flame, Moon, SlidersHorizontal } from "lucide-react";
 import ExerciseCard from "./ExerciseCard";
+import RestTimer from "./RestTimer";
 import { dayNames, WorkoutDay } from "@/lib/workouts";
 import { usePlan } from "@/context/PlanContext";
 import {
@@ -34,7 +35,24 @@ export default function TrainingTab({
   const [workoutLog, setWorkoutLog] = useState<DayWorkoutLog | null>(null);
   const [previousLog, setPreviousLog] = useState<DayWorkoutLog | null>(null);
   const [bestSets, setBestSets] = useState<Record<string, SetLog | null>>({});
+  const [restKey, setRestKey] = useState(0);
+  const [restVisible, setRestVisible] = useState(false);
   const today = new Date().getDay();
+
+  // A mirror of the log that the event handlers can read without going into
+  // their dependency lists — ExerciseCard is memoised, so a handler whose
+  // identity changed on every logged set would re-render every card.
+  const logRef = useRef<DayWorkoutLog | null>(workoutLog);
+  logRef.current = workoutLog;
+
+  /** Start a rest when a set goes from incomplete to complete. */
+  const noteSetCompleted = useCallback(
+    (exerciseIdx: number, setIdx: number, willComplete: boolean) => {
+      const was = logRef.current?.exercises[exerciseIdx]?.sets[setIdx]?.completed;
+      if (willComplete && !was) setRestKey((k) => k + 1);
+    },
+    []
+  );
 
   const scheduledIdx = workoutDays.findIndex((w) => w.dayNumbers.includes(today));
   const isRestDay = scheduledIdx < 0;
@@ -97,6 +115,12 @@ export default function TrainingTab({
 
   const handleSetUpdate = useCallback(
     (exerciseIdx: number, setIdx: number, field: "reps" | "weight", value: number) => {
+      const current = logRef.current?.exercises[exerciseIdx]?.sets[setIdx];
+      if (current) {
+        const w = field === "weight" ? value : current.weight;
+        const r = field === "reps" ? value : current.reps;
+        noteSetCompleted(exerciseIdx, setIdx, w > 0 && r > 0);
+      }
       setWorkoutLog((prev) => {
         if (!prev) return prev;
         const updated = { ...prev };
@@ -135,11 +159,13 @@ export default function TrainingTab({
         return updated;
       });
     },
-    [syncAfterSave]
+    [syncAfterSave, noteSetCompleted]
   );
 
   const handleSetToggle = useCallback(
     (exerciseIdx: number, setIdx: number) => {
+      const was = logRef.current?.exercises[exerciseIdx]?.sets[setIdx]?.completed;
+      noteSetCompleted(exerciseIdx, setIdx, !was);
       setWorkoutLog((prev) => {
         if (!prev) return prev;
         const updated = { ...prev };
@@ -164,7 +190,7 @@ export default function TrainingTab({
         return updated;
       });
     },
-    [syncAfterSave]
+    [syncAfterSave, noteSetCompleted]
   );
 
   const completedCount =
@@ -174,7 +200,7 @@ export default function TrainingTab({
     totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
 
   return (
-    <div className="px-4 pt-2 pb-safe">
+    <div className={restVisible ? "px-4 pt-2 pb-[11rem]" : "px-4 pt-2 pb-safe"}>
       {/* Header */}
       <div className="mb-5 flex items-start gap-3">
         <div className="flex-1">
@@ -343,6 +369,8 @@ export default function TrainingTab({
           })}
         </div>
       )}
+
+      <RestTimer runKey={restKey} onVisibilityChange={setRestVisible} />
     </div>
   );
 }

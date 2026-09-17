@@ -44,8 +44,13 @@ exercises from the library in `src/lib/exerciseLibrary.ts` (131 exercises).
    "Start workout" builds a session from the selected muscles and opens it on
    the Training tab
 4. **Stats Tab:** BMI/body stats input, transformation progress, Gemini AI analysis
-5. **Plan Editor:** Reachable from the Training tab header — assign workouts to
-   days, build routines, set per-exercise sets/reps, attach custom exercise GIFs
+5. **Plan Editor:** Reachable from the Training tab header or the side drawer —
+   assign workouts to days, build routines, set per-exercise sets/reps, attach
+   custom exercise GIFs
+6. **Side Drawer:** Menu button in the header — account, plan, sync status and
+   manual sync, InBody/HealthifyMe links, install guidance
+7. **Rest Timer:** Starts automatically when a set is completed; adjustable and
+   remembered between sessions
 
 ## Environment Variables
 ```

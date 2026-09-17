@@ -130,3 +130,17 @@
   - Verified: two sessions on one day both persist; a seeded legacy log reads
     back, re-keys on save without duplicating, and untouched old entries remain
     visible to the volume and muscle-status readers
+
+### Session 7 — 2026-09-17
+- [x] UX pass
+  - `SideDrawer`: account, plan, sync (with last-synced time and a manual
+    trigger), InBody/HealthifyMe, install guidance. Swipe-to-close, Escape,
+    scroll lock behind it
+  - Bottom nav 6 -> 4 items. The two external links were navigating out of the
+    app from a row meant for destinations, and six targets forced 10px labels
+  - `RestTimer`: starts when a set is completed, counts against a wall-clock
+    end time, +/- 15s, remembered duration, vibrates on finish
+  - Body map gets a sticky "Start workout" bar, so the selection stays
+    actionable after scrolling past the suggestions
+  - Tab switches scroll to top
+  - Deleted `UserAvatar` and `InstallPrompt` — the drawer absorbed both

@@ -88,3 +88,17 @@
 ## ADR-018: How a Session Is Proposed From Selected Muscles
 **Decision:** `buildSessionForMuscles` scores each exercise per target muscle: it must train the target directly, gains for every *other* selected muscle it also covers, and gains for specificity (`2 / primary.length`, so a movement whose only primary mover is the target beats one that splits its effort). The compound bonus applies only when more than one muscle is selected. Selection round-robins over the muscles so each is covered before any gets a second exercise, then sorts compounds first.
 **Why the specificity term:** without it, asking for triceps alone returned chest dips and close-grip bench — compounds that happen to involve triceps — because the compound bonus dominated. With it, a lone triceps pick returns pushdowns, overhead extensions and skull crushers, while chest+triceps still leads with presses and dips.
+
+## ADR-019: Navigation — Four Tabs and a Drawer
+**Decision:** The bottom bar carries the four destinations inside the app (Training, Body, Progress, Stats). Everything that is not a destination — account, the plan editor, sync, the InBody and HealthifyMe links, install instructions — moved into a right-hand drawer behind a menu button in the header.
+**Why:** the bar had six items, two of which navigated *out* of the app entirely. Six targets across a phone width forced 10px labels and cramped touch targets, and mixing "go to this screen" with "leave for another app" in one row made neither obvious. The drawer also gives the plan editor a second, discoverable entry point; it was previously reachable only from a button on the Training header.
+**Also folded in:** `UserAvatar`'s dropdown became the drawer's account section, and the floating `InstallPrompt` became a row in the drawer. Both files are deleted.
+
+## ADR-020: The Install Prompt Stops Covering Content
+**Decision:** Install guidance lives in the drawer instead of a `fixed bottom-20` card.
+**Why:** it sat on top of whatever screen you were on for three days at a time, obscuring exercise cards and the body map. Install is a one-off action a user takes when they decide to, not something worth permanently occluding the app for.
+
+## ADR-021: Rest Timer Driven by a Run Key
+**Decision:** `RestTimer` takes a `runKey` counter that the training screen increments whenever a set goes from incomplete to complete. A change to that number restarts the countdown.
+**Why this shape:** the caller does not have to know whether a rest is already running, and the timer owns all its own state. The transition is detected in the event handlers against a ref mirror of the log rather than by watching state in an effect — `ExerciseCard` is memoised, so a handler whose identity changed on every logged set would re-render every card in the workout.
+**Implementation notes:** it counts against a wall-clock end time rather than accumulating interval ticks, so backgrounding the tab does not leave it behind; the duration is remembered in localStorage and adjustable by 15s; the restart is done with the "adjust state when a prop changes" pattern rather than an effect, which would render the previous remaining time for a frame before correcting it.

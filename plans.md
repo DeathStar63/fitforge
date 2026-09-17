@@ -79,6 +79,18 @@
 - [x] Fixed: workout logs were keyed by date alone, so a second session on the
       same day destroyed the first
 
+## Phase 9: UX Pass [COMPLETE]
+- [x] Side drawer: account, plan, sync status and manual sync, companion app
+      links, install guidance
+- [x] Bottom nav cut from six items to four real destinations, with bigger
+      touch targets and readable labels
+- [x] Floating install prompt removed — it covered content on every screen
+- [x] Rest timer between sets, wall-clock accurate, adjustable, remembered
+- [x] Sticky "Start workout" bar on the body map, so a selection made at the
+      top of a long screen stays actionable
+- [x] Tab switches start at the top of the new screen
+- [x] Deleted UserAvatar and InstallPrompt, both absorbed by the drawer
+
 ## Future
 - [ ] Native iOS wrapper (Capacitor) for automatic Apple Health sync
 - [ ] Workout history calendar view
