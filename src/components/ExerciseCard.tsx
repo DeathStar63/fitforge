@@ -3,6 +3,7 @@
 import { useState, useEffect, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronDown, ChevronUp, Pencil, TrendingUp, Trophy, X } from "lucide-react";
+import ExerciseGif from "./ExerciseGif";
 import { Exercise, SetLog } from "@/lib/workouts";
 import {
   WeightUnit,
@@ -134,19 +135,11 @@ const ExerciseCard = memo(function ExerciseCard({
           >
             <div className="px-4 pb-4">
               {/* Exercise GIF */}
-              {exercise.gifUrl && (
-                <div className="mb-3 rounded-xl overflow-hidden bg-bg-surface">
-                  <img
-                    src={exercise.gifUrl}
-                    alt={exercise.name}
-                    width={320}
-                    height={160}
-                    className="w-full h-40 object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              )}
+              <ExerciseGif
+                exerciseId={exercise.id}
+                name={exercise.name}
+                gifUrl={exercise.gifUrl}
+              />
 
               {/* Weight increase suggestion */}
               {shouldIncreaseWeight && (

@@ -76,3 +76,24 @@
 - Gemini API calls happen client-side (API key in NEXT_PUBLIC env var)
 - Apple Health auto-sync requires native iOS wrapper (Capacitor) — manual logging for now
 - Session 1-2 tracker entries reference the original dark/lime theme (historically accurate); the white redesign landed in Session 3 (2026-03-23)
+
+### Session 4 — 2026-09-17
+- [x] Personal customisation — the weekly split is now user-owned
+  - `lib/plan.ts`: routines + a routine-per-weekday assignment in localStorage
+  - `context/PlanContext.tsx`: single source of truth, debounced cloud sync
+  - `PlanEditor` screen: schedule editor, routine CRUD, exercise reorder,
+    per-exercise sets/reps overrides, reset to the default split
+  - The built-in Legs / Push / Pull routines keep their ids, so existing
+    workout history still resolves
+- [x] Interactive muscle map (`lib/muscles.ts` + `BodyMap.tsx`)
+  - Hand-built front and back SVG figures, 17 muscle groups, mirrored geometry
+  - Colour-coded by recovery state, tappable to select, today's workout outlined
+  - Re-used compactly in the routine editor and as the exercise GIF fallback
+- [x] Suggestions (`lib/muscleStatus.ts`)
+  - Weighted set counting (primary 1.0, secondary 0.5) over a trailing week
+  - Ranks muscles by days-since-trained and volume gap vs a weekly target
+- [x] Exercise library grown from 27 to 108 (`lib/exerciseLibrary.ts`)
+  - Muscle, equipment and group tags on every entry; searchable picker
+  - Custom GIF URLs per exercise; muscle-map fallback when none loads
+- [x] Progress and Stats charts follow the user's routines instead of a
+      hardcoded Legs/Push/Pull trio

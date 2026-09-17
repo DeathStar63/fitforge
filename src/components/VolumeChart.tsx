@@ -16,10 +16,12 @@ import {
 } from "recharts";
 import { Dumbbell, TrendingUp, Target, Flame, ChevronRight } from "lucide-react";
 import { DayWorkoutLog, getAllWorkoutLogs } from "@/lib/storage";
-import { workoutDays } from "@/lib/workouts";
+import type { WorkoutDay } from "@/lib/workouts";
+import { usePlan } from "@/context/PlanContext";
 
 type TimeRange = "1W" | "1M" | "3M" | "ALL";
-type Category = "all" | "legs" | "push" | "pull";
+/** "all", or the id of one of the user's routines. */
+type Category = string;
 
 interface WeeklyExerciseStat {
   exerciseId: string;
@@ -58,7 +60,10 @@ function getDateCutoff(range: TimeRange): string | null {
   return now.toISOString().split("T")[0];
 }
 
-function calculateWeeklyOverview(logs: Record<string, DayWorkoutLog>): WeeklyOverview {
+function calculateWeeklyOverview(
+  logs: Record<string, DayWorkoutLog>,
+  workoutDays: WorkoutDay[]
+): WeeklyOverview {
   const weekStart = getWeekStart();
   const weekStartStr = weekStart.toISOString().split("T")[0];
 
@@ -77,7 +82,8 @@ function calculateWeeklyOverview(logs: Record<string, DayWorkoutLog>): WeeklyOve
         exerciseName: ex.name,
         muscle: ex.muscle,
         setsCompleted: 0,
-        targetSets: ex.sets * 2, // 2 sessions per week
+        // One target per scheduled session of the workout this exercise is in.
+        targetSets: ex.sets * Math.max(1, day.dayNumbers.length),
         bestWeight: 0,
         bestReps: 0,
         totalVolume: 0,
@@ -118,24 +124,33 @@ function calculateWeeklyOverview(logs: Record<string, DayWorkoutLog>): WeeklyOve
   };
 }
 
-interface VolumeDataPoint {
+/** One point per session; a key per routine id holds that session's volume. */
+type VolumeDataPoint = {
   date: string;
   label: string;
-  legs: number | null;
-  push: number | null;
-  pull: number | null;
-}
+} & Record<string, string | number | null>;
+
+/** Series colours, cycled when a plan has more routines than colours. */
+const SERIES_COLORS = [
+  "#06D6A0",
+  "#4EA8DE",
+  "#FF6B35",
+  "#A855F7",
+  "#F472B6",
+  "#EAB308",
+];
 
 function buildVolumeData(
   logs: Record<string, DayWorkoutLog>,
-  range: TimeRange
+  range: TimeRange,
+  routineIds: string[]
 ): VolumeDataPoint[] {
   const cutoff = getDateCutoff(range);
+  const known = new Set(routineIds);
   const entries = Object.values(logs)
     .filter((log) => {
       if (cutoff && log.date < cutoff) return false;
-      const type = log.workoutId;
-      if (!["legs", "push", "pull"].includes(type)) return false;
+      if (!known.has(log.workoutId)) return false;
       let vol = 0;
       for (const ex of log.exercises) {
         for (const s of ex.sets) {
@@ -153,16 +168,17 @@ function buildVolumeData(
         if (s.completed && s.reps > 0 && s.weight > 0) vol += s.reps * s.weight;
       }
     }
-    return {
+    const point: VolumeDataPoint = {
       date: log.date,
       label: new Date(log.date + "T00:00:00").toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
       }),
-      legs: log.workoutId === "legs" ? vol : null,
-      push: log.workoutId === "push" ? vol : null,
-      pull: log.workoutId === "pull" ? vol : null,
     };
+    for (const id of routineIds) {
+      point[id] = log.workoutId === id ? vol : null;
+    }
+    return point;
   });
 }
 
@@ -174,7 +190,8 @@ interface WeeklySetsData {
 
 function buildWeeklySetsData(
   exerciseStats: WeeklyExerciseStat[],
-  category: Category
+  category: Category,
+  workoutDays: WorkoutDay[]
 ): WeeklySetsData[] {
   let filtered = exerciseStats;
   if (category !== "all") {
@@ -197,6 +214,7 @@ function buildWeeklySetsData(
 }
 
 export default function VolumeChart() {
+  const { workoutDays } = usePlan();
   const [logs, setLogs] = useState<Record<string, DayWorkoutLog>>({});
   const [timeRange, setTimeRange] = useState<TimeRange>("1M");
   const [category, setCategory] = useState<Category>("all");
@@ -206,22 +224,36 @@ export default function VolumeChart() {
     setLogs(getAllWorkoutLogs());
   }, []);
 
-  const overview = useMemo(() => calculateWeeklyOverview(logs), [logs]);
-  const volumeData = useMemo(() => buildVolumeData(logs, timeRange), [logs, timeRange]);
+  const routineIds = useMemo(() => workoutDays.map((d) => d.id), [workoutDays]);
+
+  const overview = useMemo(
+    () => calculateWeeklyOverview(logs, workoutDays),
+    [logs, workoutDays]
+  );
+  const volumeData = useMemo(
+    () => buildVolumeData(logs, timeRange, routineIds),
+    [logs, timeRange, routineIds]
+  );
   const weeklySetsData = useMemo(
-    () => buildWeeklySetsData(overview.exerciseStats, category),
-    [overview.exerciseStats, category]
+    () => buildWeeklySetsData(overview.exerciseStats, category, workoutDays),
+    [overview.exerciseStats, category, workoutDays]
   );
 
   const maxVolume = useMemo(() => {
     let max = 0;
     for (const d of volumeData) {
-      if (d.legs && d.legs > max) max = d.legs;
-      if (d.push && d.push > max) max = d.push;
-      if (d.pull && d.pull > max) max = d.pull;
+      for (const id of routineIds) {
+        const v = d[id];
+        if (typeof v === "number" && v > max) max = v;
+      }
     }
     return max;
-  }, [volumeData]);
+  }, [volumeData, routineIds]);
+
+  const routineNames = useMemo(
+    () => Object.fromEntries(workoutDays.map((d) => [d.id, d.name])),
+    [workoutDays]
+  );
 
   const overviewCards = [
     {
@@ -255,9 +287,7 @@ export default function VolumeChart() {
 
   const categories: { id: Category; label: string }[] = [
     { id: "all", label: "All" },
-    { id: "legs", label: "Legs" },
-    { id: "push", label: "Push" },
-    { id: "pull", label: "Pull" },
+    ...workoutDays.map((d) => ({ id: d.id, label: d.name })),
   ];
 
   const timeRanges: TimeRange[] = ["1W", "1M", "3M", "ALL"];
@@ -525,45 +555,29 @@ export default function VolumeChart() {
                     labelStyle={{ color: "#6B7280" }}
                     formatter={(value: unknown, name: unknown) => [
                       `${Number(value).toLocaleString()} kg`,
-                      String(name).charAt(0).toUpperCase() + String(name).slice(1),
+                      routineNames[String(name)] ?? String(name),
                     ]}
                   />
                   <Legend
                     wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }}
-                    formatter={(value: string) =>
-                      value.charAt(0).toUpperCase() + value.slice(1)
-                    }
+                    formatter={(value: string) => routineNames[value] ?? value}
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="legs"
-                    stroke="#06D6A0"
-                    strokeWidth={2}
-                    dot={{ r: 3, fill: "#06D6A0" }}
-                    activeDot={{ r: 5 }}
-                    connectNulls={true}
-                    name="legs"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="push"
-                    stroke="#4EA8DE"
-                    strokeWidth={2}
-                    dot={{ r: 3, fill: "#4EA8DE" }}
-                    activeDot={{ r: 5 }}
-                    connectNulls={true}
-                    name="push"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="pull"
-                    stroke="#FF6B35"
-                    strokeWidth={2}
-                    dot={{ r: 3, fill: "#FF6B35" }}
-                    activeDot={{ r: 5 }}
-                    connectNulls={true}
-                    name="pull"
-                  />
+                  {workoutDays.map((day, i) => {
+                    const color = SERIES_COLORS[i % SERIES_COLORS.length];
+                    return (
+                      <Line
+                        key={day.id}
+                        type="monotone"
+                        dataKey={day.id}
+                        stroke={color}
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: color }}
+                        activeDot={{ r: 5 }}
+                        connectNulls={true}
+                        name={day.id}
+                      />
+                    );
+                  })}
                 </LineChart>
               </ResponsiveContainer>
             </div>

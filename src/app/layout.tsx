@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import PWARegister from "@/components/PWARegister";
 import { AuthProvider } from "@/context/AuthContext";
 import { SyncProvider } from "@/context/SyncContext";
+import { PlanProvider } from "@/context/PlanContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -46,7 +47,7 @@ export default function RootLayout({
         <PWARegister />
         <AuthProvider>
           <SyncProvider>
-            {children}
+            <PlanProvider>{children}</PlanProvider>
           </SyncProvider>
         </AuthProvider>
       </body>

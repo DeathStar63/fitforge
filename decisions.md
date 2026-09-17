@@ -37,3 +37,23 @@
 ## ADR-009: Local Storage + Supabase Hybrid
 **Decision:** Use localStorage for immediate state, sync to Supabase for persistence
 **Why:** Ensures app works offline in gym (poor WiFi), syncs when connection available
+
+## ADR-010: User-Owned Weekly Plan
+**Decision:** The Legs/Push/Pull schedule moved out of `lib/workouts.ts` and into a `WeekPlan` document the user edits (`lib/plan.ts`), surfaced through `PlanContext`. `lib/workouts.ts` now only holds types and the helpers that turn a plan into a workout day.
+**Why:** The split was hardcoded for one person. Anyone else wants their own days and their own exercises.
+**Trade-off:** Anything that previously read the constant `workoutDays` (Progress, Stats/VolumeChart) had to become plan-aware, and the volume chart's series are now generated per routine rather than three fixed lines.
+**Compatibility:** The three default routines keep the ids `legs`, `push` and `pull`, and the default day assignment reproduces the old schedule exactly, so logs written before this change still resolve. `getPlan()` drops references to exercises that are no longer in the library.
+**Supersedes:** ADR-005, which fixed the day order. That order is now just the default.
+
+## ADR-011: Hand-Built SVG Muscle Map
+**Decision:** Draw the body as SVG paths in `lib/muscles.ts` — right-half geometry mirrored at render time, muscle shapes clipped to the silhouette — rather than pulling in an anatomy image or a body-map library.
+**Why:** It stays a few KB, themes with the rest of the app, scales to any size, and every region is a real DOM node so it can be tapped and animated. Mirroring halves the geometry to maintain and makes symmetry automatic; clipping to the silhouette means a muscle shape can be drawn generously without spilling past the body outline.
+**Note:** `<clipPath>` only accepts shape elements, so the region renderer emits bare `<path>` elements with no wrapper `<g>`.
+
+## ADR-012: Weighted Set Counting for Muscle Status
+**Decision:** A completed set counts 1.0 toward each of the exercise's primary muscles and 0.5 toward each secondary. Only primary work moves the "last trained" marker.
+**Why:** It is the standard direct-vs-indirect volume convention, and it keeps a muscle from looking freshly trained because it assisted on something else. Statuses are: worked (trained within 2 days), ready (3-4 days), needs work (5+ days or never).
+
+## ADR-013: Exercise GIFs Degrade Instead of Breaking
+**Decision:** `gifUrl` is optional in the library. When it is missing or the image fails to load, the card renders the body map with that exercise's muscles highlighted, and the user can attach their own GIF URL per exercise from the plan editor.
+**Why:** The new library entries have no verified static GIF URLs, and hotlinked GIFs can disappear or block referrers. Showing which muscles the movement trains is a useful answer rather than an empty box, and a user-supplied link is a permanent fix for any individual exercise.

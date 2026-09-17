@@ -2,13 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Flame } from "lucide-react";
+import { Calendar, Clock, Flame, Moon, SlidersHorizontal } from "lucide-react";
 import ExerciseCard from "./ExerciseCard";
-import {
-  workoutDays,
-  dayNames,
-  WorkoutDay,
-} from "@/lib/workouts";
+import { dayNames, WorkoutDay } from "@/lib/workouts";
+import { usePlan } from "@/context/PlanContext";
 import {
   getWorkoutLog,
   saveWorkoutLog,
@@ -22,42 +19,67 @@ import {
 import { useSync } from "@/context/SyncContext";
 import type { ExerciseLog, SetLog } from "@/lib/workouts";
 
-// Determine suggested workout index based on day of week
-function getSuggestedWorkoutIdx(): number {
-  const day = new Date().getDay();
-  // Mon/Thu → Legs(0), Tue/Fri → Push(1), Wed/Sat → Pull(2), Sun → Legs(0)
-  const idx = workoutDays.findIndex((w) => w.dayNumbers.includes(day));
-  return idx >= 0 ? idx : 0;
-}
-
-export default function TrainingTab() {
+export default function TrainingTab({
+  onOpenPlan,
+}: {
+  onOpenPlan?: () => void;
+}) {
   const { syncAfterSave } = useSync();
-  const [selectedDayIdx, setSelectedDayIdx] = useState<number>(getSuggestedWorkoutIdx);
+  const { workoutDays, ready } = usePlan();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [workoutLog, setWorkoutLog] = useState<DayWorkoutLog | null>(null);
   const [previousLog, setPreviousLog] = useState<DayWorkoutLog | null>(null);
   const [bestSets, setBestSets] = useState<Record<string, SetLog | null>>({});
   const today = new Date().getDay();
 
-  const currentWorkout: WorkoutDay = workoutDays[selectedDayIdx];
   const scheduledIdx = workoutDays.findIndex((w) => w.dayNumbers.includes(today));
+  const isRestDay = scheduledIdx < 0;
 
-  // Load workout log
+  // Default to whatever is scheduled today; fall back to the first workout so
+  // there is always something to log on a rest day.
+  const selectedDayIdx = (() => {
+    if (selectedId) {
+      const idx = workoutDays.findIndex((w) => w.id === selectedId);
+      if (idx >= 0) return idx;
+    }
+    return scheduledIdx >= 0 ? scheduledIdx : 0;
+  })();
+
+  const currentWorkout: WorkoutDay | undefined = workoutDays[selectedDayIdx];
+
+  // Load today's log and line it up with the routine as it currently stands.
+  // The routine is editable, so a stored log can be missing exercises, carry
+  // ones that were removed, or have a stale set count — and the UI pairs
+  // `workoutLog.exercises[i]` with `currentWorkout.exercises[i]` by position.
   useEffect(() => {
     if (!currentWorkout) return;
     const dateKey = getDateKey();
     const existing = getWorkoutLog(dateKey);
-    if (existing && existing.workoutId === currentWorkout.id) {
-      setWorkoutLog(existing);
-    } else {
-      const newLog: DayWorkoutLog = {
-        date: dateKey,
-        workoutId: currentWorkout.id,
-        exercises: currentWorkout.exercises.map((ex) =>
-          initExerciseLog(ex.id, ex.sets)
-        ),
-      };
-      setWorkoutLog(newLog);
-    }
+    const previousEntries =
+      existing && existing.workoutId === currentWorkout.id ? existing.exercises : [];
+
+    const exercises = currentWorkout.exercises.map((ex) => {
+      const logged = previousEntries.find((e) => e.exerciseId === ex.id);
+      if (!logged) return initExerciseLog(ex.id, ex.sets);
+      if (logged.sets.length === ex.sets) return logged;
+      // Set count changed in the plan editor: keep what was logged, then pad
+      // or trim to the new length.
+      const sets = Array.from({ length: ex.sets }, (_, i) =>
+        logged.sets[i] ?? { reps: 0, weight: 0, completed: false }
+      );
+      return { ...logged, sets, completed: sets.every((set) => set.completed) };
+    });
+
+    const reconciled: DayWorkoutLog = {
+      date: dateKey,
+      workoutId: currentWorkout.id,
+      exercises,
+      completedAt:
+        exercises.length > 0 && exercises.every((e) => e.completed)
+          ? existing?.completedAt ?? new Date().toISOString()
+          : undefined,
+    };
+    setWorkoutLog(reconciled);
     // Get previous session for same workout type
     const prev = getLastWorkoutLog(currentWorkout.id);
     setPreviousLog(prev);
@@ -145,20 +167,44 @@ export default function TrainingTab() {
   const completedCount =
     workoutLog?.exercises.filter((e) => e.completed).length || 0;
   const totalExercises = currentWorkout?.exercises.length || 0;
+  const progressPct =
+    totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
 
   return (
     <div className="px-4 pt-2 pb-safe">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary">Training</h1>
-        <p className="text-sm text-text-muted mt-1 flex items-center gap-1.5">
-          <Calendar size={14} />
-          {dayNames[today]}
-          <span className="text-text-subtle mx-1">|</span>
-          <Clock size={14} />
-          90 min + 30 min cardio
-        </p>
+      <div className="mb-5 flex items-start gap-3">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-text-primary">Training</h1>
+          <p className="text-sm text-text-muted mt-1 flex items-center gap-1.5">
+            <Calendar size={14} />
+            {dayNames[today]}
+            <span className="text-text-subtle mx-1">|</span>
+            <Clock size={14} />
+            90 min + 30 min cardio
+          </p>
+        </div>
+        {onOpenPlan && (
+          <button
+            onClick={onOpenPlan}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-bg-surface text-xs font-medium text-text-muted"
+          >
+            <SlidersHorizontal size={13} />
+            Plan
+          </button>
+        )}
       </div>
+
+      {/* Rest day note */}
+      {isRestDay && (
+        <div className="mb-5 px-3 py-2.5 rounded-2xl bg-blue/8 border border-blue/20 flex items-center gap-2">
+          <Moon size={14} className="text-blue shrink-0" />
+          <p className="text-xs text-blue">
+            {dayNames[today]} is a rest day in your plan. Pick a workout below if
+            you want to train anyway.
+          </p>
+        </div>
+      )}
 
       {/* Day selector — pick any workout */}
       <div className="flex gap-1 mb-6 overflow-x-auto no-scrollbar border-b border-border">
@@ -168,7 +214,7 @@ export default function TrainingTab() {
           return (
             <button
               key={day.id}
-              onClick={() => setSelectedDayIdx(idx)}
+              onClick={() => setSelectedId(day.id)}
               className={`relative shrink-0 px-4 py-2.5 text-sm font-medium transition-colors ${
                 isSelected
                   ? "text-text-primary"
@@ -200,16 +246,14 @@ export default function TrainingTab() {
             </span>
             <span className="text-xs font-medium text-text-primary flex items-center gap-1">
               <Flame size={12} className="text-orange" />
-              {Math.round((completedCount / totalExercises) * 100)}%
+              {progressPct}%
             </span>
           </div>
           <div className="h-1.5 bg-bg-surface rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-accent rounded-full"
               initial={{ width: 0 }}
-              animate={{
-                width: `${(completedCount / totalExercises) * 100}%`,
-              }}
+              animate={{ width: `${progressPct}%` }}
               transition={{ type: "spring", stiffness: 100 }}
             />
           </div>
@@ -227,6 +271,40 @@ export default function TrainingTab() {
             Workout Complete! Time for 30 min LISS cardio.
           </p>
         </motion.div>
+      )}
+
+      {/* No workouts configured at all */}
+      {ready && workoutDays.length === 0 && (
+        <div className="px-4 py-8 text-center">
+          <p className="text-sm text-text-muted mb-3">
+            You have no workouts yet.
+          </p>
+          {onOpenPlan && (
+            <button
+              onClick={onOpenPlan}
+              className="px-4 py-2.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+            >
+              Build your plan
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Workout with no exercises in it */}
+      {currentWorkout && currentWorkout.exercises.length === 0 && (
+        <div className="px-4 py-8 text-center">
+          <p className="text-sm text-text-muted mb-3">
+            {currentWorkout.name} has no exercises yet.
+          </p>
+          {onOpenPlan && (
+            <button
+              onClick={onOpenPlan}
+              className="px-4 py-2.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+            >
+              Add exercises
+            </button>
+          )}
+        </div>
       )}
 
       {/* Exercise cards */}

@@ -1,15 +1,25 @@
 "use client";
 
-import { Dumbbell, TrendingUp, ExternalLink, Activity, BarChart3 } from "lucide-react";
+import {
+  Dumbbell,
+  TrendingUp,
+  ExternalLink,
+  Activity,
+  BarChart3,
+  PersonStanding,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
+export type NavTab = "training" | "body" | "progress" | "stats";
+
 interface BottomNavProps {
-  activeTab: "training" | "progress" | "stats";
-  onTabChange: (tab: "training" | "progress" | "stats") => void;
+  activeTab: NavTab;
+  onTabChange: (tab: NavTab) => void;
 }
 
 const tabs = [
   { id: "training" as const, label: "Training", icon: Dumbbell },
+  { id: "body" as const, label: "Body", icon: PersonStanding },
   { id: "progress" as const, label: "Progress", icon: TrendingUp },
   { id: "stats" as const, label: "Stats", icon: BarChart3 },
 ];
@@ -17,14 +27,14 @@ const tabs = [
 export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-bg-card/95 backdrop-blur-xl border-t border-border">
-      <div className="flex items-center justify-around max-w-md mx-auto px-4 pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-center justify-between max-w-md mx-auto px-2 pb-[env(safe-area-inset-bottom)]">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className="relative flex flex-col items-center py-3 px-6 gap-1.5"
+              className="relative flex flex-col items-center py-3 px-2.5 gap-1.5"
             >
               <div className="relative">
                 {isActive && (
@@ -56,7 +66,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
         {/* InBody link */}
         <a
           href="https://apps.apple.com/us/app/inbody/id884923678"
-          className="relative flex flex-col items-center py-3 px-6 gap-1.5"
+          className="relative flex flex-col items-center py-3 px-2.5 gap-1.5"
         >
           <div className="w-8 h-8 rounded-xl bg-blue/15 flex items-center justify-center">
             <Activity size={16} className="text-blue" />
@@ -69,7 +79,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
         {/* HealthifyMe link */}
         <a
           href="hmein://activity/DashboardActivity"
-          className="relative flex flex-col items-center py-3 px-6 gap-1.5"
+          className="relative flex flex-col items-center py-3 px-2.5 gap-1.5"
         >
           <div className="w-8 h-8 rounded-xl bg-success/15 flex items-center justify-center">
             <ExternalLink size={16} className="text-success" />
