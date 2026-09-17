@@ -46,6 +46,20 @@
 - [x] Add progress charts (weight over time with Recharts)
 - [x] Sync localStorage to Supabase for cloud persistence
 
+## Phase 6: Personalisation [COMPLETE]
+- [x] User-owned weekly plan — assign any workout (or rest) to any day
+- [x] Routine builder — create, rename, re-emoji and delete your own workouts
+- [x] Per-exercise set and rep-range overrides inside a routine, plus reordering
+- [x] Exercise library expanded to 108 exercises across legs/push/pull/core/cardio,
+      each tagged with primary and secondary muscles and equipment
+- [x] Searchable exercise picker with group, equipment and muscle filters
+- [x] Interactive front/back muscle map — green (worked) / amber (ready) /
+      red (needs work), tap to select, today's workout outlined
+- [x] "What to hit next" suggestions from days-since-trained + weekly set volume
+- [x] Per-exercise custom GIF URLs, with a muscle-map fallback when an
+      animation is missing or fails to load
+- [x] Plan syncs to Supabase alongside logs, stats and InBody reports
+
 ## Future
 - [ ] Native iOS wrapper (Capacitor) for automatic Apple Health sync
 - [ ] Workout history calendar view

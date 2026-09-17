@@ -12,12 +12,13 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
-import { workoutDays } from "@/lib/workouts";
+import { usePlan } from "@/context/PlanContext";
 import { DayWorkoutLog } from "@/lib/storage";
 
 type TimeRange = "1w" | "1m" | "3m" | "all";
 
 export default function ProgressTab() {
+  const { workoutDays } = usePlan();
   const [logs, setLogs] = useState<Record<string, DayWorkoutLog>>({});
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>("1m");
@@ -41,7 +42,7 @@ export default function ProgressTab() {
       }
     }
     return exercises;
-  }, []);
+  }, [workoutDays]);
 
   // Group exercises by workout
   const exercisesByWorkout = useMemo(() => {

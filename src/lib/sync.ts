@@ -6,7 +6,7 @@
  * CREATE TABLE user_data (
  *   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
  *   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
- *   data_type TEXT NOT NULL CHECK (data_type IN ('workout_logs', 'body_stats', 'inbody_reports')),
+ *   data_type TEXT NOT NULL CHECK (data_type IN ('workout_logs', 'body_stats', 'inbody_reports', 'plan')),
  *   data JSONB NOT NULL DEFAULT '{}',
  *   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
  *   UNIQUE(user_id, data_type)
@@ -25,19 +25,45 @@
  * CREATE POLICY "Users can update own data" ON user_data
  *   FOR UPDATE USING (auth.uid() = user_id);
  * ----------------------------------------
+ *
+ * Upgrading an existing database (the 'plan' data type was added with the
+ * customisable weekly plan) — run once:
+ * ----------------------------------------
+ * ALTER TABLE user_data DROP CONSTRAINT user_data_data_type_check;
+ * ALTER TABLE user_data ADD CONSTRAINT user_data_data_type_check
+ *   CHECK (data_type IN ('workout_logs', 'body_stats', 'inbody_reports', 'plan'));
+ * ----------------------------------------
+ * Until that runs, plan sync is rejected by the server and the plan simply
+ * stays local — the app keeps working, it just will not follow you to a
+ * second device.
  */
 
 import { supabase } from "./supabase";
 
-export type SyncDataType = "workout_logs" | "body_stats" | "inbody_reports";
+export type SyncDataType =
+  | "workout_logs"
+  | "body_stats"
+  | "inbody_reports"
+  | "plan";
 
 const STORAGE_KEYS: Record<SyncDataType, string> = {
   workout_logs: "fitforge_workout_logs",
   body_stats: "fitforge_body_stats",
   inbody_reports: "fitforge_inbody_reports",
+  plan: "fitforge_plan",
 };
 
+/** Shape used when a data type has nothing stored locally yet. */
+function emptyValue(dataType: SyncDataType): unknown {
+  if (dataType === "workout_logs") return {};
+  if (dataType === "plan") return null;
+  return [];
+}
+
 const LAST_SYNC_KEY = "fitforge_last_sync";
+
+/** Fired on `window` once a full sync has rewritten localStorage. */
+export const SYNC_COMPLETE_EVENT = "fitforge:synced";
 
 /**
  * Push local data to Supabase for a given data type.
@@ -101,11 +127,11 @@ export async function syncFromSupabase(
  */
 function getLocalData(dataType: SyncDataType): unknown {
   const raw = localStorage.getItem(STORAGE_KEYS[dataType]);
-  if (!raw) return dataType === "workout_logs" ? {} : [];
+  if (!raw) return emptyValue(dataType);
   try {
     return JSON.parse(raw);
   } catch {
-    return dataType === "workout_logs" ? {} : [];
+    return emptyValue(dataType);
   }
 }
 
@@ -147,6 +173,12 @@ function mergeData(dataType: SyncDataType, local: unknown, remote: unknown): unk
     );
   }
 
+  if (dataType === "plan") {
+    // The plan is a single document — there is no sensible field-level merge,
+    // so the remote copy wins unless the user has never saved one locally.
+    return remote ?? local;
+  }
+
   if (dataType === "inbody_reports") {
     const localArr = Array.isArray(local) ? local : [];
     const remoteArr = Array.isArray(remote) ? remote : [];
@@ -172,7 +204,12 @@ function mergeData(dataType: SyncDataType, local: unknown, remote: unknown): unk
 export async function fullSync(userId: string): Promise<void> {
   if (!supabase) return;
 
-  const dataTypes: SyncDataType[] = ["workout_logs", "body_stats", "inbody_reports"];
+  const dataTypes: SyncDataType[] = [
+    "workout_logs",
+    "body_stats",
+    "inbody_reports",
+    "plan",
+  ];
 
   for (const dataType of dataTypes) {
     try {
@@ -190,7 +227,7 @@ export async function fullSync(userId: string): Promise<void> {
         setLocalData(dataType, merged);
         // Push merged result back
         await syncToSupabase(userId, dataType, merged);
-      } else {
+      } else if (localData !== null) {
         // No remote data yet — push local up
         await syncToSupabase(userId, dataType, localData);
       }
@@ -200,6 +237,9 @@ export async function fullSync(userId: string): Promise<void> {
   }
 
   localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
+  // A full sync can rewrite localStorage underneath React state, so let
+  // interested contexts (the plan, for one) re-read their slice.
+  window.dispatchEvent(new CustomEvent(SYNC_COMPLETE_EVENT));
   console.log("[Sync] Full sync completed at", new Date().toISOString());
 }
 
@@ -210,6 +250,7 @@ export async function fullSync(userId: string): Promise<void> {
 export function pushDataType(userId: string, dataType: SyncDataType): void {
   if (!supabase) return;
   const data = getLocalData(dataType);
+  if (data === null) return;
   syncToSupabase(userId, dataType, data).catch((err) =>
     console.error(`[Sync] Background push failed for ${dataType}:`, err)
   );

@@ -2,7 +2,7 @@
 
 import { useState, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import BottomNav from "@/components/BottomNav";
+import BottomNav, { type NavTab } from "@/components/BottomNav";
 import TrainingTab from "@/components/TrainingTab";
 import InstallPrompt from "@/components/InstallPrompt";
 import AuthScreen from "@/components/AuthScreen";
@@ -12,6 +12,9 @@ import { useAuth } from "@/context/AuthContext";
 // Lazy load heavy tabs — they pull in recharts which is heavy (~200kb)
 const ProgressTab = lazy(() => import("@/components/ProgressTab"));
 const StatsTab = lazy(() => import("@/components/StatsTab"));
+// The body map and plan editor pull in the whole exercise library
+const BodyTab = lazy(() => import("@/components/BodyTab"));
+const PlanEditor = lazy(() => import("@/components/PlanEditor"));
 
 function ProgressFallback() {
   return (
@@ -21,11 +24,12 @@ function ProgressFallback() {
   );
 }
 
-type Tab = "training" | "progress" | "stats";
-
 export default function Home() {
   const { user, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState<Tab>("training");
+  const [activeTab, setActiveTab] = useState<NavTab>("training");
+  const [planOpen, setPlanOpen] = useState(false);
+  // An exercise sent from the body map to the plan editor.
+  const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -68,7 +72,19 @@ export default function Home() {
           exit={{ opacity: 0, x: -10 }}
           transition={{ duration: 0.15 }}
         >
-          {activeTab === "training" && <TrainingTab />}
+          {activeTab === "training" && (
+            <TrainingTab onOpenPlan={() => setPlanOpen(true)} />
+          )}
+          {activeTab === "body" && (
+            <Suspense fallback={<ProgressFallback />}>
+              <BodyTab
+                onAddExercise={(id) => {
+                  setPendingExerciseId(id);
+                  setPlanOpen(true);
+                }}
+              />
+            </Suspense>
+          )}
           {activeTab === "progress" && (
             <Suspense fallback={<ProgressFallback />}>
               <ProgressTab />
@@ -80,6 +96,21 @@ export default function Home() {
             </Suspense>
           )}
         </motion.div>
+      </AnimatePresence>
+
+      {/* Plan editor */}
+      <AnimatePresence>
+        {planOpen && (
+          <Suspense fallback={null}>
+            <PlanEditor
+              pendingExerciseId={pendingExerciseId}
+              onClose={() => {
+                setPlanOpen(false);
+                setPendingExerciseId(null);
+              }}
+            />
+          </Suspense>
+        )}
       </AnimatePresence>
 
       {/* Install prompt */}
