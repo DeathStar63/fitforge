@@ -59,8 +59,8 @@ export default function QuickWorkoutSheet({
         onClick={() => toggle(id)}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left transition-colors ${
           selected
-            ? "bg-success/8 border-success/30"
-            : "bg-bg-card border-border"
+            ? "bg-success/10 border-success/35"
+            : "surface"
         }`}
       >
         <span
@@ -147,7 +147,7 @@ export default function QuickWorkoutSheet({
         <button
           disabled={picked.length === 0}
           onClick={() => onStart(picked)}
-          className="w-full py-3 rounded-xl bg-accent text-bg-primary text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
+          className="w-full py-3.5 rounded-2xl btn-primary text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
         >
           <Play size={15} />
           Start workout

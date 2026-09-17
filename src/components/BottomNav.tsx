@@ -30,8 +30,9 @@ const tabs = [
 
 export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-bg-card/95 backdrop-blur-xl border-t border-border">
-      <div className="flex items-stretch max-w-md mx-auto px-2 pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="max-w-md mx-auto px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="glass rounded-[22px] flex items-stretch px-1.5 py-1 shadow-[var(--shadow-card-lg)] pointer-events-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -39,27 +40,25 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               aria-current={isActive ? "page" : undefined}
-              className="relative flex-1 flex flex-col items-center py-2.5 gap-1.5"
+              className="relative flex-1 flex flex-col items-center py-2 gap-1 rounded-[18px]"
             >
-              <div className="relative">
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-[-7px] bg-accent rounded-xl"
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  />
-                )}
-                <tab.icon
-                  size={21}
-                  className={`relative z-10 ${
-                    isActive ? "text-bg-primary" : "text-text-subtle"
-                  }`}
-                  strokeWidth={isActive ? 2.5 : 1.8}
+              {isActive && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 rounded-[18px] grad-primary opacity-95 shadow-[var(--glow-primary)]"
+                  transition={{ type: "spring", stiffness: 500, damping: 36 }}
                 />
-              </div>
+              )}
+              <tab.icon
+                size={20}
+                className={`relative z-10 ${
+                  isActive ? "text-[#0B0B14]" : "text-text-subtle"
+                }`}
+                strokeWidth={isActive ? 2.4 : 1.8}
+              />
               <span
-                className={`text-[11px] font-medium ${
-                  isActive ? "text-text-primary" : "text-text-subtle"
+                className={`relative z-10 text-[10.5px] font-semibold tracking-tight ${
+                  isActive ? "text-[#0B0B14]" : "text-text-subtle"
                 }`}
               >
                 {tab.label}
@@ -67,6 +66,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             </button>
           );
         })}
+        </div>
       </div>
     </nav>
   );

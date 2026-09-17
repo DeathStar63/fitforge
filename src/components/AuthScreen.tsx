@@ -153,7 +153,7 @@ export default function AuthScreen() {
                 <button
                   type="submit"
                   disabled={loading || !password.trim() || !confirmPassword.trim()}
-                  className="w-full py-3.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl btn-primary text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 size={16} className="animate-spin" />}
                   Update Password
@@ -211,7 +211,7 @@ export default function AuthScreen() {
                     <button
                       type="submit"
                       disabled={loading || !email.trim()}
-                      className="w-full py-3.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
+                      className="w-full py-3.5 rounded-xl btn-primary text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
                     >
                       {loading && <Loader2 size={16} className="animate-spin" />}
                       Send Reset Link
@@ -290,7 +290,7 @@ export default function AuthScreen() {
                 <button
                   type="submit"
                   disabled={loading || !email.trim() || !password.trim()}
-                  className="w-full py-3.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl btn-primary text-sm font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 size={16} className="animate-spin" />}
                   {currentMode === "signin" ? "Sign In" : "Create Account"}

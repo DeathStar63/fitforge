@@ -30,7 +30,7 @@ export default function ExerciseGif({
 
   if (gifUrl && !failed) {
     return (
-      <div className="mb-3 rounded-xl overflow-hidden bg-bg-surface">
+      <div className="mb-3 rounded-2xl overflow-hidden surface-sunken">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={gifUrl}
@@ -51,7 +51,7 @@ export default function ExerciseGif({
   const secondary = lib?.secondary ?? [];
 
   return (
-    <div className="mb-3 rounded-xl overflow-hidden bg-bg-surface px-3 py-2">
+    <div className="mb-3 rounded-2xl overflow-hidden surface-sunken px-3 py-2">
       <div className="flex items-center justify-center gap-4 h-32">
         {(["front", "back"] as const).map((view) => (
           <div key={view} className="h-full">

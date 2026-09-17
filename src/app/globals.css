@@ -1,24 +1,64 @@
 @import "tailwindcss";
 
+/*
+ * Design system
+ * -------------
+ * Near-black base, layered translucent surfaces, one signature gradient for
+ * anything primary, and semantic gradients for the states the body map and the
+ * stats screens report. Colour lives in the tokens below rather than in
+ * components, so the palette can move without touching markup.
+ */
+
 @theme inline {
-  --color-bg-primary: #0F0F17;
-  --color-bg-card: #1A1A28;
-  --color-bg-surface: #232336;
-  --color-bg-input: #252538;
-  --color-accent: #EFEFEF;
-  --color-accent-dim: #C0C0C0;
-  --color-orange: #F97316;
-  --color-success: #22C55E;
-  --color-error: #EF4444;
+  /* Surfaces, from deepest to most raised */
+  --color-bg-primary: #07070D;
+  --color-bg-card: #111120;
+  --color-bg-surface: #1A1A2B;
+  --color-bg-input: #15152A;
+
+  --color-accent: #F4F4F7;
+  --color-accent-dim: #B8B8C4;
+
+  /* Signature */
+  --color-violet: #8B5CF6;
+  --color-indigo: #6366F1;
+
+  /* Semantic */
+  --color-orange: #FB923C;
+  --color-success: #34D399;
+  --color-error: #FB7185;
   --color-blue: #60A5FA;
   --color-pink: #F472B6;
-  --color-text-primary: #F0F0F0;
-  --color-text-muted: #9CA3AF;
-  --color-text-subtle: #5C5C72;
-  --color-border: #2A2A3E;
+
+  --color-text-primary: #F5F5F8;
+  --color-text-muted: #9B9BB0;
+  --color-text-subtle: #61617C;
+  --color-border: #23233C;
+
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.3);
-  --shadow-card-lg: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-card-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+}
+
+:root {
+  --grad-primary: linear-gradient(135deg, #A78BFA 0%, #7C6BF5 45%, #5B8DEF 100%);
+  --grad-success: linear-gradient(135deg, #6EE7B7 0%, #10B981 100%);
+  --grad-warn: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+  --grad-danger: linear-gradient(135deg, #FDA4AF 0%, #F43F5E 100%);
+  --grad-flame: linear-gradient(135deg, #FDBA74 0%, #F97316 100%);
+
+  --glow-primary: 0 10px 34px -10px rgba(124, 107, 245, 0.65);
+  --glow-success: 0 10px 30px -12px rgba(16, 185, 129, 0.55);
+
+  /* The hairline of light along the top edge of a raised surface */
+  --edge-light: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.16) 30%,
+    rgba(255, 255, 255, 0.16) 70%,
+    transparent
+  );
 }
 
 * {
@@ -35,18 +75,30 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-input, textarea {
+/* Ambient wash so the near-black never reads as flat grey */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 38% at 50% -8%, rgba(124, 107, 245, 0.2), transparent 72%),
+    radial-gradient(48% 30% at 102% 4%, rgba(236, 72, 153, 0.09), transparent 72%),
+    radial-gradient(60% 34% at -8% 22%, rgba(56, 189, 248, 0.07), transparent 72%);
+}
+
+input,
+textarea {
   user-select: text;
   -webkit-user-select: text;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
-/* Number input spinners removal */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -56,7 +108,117 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Safe area for bottom nav */
 .pb-safe {
   padding-bottom: max(5rem, calc(5rem + env(safe-area-inset-bottom)));
+}
+
+/* ---------------------------------------------------------------- surfaces */
+
+/**
+ * A raised panel: a faint top-lit gradient, a hairline border, and a light
+ * edge along the top. The edge is what stops a dark card reading as a flat
+ * rectangle — it is the single biggest difference between "dark theme" and
+ * something that looks lit.
+ */
+.surface {
+  position: relative;
+  background: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.062) 0%,
+    rgba(255, 255, 255, 0.022) 42%,
+    rgba(255, 255, 255, 0.012) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  box-shadow: var(--shadow-card);
+}
+
+.surface::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: var(--edge-light);
+  pointer-events: none;
+}
+
+/* Same treatment, but reading as inset rather than raised — inputs, wells. */
+.surface-sunken {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(255, 255, 255, 0.025) 140%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+/* Frosted bar for the nav and any sticky chrome */
+.glass {
+  background: rgba(12, 12, 22, 0.72);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ----------------------------------------------------------------- accents */
+
+.grad-primary {
+  background-image: var(--grad-primary);
+}
+
+.btn-primary {
+  background-image: var(--grad-primary);
+  color: #0B0B14;
+  box-shadow: var(--glow-primary);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.985);
+  filter: brightness(1.05);
+}
+.btn-primary:disabled {
+  box-shadow: none;
+  filter: grayscale(0.5);
+}
+
+/* Gradient text, for figures worth looking at */
+.text-gradient {
+  background-image: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* A 1px gradient outline, drawn with a mask so the fill stays transparent */
+.ring-gradient {
+  position: relative;
+}
+.ring-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--grad-primary);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

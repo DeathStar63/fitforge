@@ -310,7 +310,7 @@ export default function VolumeChart() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-bg-card rounded-2xl border border-border p-3 shadow-[var(--shadow-card)]"
+            className="surface rounded-2xl p-3 shadow-[var(--shadow-card)]"
           >
             <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center mb-2`}>
               <card.icon size={14} className={card.iconColor} />
@@ -335,7 +335,7 @@ export default function VolumeChart() {
               onClick={() => setCategory(cat.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 category === cat.id
-                  ? "bg-accent text-bg-primary"
+                  ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
                   : "bg-bg-surface text-text-muted"
               }`}
             >
@@ -357,7 +357,7 @@ export default function VolumeChart() {
               return (
                 <div
                   key={day.id}
-                  className="bg-bg-card rounded-2xl border border-border shadow-[var(--shadow-card)] overflow-hidden"
+                  className="surface rounded-2xl overflow-hidden"
                 >
                   <button
                     onClick={() => setExpandedCategory(isExpanded ? null : day.id)}
@@ -429,7 +429,7 @@ export default function VolumeChart() {
             })}
           </div>
         ) : (
-          <div className="bg-bg-card rounded-2xl border border-border p-4 shadow-[var(--shadow-card)]">
+          <div className="surface rounded-2xl p-4 shadow-[var(--shadow-card)]">
             {weeklySetsData.length > 0 ? (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -440,35 +440,35 @@ export default function VolumeChart() {
                   >
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="#E5E7EB"
+                      stroke="rgba(255,255,255,0.07)"
                       horizontal={false}
                     />
                     <XAxis
                       type="number"
-                      tick={{ fill: "#6B7280", fontSize: 10 }}
+                      tick={{ fill: "#61617C", fontSize: 10 }}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis
                       type="category"
                       dataKey="name"
-                      tick={{ fill: "#6B7280", fontSize: 10 }}
+                      tick={{ fill: "#61617C", fontSize: 10 }}
                       tickLine={false}
                       axisLine={false}
                       width={100}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid #E5E7EB",
+                        backgroundColor: "#15152A",
+                        border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: "12px",
                         fontSize: "12px",
-                        color: "#1A1A2E",
+                        color: "#F5F5F8",
                       }}
                     />
                     <Bar
                       dataKey="target"
-                      fill="#E5E7EB"
+                      fill="rgba(255,255,255,0.08)"
                       radius={[0, 4, 4, 0]}
                       name="Target"
                     />
@@ -504,7 +504,7 @@ export default function VolumeChart() {
                   onClick={() => setTimeRange(r)}
                   className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors ${
                     timeRange === r
-                      ? "bg-accent text-bg-primary"
+                      ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
                       : "bg-bg-surface text-text-muted"
                   }`}
                 >
@@ -513,7 +513,7 @@ export default function VolumeChart() {
               ))}
             </div>
           </div>
-          <div className="bg-bg-card rounded-2xl border border-border p-4 shadow-[var(--shadow-card)]">
+          <div className="surface rounded-2xl p-4 shadow-[var(--shadow-card)]">
             <p className="text-xs text-text-subtle mb-3">
               Total volume (sets x reps x weight) per session
             </p>
@@ -525,18 +525,18 @@ export default function VolumeChart() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="#E5E7EB"
+                    stroke="rgba(255,255,255,0.07)"
                     vertical={false}
                   />
                   <XAxis
                     dataKey="label"
-                    tick={{ fill: "#6B7280", fontSize: 10 }}
+                    tick={{ fill: "#61617C", fontSize: 10 }}
                     tickLine={false}
-                    axisLine={{ stroke: "#E5E7EB" }}
+                    axisLine={{ stroke: "rgba(255,255,255,0.09)" }}
                     interval="preserveStartEnd"
                   />
                   <YAxis
-                    tick={{ fill: "#6B7280", fontSize: 10 }}
+                    tick={{ fill: "#61617C", fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(v: number) =>
@@ -546,13 +546,13 @@ export default function VolumeChart() {
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid #E5E7EB",
+                      backgroundColor: "#15152A",
+                      border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: "12px",
                       fontSize: "12px",
-                      color: "#1A1A2E",
+                      color: "#F5F5F8",
                     }}
-                    labelStyle={{ color: "#6B7280" }}
+                    labelStyle={{ color: "#9B9BB0" }}
                     formatter={(value: unknown, name: unknown) => [
                       `${Number(value).toLocaleString()} kg`,
                       routineNames[String(name)] ?? String(name),

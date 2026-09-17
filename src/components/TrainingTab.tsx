@@ -204,7 +204,9 @@ export default function TrainingTab({
       {/* Header */}
       <div className="mb-5 flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-text-primary">Training</h1>
+          <h1 className="text-[28px] leading-tight font-bold text-text-primary tracking-[-0.02em]">
+            Training
+          </h1>
           <p className="text-sm text-text-muted mt-1 flex items-center gap-1.5">
             <Calendar size={14} />
             {dayNames[today]}
@@ -216,7 +218,7 @@ export default function TrainingTab({
         {onOpenPlan && (
           <button
             onClick={onOpenPlan}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-bg-surface text-xs font-medium text-text-muted"
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl surface text-xs font-semibold text-text-muted"
           >
             <SlidersHorizontal size={13} />
             Plan
@@ -226,7 +228,7 @@ export default function TrainingTab({
 
       {/* Rest day note */}
       {isRestDay && (
-        <div className="mb-5 px-3 py-2.5 rounded-2xl bg-blue/8 border border-blue/20 flex items-center gap-2">
+        <div className="mb-5 px-3.5 py-3 rounded-2xl bg-blue/10 border border-blue/25 flex items-center gap-2.5">
           <Moon size={14} className="text-blue shrink-0" />
           <p className="text-xs text-blue">
             {dayNames[today]} is a rest day in your plan. Pick a workout below if
@@ -257,7 +259,7 @@ export default function TrainingTab({
               {isSelected && (
                 <motion.div
                   layoutId="dayTab"
-                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-text-primary rounded-full"
+                  className="absolute bottom-0 left-2 right-2 h-[2.5px] rounded-full grad-primary"
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
                 />
               )}
@@ -273,14 +275,14 @@ export default function TrainingTab({
             <span className="text-xs text-text-muted">
               {completedCount}/{totalExercises} exercises
             </span>
-            <span className="text-xs font-medium text-text-primary flex items-center gap-1">
-              <Flame size={12} className="text-orange" />
+            <span className="text-sm font-bold flex items-center gap-1.5 text-gradient">
+              <Flame size={13} className="text-orange" />
               {progressPct}%
             </span>
           </div>
-          <div className="h-1.5 bg-bg-surface rounded-full overflow-hidden">
+          <div className="h-2 rounded-full overflow-hidden surface-sunken">
             <motion.div
-              className="h-full bg-accent rounded-full"
+              className="h-full rounded-full grad-primary shadow-[var(--glow-primary)]"
               initial={{ width: 0 }}
               animate={{ width: `${progressPct}%` }}
               transition={{ type: "spring", stiffness: 100 }}
@@ -294,7 +296,7 @@ export default function TrainingTab({
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-5 px-4 py-3 bg-success/8 border border-success/20 rounded-2xl"
+          className="mb-5 px-4 py-3.5 bg-success/10 border border-success/30 rounded-2xl shadow-[var(--glow-success)]"
         >
           <p className="text-sm font-semibold text-success text-center">
             Workout Complete! Time for 30 min LISS cardio.
@@ -311,7 +313,7 @@ export default function TrainingTab({
           {onOpenPlan && (
             <button
               onClick={onOpenPlan}
-              className="px-4 py-2.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+              className="px-5 py-3 rounded-2xl btn-primary text-sm font-semibold"
             >
               Build your plan
             </button>
@@ -328,7 +330,7 @@ export default function TrainingTab({
           {onOpenPlan && (
             <button
               onClick={onOpenPlan}
-              className="px-4 py-2.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+              className="px-5 py-3 rounded-2xl btn-primary text-sm font-semibold"
             >
               Add exercises
             </button>

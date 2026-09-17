@@ -189,7 +189,7 @@ export default function PlanEditor({
               return (
                 <div
                   key={name}
-                  className="bg-bg-card border border-border rounded-2xl px-3 py-2.5"
+                  className="surface rounded-2xl px-3 py-2.5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="w-9 text-xs font-semibold text-text-primary">
@@ -206,7 +206,7 @@ export default function PlanEditor({
                       onClick={() => assignDay(day, null)}
                       className={`shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
                         assigned === null
-                          ? "bg-accent text-bg-primary"
+                          ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
                           : "bg-bg-surface text-text-muted"
                       }`}
                     >
@@ -218,7 +218,7 @@ export default function PlanEditor({
                         onClick={() => assignDay(day, r.id)}
                         className={`shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
                           assigned === r.id
-                            ? "bg-accent text-bg-primary"
+                            ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
                             : "bg-bg-surface text-text-muted"
                         }`}
                       >
@@ -238,7 +238,7 @@ export default function PlanEditor({
             <h2 className="text-sm font-semibold text-text-primary">Workouts</h2>
             <button
               onClick={addRoutine}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-accent text-bg-primary text-[11px] font-semibold"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg btn-primary text-[11px] font-semibold"
             >
               <Plus size={12} />
               New
@@ -256,7 +256,7 @@ export default function PlanEditor({
               return (
                 <div
                   key={routine.id}
-                  className="bg-bg-card border border-border rounded-2xl p-3"
+                  className="surface rounded-2xl p-3"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-bg-surface flex items-center justify-center text-lg shrink-0">
@@ -339,7 +339,7 @@ export default function PlanEditor({
                   onChange={(e) =>
                     patchRoutine(editing.id, { name: e.target.value })
                   }
-                  className="flex-1 px-3 py-2.5 rounded-xl bg-bg-input border border-border text-sm text-text-primary outline-none focus:ring-2 focus:ring-accent/20"
+                  className="flex-1 px-3 py-2.5 rounded-xl surface-sunken text-sm text-text-primary outline-none focus:ring-2 focus:ring-violet/40"
                   placeholder="Workout name"
                 />
               </div>
@@ -348,7 +348,7 @@ export default function PlanEditor({
                 onChange={(e) =>
                   patchRoutine(editing.id, { subtitle: e.target.value })
                 }
-                className="w-full px-3 py-2.5 mb-3 rounded-xl bg-bg-input border border-border text-sm text-text-primary outline-none focus:ring-2 focus:ring-accent/20"
+                className="w-full px-3 py-2.5 mb-3 rounded-xl surface-sunken text-sm text-text-primary outline-none focus:ring-2 focus:ring-violet/40"
                 placeholder="Description, e.g. Chest, Shoulders, Triceps"
               />
               <div className="flex gap-1.5 overflow-x-auto no-scrollbar mb-4">
@@ -366,7 +366,7 @@ export default function PlanEditor({
               </div>
 
               {/* Muscles this workout covers */}
-              <div className="bg-bg-card border border-border rounded-2xl p-3 mb-4">
+              <div className="surface rounded-2xl p-3 mb-4">
                 <p className="text-[11px] text-text-muted mb-2">
                   Muscles this workout hits
                 </p>
@@ -392,7 +392,7 @@ export default function PlanEditor({
                 </h3>
                 <button
                   onClick={() => setPickerOpen(true)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-accent text-bg-primary text-[11px] font-semibold"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg btn-primary text-[11px] font-semibold"
                 >
                   <Plus size={12} />
                   Add
@@ -419,7 +419,7 @@ export default function PlanEditor({
                   return (
                     <div
                       key={ref.exerciseId}
-                      className="bg-bg-card border border-border rounded-2xl p-3"
+                      className="surface rounded-2xl p-3"
                     >
                       <div className="flex items-center gap-2">
                         <span className="flex-1 min-w-0">
@@ -472,7 +472,7 @@ export default function PlanEditor({
                                 ),
                               })
                             }
-                            className="w-12 text-center py-1 rounded-lg bg-bg-input border border-border text-xs text-text-primary outline-none"
+                            className="w-12 text-center py-1 rounded-lg surface-sunken text-xs text-text-primary outline-none"
                           />
                         </label>
                         <label className="flex items-center gap-1.5 text-[11px] text-text-subtle">
@@ -486,7 +486,7 @@ export default function PlanEditor({
                                 repsMin: Math.max(1, parseInt(e.target.value) || 1),
                               })
                             }
-                            className="w-12 text-center py-1 rounded-lg bg-bg-input border border-border text-xs text-text-primary outline-none"
+                            className="w-12 text-center py-1 rounded-lg surface-sunken text-xs text-text-primary outline-none"
                           />
                           –
                           <input
@@ -498,7 +498,7 @@ export default function PlanEditor({
                                 repsMax: Math.max(1, parseInt(e.target.value) || 1),
                               })
                             }
-                            className="w-12 text-center py-1 rounded-lg bg-bg-input border border-border text-xs text-text-primary outline-none"
+                            className="w-12 text-center py-1 rounded-lg surface-sunken text-xs text-text-primary outline-none"
                           />
                         </label>
                         <button
@@ -571,7 +571,7 @@ export default function PlanEditor({
               animate={{ y: 0 }}
               exit={{ y: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-bg-card border border-border rounded-2xl p-4"
+              className="w-full max-w-sm surface rounded-2xl p-4"
             >
               <p className="text-sm font-semibold text-text-primary mb-1">
                 Exercise animation
@@ -584,7 +584,7 @@ export default function PlanEditor({
                 value={gifDraft}
                 onChange={(e) => setGifDraft(e.target.value)}
                 placeholder="https://…/exercise.gif"
-                className="w-full px-3 py-2.5 rounded-xl bg-bg-input border border-border text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-accent/20"
+                className="w-full px-3 py-2.5 rounded-xl surface-sunken text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-violet/40"
               />
               <div className="flex gap-2 mt-3">
                 <button
@@ -602,7 +602,7 @@ export default function PlanEditor({
                     // Re-render the plan so resolved GIF URLs refresh.
                     updatePlan((prev) => ({ ...prev }));
                   }}
-                  className="flex-1 py-2.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+                  className="flex-1 py-2.5 rounded-xl btn-primary text-sm font-semibold"
                 >
                   Save
                 </button>
@@ -626,7 +626,7 @@ export default function PlanEditor({
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-bg-card border border-border rounded-2xl p-4"
+              className="w-full max-w-sm surface rounded-2xl p-4"
             >
               <p className="text-sm font-semibold text-text-primary mb-1">
                 Reset your plan?

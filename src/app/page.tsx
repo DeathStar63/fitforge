@@ -43,8 +43,8 @@ export default function Home() {
   if (loading) {
     return (
       <main className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center animate-pulse">
-          <span className="text-bg-primary text-xl font-black">F</span>
+        <div className="w-14 h-14 rounded-3xl grad-primary flex items-center justify-center animate-pulse shadow-[var(--glow-primary)]">
+          <span className="text-[#0B0B14] text-xl font-black">F</span>
         </div>
       </main>
     );
@@ -62,8 +62,8 @@ export default function Home() {
       {/* App header */}
       <header className="px-4 pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-accent flex items-center justify-center">
-            <span className="text-bg-primary text-sm font-black">F</span>
+          <div className="w-9 h-9 rounded-2xl grad-primary flex items-center justify-center shadow-[var(--glow-primary)]">
+            <span className="text-[#0B0B14] text-sm font-black">F</span>
           </div>
           <span className="text-lg font-bold text-text-primary tracking-tight">
             FitForge
@@ -71,7 +71,7 @@ export default function Home() {
         </div>
         <button
           onClick={() => setDrawerOpen(true)}
-          className="w-9 h-9 rounded-xl bg-bg-surface flex items-center justify-center"
+          className="w-9 h-9 rounded-xl surface flex items-center justify-center"
           aria-label="Open menu"
         >
           <Menu size={17} className="text-text-muted" />

@@ -144,3 +144,19 @@
     actionable after scrolling past the suggestions
   - Tab switches scroll to top
   - Deleted `UserAvatar` and `InstallPrompt` — the drawer absorbed both
+
+### Session 8 — 2026-09-17
+- [x] Premium visual pass, working from supplied Pinterest/Dribbble references
+  - Design system in `globals.css`: near-black base, layered translucent
+    surfaces, signature violet->blue gradient, semantic state gradients,
+    ambient radial wash, `.surface` / `.surface-sunken` / `.glass` /
+    `.btn-primary` / `.ring-gradient` utilities
+  - Body map: per-state SVG gradients plus a bloom on trained and selected
+    muscles, replacing flat fills that made same-state neighbours merge
+  - Bottom nav became a floating frosted pill with a gradient active tab
+  - Side drawer became frosted glass
+  - Every solid accent button across 7 components moved to one gradient
+    treatment; inputs became sunken wells
+  - Charts: replaced leftover white-theme colours (white tooltips, light grid
+    lines) that predate the dark redesign
+  - Added a reduced-motion media query
