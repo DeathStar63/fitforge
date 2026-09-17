@@ -118,16 +118,18 @@ export default function BodyTab({
   return (
     <div className={selected.length > 0 ? "px-4 pt-2 pb-[10rem]" : "px-4 pt-2 pb-safe"}>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-text-primary">Body Map</h1>
+        <h1 className="text-[28px] leading-tight font-bold text-text-primary tracking-[-0.02em]">
+          Body Map
+        </h1>
         <p className="text-sm text-text-muted mt-1">
-          Green means recently trained, red means it needs work. Tap a muscle to
-          find exercises for it.
+          Lime means recently trained, grey means it needs work. Tap a muscle
+          to find exercises for it.
         </p>
       </div>
 
       {/* Front / back toggle */}
       <div className="flex items-center justify-between mb-3">
-        <div className="inline-flex rounded-xl bg-bg-surface p-1">
+        <div className="inline-flex rounded-2xl surface-sunken p-1">
           {(["front", "back"] as BodyView[]).map((v) => {
             const count = countForView(v);
             return (
@@ -136,7 +138,7 @@ export default function BodyTab({
                 onClick={() => setView(v)}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-lg capitalize transition-colors flex items-center gap-1.5 ${
                   view === v
-                    ? "bg-bg-card text-text-primary shadow-[var(--shadow-card)]"
+                    ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]"
                     : "text-text-subtle"
                 }`}
               >
@@ -144,7 +146,7 @@ export default function BodyTab({
                 {count > 0 && (
                   <span
                     className={`px-1.5 rounded-full text-[10px] font-bold ${
-                      view === v ? "bg-accent text-bg-primary" : "bg-accent/25 text-accent"
+                      view === v ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]" : "bg-accent/25 text-accent"
                     }`}
                   >
                     {count}
@@ -166,7 +168,7 @@ export default function BodyTab({
       </div>
 
       {/* The figure */}
-      <div className="bg-bg-card border border-border rounded-2xl p-3 mb-4 shadow-[var(--shadow-card)]">
+      <div className="surface rounded-3xl p-3 mb-4">
         <div className="h-[460px] mx-auto">
           <BodyMap
             view={view}
@@ -223,10 +225,10 @@ export default function BodyTab({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}
                   onClick={() => toggleMuscle(s.muscle)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl text-left transition-colors ${
                     selected.includes(s.muscle)
-                      ? "bg-accent/10 border-accent/30"
-                      : "bg-bg-card border-border"
+                      ? "surface ring-gradient"
+                      : "surface"
                   }`}
                 >
                   <span
@@ -281,7 +283,7 @@ export default function BodyTab({
                       return (
                         <div
                           key={m}
-                          className="flex items-center gap-3 px-3 py-2 bg-bg-card border border-border rounded-2xl"
+                          className="flex items-center gap-3 px-3 py-2 surface rounded-2xl"
                         >
                           <span
                             className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -318,7 +320,7 @@ export default function BodyTab({
             {selectedExercises.map((ex) => (
               <div
                 key={ex.id}
-                className="flex items-center gap-3 px-3 py-2.5 bg-bg-card border border-border rounded-2xl"
+                className="flex items-center gap-3 px-3 py-2.5 surface rounded-2xl"
               >
                 <span className="flex-1 min-w-0">
                   <span className="block text-sm font-medium text-text-primary truncate">
@@ -330,7 +332,7 @@ export default function BodyTab({
                 </span>
                 <button
                   onClick={() => addToTodaysRoutine(ex.id)}
-                  className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-accent text-bg-primary text-[11px] font-semibold"
+                  className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl btn-primary text-[11px] font-semibold"
                 >
                   <Plus size={12} />
                   Add
@@ -358,7 +360,7 @@ export default function BodyTab({
           >
             <button
               onClick={() => setBuilderOpen(true)}
-              className="w-full py-3.5 rounded-2xl bg-accent text-bg-primary text-sm font-semibold flex items-center justify-center gap-2 shadow-[var(--shadow-card-lg)]"
+              className="w-full py-3.5 rounded-2xl btn-primary text-sm font-semibold flex items-center justify-center gap-2"
             >
               <Play size={15} />
               Start workout ·{" "}

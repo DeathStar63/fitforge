@@ -15,8 +15,20 @@ import {
 } from "@/lib/muscles";
 import {
   MUSCLE_STATE_COLORS,
+  type MuscleState,
   type MuscleStatusMap,
 } from "@/lib/muscleStatus";
+
+/** [top stop, bottom stop] per state. */
+const STATE_GRADIENTS: Record<MuscleState | "none", [string, string]> = {
+  // Lime for trained, warm amber for recovered, and plain grey for dormant.
+  // "You have not trained this in five days" does not deserve an alarm colour
+  // on a dozen muscles at once, and grey lets the trained ones lead the eye.
+  worked: ["#E2FA5B", "#93B81C"],
+  ready: ["#FBBF24", "#B45309"],
+  due: ["#4C505C", "#31343D"],
+  none: ["#3E414B", "#282B33"],
+};
 
 interface BodyMapProps {
   view: BodyView;
@@ -37,11 +49,13 @@ const LABEL_GUTTER = 96; // extra width on the right for the name column
 const LABEL_X = BODY_VIEWBOX.width + 16; // where the text sits
 const LABEL_MIN_GAP = 21; // smallest vertical gap between two stacked labels
 
-const NEUTRAL_FILL = "#2A2A3E";
-const NEUTRAL_STROKE = "#3A3A52";
+/** Untrained muscle and the body itself, as gradient stops. */
+const SILHOUETTE_TOP = "#1E2029";
+const SILHOUETTE_BOTTOM = "#101219";
+const NEUTRAL_STROKE = "rgba(255,255,255,0.10)";
 /** Separator between neighbouring muscles — without it, a row of muscles in
  *  the same state reads as one undifferentiated blob. */
-const SEPARATOR = "#0F0F17";
+const SEPARATOR = "#08080C";
 
 /**
  * Draws a region plus, when `mirror` is set, its x-flipped twin.
@@ -123,13 +137,46 @@ const BodyMap = memo(function BodyMap({
         <clipPath id={clipId}>
           <RegionPaths regions={SILHOUETTE} />
         </clipPath>
+
+        {/* The body itself, lit from above */}
+        <linearGradient id={`${clipId}-body`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={SILHOUETTE_TOP} />
+          <stop offset="100%" stopColor={SILHOUETTE_BOTTOM} />
+        </linearGradient>
+
+        {/* One gradient per state, plus the unknown/neutral case. Flat fills
+            made neighbouring muscles in the same state merge into one blob;
+            a gradient gives each shape its own highlight and shadow. */}
+        {(Object.keys(STATE_GRADIENTS) as (MuscleState | "none")[]).map((key) => {
+          const [from, to] = STATE_GRADIENTS[key];
+          return (
+            <linearGradient
+              key={key}
+              id={`${clipId}-${key}`}
+              x1="0"
+              y1="0"
+              x2="0.35"
+              y2="1"
+            >
+              <stop offset="0%" stopColor={from} />
+              <stop offset="100%" stopColor={to} />
+            </linearGradient>
+          );
+        })}
+
+        {/* Soft bloom behind the fills, so a trained muscle reads as lit
+            rather than painted. */}
+        <filter id={`${clipId}-glow`} x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feComposite in="blur" in2="SourceGraphic" operator="over" />
+        </filter>
       </defs>
 
       {/* Body outline */}
       <g>
         <RegionPaths
           regions={SILHOUETTE}
-          fill={NEUTRAL_FILL}
+          fill={`url(#${clipId}-body)`}
           stroke={NEUTRAL_STROKE}
           strokeWidth={1}
           strokeLinejoin="round"
@@ -148,11 +195,14 @@ const BodyMap = memo(function BodyMap({
           // With no history to colour by (the plan editor's preview maps), a
           // highlighted muscle is the only thing worth picking out.
           const fill = status
-            ? MUSCLE_STATE_COLORS[status.state]
+            ? `url(#${clipId}-${status.state})`
             : isHighlighted
               ? "#60A5FA"
-              : "#4B5563";
-          const opacity = isSelected || isHighlighted ? 0.95 : status ? 0.62 : 0.4;
+              : `url(#${clipId}-none)`;
+          const opacity = isSelected || isHighlighted ? 1 : status ? 1 : 0.85;
+          // Bloom only where there is something to celebrate, and on whatever
+          // is selected — glowing all 21 at once is just noise.
+          const lit = isSelected || status?.state === "worked";
 
           return (
             <motion.g
@@ -167,12 +217,13 @@ const BodyMap = memo(function BodyMap({
               <RegionPaths
                 regions={groupRegions}
                 fill={fill}
-                stroke={isSelected ? "#F0F0F0" : SEPARATOR}
+                filter={lit ? `url(#${clipId}-glow)` : undefined}
+                stroke={isSelected ? "#FFFFFF" : SEPARATOR}
                 // A heavy outline on every selection turns a dozen picks into
                 // armour plating; the callout already names what is selected,
                 // so the outline only has to read as "this one".
-                strokeWidth={isSelected ? 1.3 : 0.9}
-                strokeOpacity={isSelected ? 0.9 : 0.55}
+                strokeWidth={isSelected ? 1.5 : 0.9}
+                strokeOpacity={isSelected ? 0.95 : 0.7}
                 strokeLinejoin="round"
               />
             </motion.g>
@@ -191,9 +242,9 @@ const BodyMap = memo(function BodyMap({
               key={id}
               regions={groupRegions}
               fill="none"
-              stroke="#60A5FA"
-              strokeWidth={2}
-              strokeDasharray="4 3"
+              stroke="#DCF64F"
+              strokeWidth={1.5}
+              strokeDasharray="3.5 3"
               strokeLinejoin="round"
             />
           );
@@ -205,7 +256,7 @@ const BodyMap = memo(function BodyMap({
         <g pointerEvents="none">
           {callouts.map(({ id, anchor, labelY }) => {
             const status = statuses?.[id];
-            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#9CA3AF";
+            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#62655F";
             const elbowX = BODY_VIEWBOX.width + 4;
             return (
               <motion.g
@@ -222,7 +273,7 @@ const BodyMap = memo(function BodyMap({
                   fill="none"
                   stroke={color}
                   strokeWidth={1.1}
-                  strokeOpacity={0.5}
+                  strokeOpacity={0.55}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -231,9 +282,10 @@ const BodyMap = memo(function BodyMap({
                   x={LABEL_X}
                   y={labelY}
                   dominantBaseline="middle"
-                  fill="#F0F0F0"
+                  fill="#F4F5F0"
                   fontSize={12}
-                  fontWeight={500}
+                  fontWeight={600}
+                  letterSpacing="-0.01em"
                 >
                   {muscleLabel(id)}
                 </text>

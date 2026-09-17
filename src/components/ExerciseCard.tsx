@@ -71,8 +71,8 @@ const ExerciseCard = memo(function ExerciseCard({
       transition={{ delay: index * 0.05 }}
       className={`rounded-2xl overflow-hidden transition-colors ${
         allSetsCompleted
-          ? "bg-success/5 border border-success/20"
-          : "bg-bg-card border border-border shadow-[var(--shadow-card)]"
+          ? "surface ring-gradient"
+          : "surface"
       }`}
     >
       {/* Header */}

@@ -102,3 +102,20 @@
 **Decision:** `RestTimer` takes a `runKey` counter that the training screen increments whenever a set goes from incomplete to complete. A change to that number restarts the countdown.
 **Why this shape:** the caller does not have to know whether a rest is already running, and the timer owns all its own state. The transition is detected in the event handlers against a ref mirror of the log rather than by watching state in an effect — `ExerciseCard` is memoised, so a handler whose identity changed on every logged set would re-render every card in the workout.
 **Implementation notes:** it counts against a wall-clock end time rather than accumulating interval ticks, so backgrounding the tab does not leave it behind; the duration is remembered in localStorage and adjustable by 15s; the restart is done with the "adjust state when a prop changes" pattern rather than an effect, which would render the previous remaining time for a frame before correcting it.
+
+## ADR-022: A Design System, Not Scattered Gradients
+**Decision:** Visual language lives in `globals.css` as tokens plus five utilities — `.surface`, `.surface-sunken`, `.glass`, `.btn-primary`/`.grad-primary`, `.ring-gradient` — and components use those instead of one-off colour classes.
+**Why:** the ask was "make it look premium, use gradients". Sprinkling gradients per component produces an app where every screen is slightly differently premium. Because the Tailwind v4 `@theme` block already generated every `bg-bg-card` / `text-text-muted` / `border-border` utility from tokens, deepening the palette in one place lifted every screen at once, and the utilities then handled the surfaces that needed real treatment.
+**The palette:** near-black base (`#07070D`), layered translucent surfaces, one signature gradient (violet → indigo → blue) for anything primary, and semantic gradients for the states the body map reports.
+**The detail that does the work:** `.surface` draws a hairline of light along the top edge of each card. That single 1px gradient is most of the difference between "dark theme" and something that looks lit — a flat dark rectangle reads as absence of colour, a top-lit one reads as a physical panel.
+**Ambient wash:** `body::before` lays three wide radial gradients over the base so the near-black never reads as flat grey. It is `position: fixed` and `pointer-events: none`, sitting under content that is already positioned.
+
+## ADR-023: Body Map Gradients
+**Decision:** Each muscle state is an SVG `linearGradient` rather than a flat fill, and muscles in the `worked` state (plus anything selected) get a Gaussian bloom.
+**Why:** flat fills made neighbouring muscles in the same state merge into a single blob — the whole upper back read as one green shape. A vertical gradient gives every shape its own highlight and shadow, so the separator strokes have something to separate.
+**Tuning note:** the first attempt used pale top stops (`#FDA4AF`, `#6EE7B7`) which read as pastel rather than premium against black. Deep bottom stops with saturated tops (`#F43F5E` → `#9F1239`) hold up far better on a near-black background.
+**Restraint:** the bloom is applied only to trained and selected muscles. Glowing all 21 at once is noise, not emphasis.
+
+## ADR-024: Charts Were Still Light-Themed
+**Decision:** Recharts grids, axes and tooltips moved to the dark palette.
+**Why:** they carried `#FFFFFF` tooltip backgrounds, `#E5E7EB` grid lines and `#1A1A2E` label text — left over from the white theme described in ADR-004 and never updated when the app went dark. A white tooltip card on a near-black chart is the most obvious possible seam.

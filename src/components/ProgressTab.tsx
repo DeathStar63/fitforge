@@ -154,7 +154,7 @@ export default function ProgressTab() {
             onClick={() => setTimeRange(tr.value)}
             className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
               timeRange === tr.value
-                ? "bg-accent text-bg-primary"
+                ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]"
                 : "text-text-subtle"
             }`}
           >
@@ -166,7 +166,7 @@ export default function ProgressTab() {
       {/* Exercise selector */}
       <div className="mb-5 space-y-2">
         {workoutDays.map((day) => (
-          <div key={day.id} className="bg-bg-card rounded-2xl border border-border overflow-hidden shadow-[var(--shadow-card)]">
+          <div key={day.id} className="surface rounded-2xl overflow-hidden shadow-[var(--shadow-card)]">
             <button
               onClick={() => setExpandedWorkout(expandedWorkout === day.id ? null : day.id)}
               className="w-full flex items-center justify-between p-3.5"
@@ -215,7 +215,7 @@ export default function ProgressTab() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-bg-card rounded-2xl border border-border p-4 mb-5 shadow-[var(--shadow-card)]"
+          className="surface rounded-2xl p-4 mb-5 shadow-[var(--shadow-card)]"
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
             {selectedName}
@@ -224,19 +224,19 @@ export default function ProgressTab() {
 
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={selectedProgress}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2A2A3E" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" vertical={false} />
               <XAxis
                 dataKey="date"
                 tickFormatter={(d: string) => {
                   const date = new Date(d);
                   return `${date.getDate()}/${date.getMonth() + 1}`;
                 }}
-                tick={{ fontSize: 10, fill: "#5C5C72" }}
+                tick={{ fontSize: 10, fill: "#62655F" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: "#5C5C72" }}
+                tick={{ fontSize: 10, fill: "#62655F" }}
                 axisLine={false}
                 tickLine={false}
                 width={35}
@@ -245,7 +245,7 @@ export default function ProgressTab() {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1A1A28",
+                  backgroundColor: "#15151C",
                   border: "1px solid #2A2A3E",
                   borderRadius: "12px",
                   fontSize: "12px",
@@ -260,10 +260,10 @@ export default function ProgressTab() {
               <Line
                 type="monotone"
                 dataKey="maxWeight"
-                stroke="#22C55E"
+                stroke="#DCF64F"
                 strokeWidth={2}
-                dot={{ fill: "#22C55E", r: 4 }}
-                activeDot={{ fill: "#22C55E", r: 6 }}
+                dot={{ fill: "#DCF64F", r: 4 }}
+                activeDot={{ fill: "#DCF64F", r: 6 }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -275,7 +275,7 @@ export default function ProgressTab() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-bg-card rounded-2xl border border-border p-4 mb-5 shadow-[var(--shadow-card)]"
+          className="surface rounded-2xl p-4 mb-5 shadow-[var(--shadow-card)]"
         >
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp size={14} className="text-success" />
@@ -311,7 +311,7 @@ export default function ProgressTab() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-bg-card rounded-2xl border border-border overflow-hidden mb-5 shadow-[var(--shadow-card)]"
+          className="surface rounded-2xl overflow-hidden mb-5 shadow-[var(--shadow-card)]"
         >
           <div className="px-4 py-3 border-b border-border">
             <h3 className="text-sm font-semibold text-text-primary">Session History</h3>

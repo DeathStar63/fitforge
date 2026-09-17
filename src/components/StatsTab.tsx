@@ -160,7 +160,7 @@ export default function StatsTab() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-bg-card rounded-2xl border border-border p-3 shadow-[var(--shadow-card)]"
+                className="surface rounded-2xl p-3 shadow-[var(--shadow-card)]"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <div
@@ -196,7 +196,7 @@ export default function StatsTab() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-bg-card rounded-2xl border border-border p-4 mb-4 shadow-[var(--shadow-card)]"
+            className="surface rounded-2xl p-4 mb-4 shadow-[var(--shadow-card)]"
           >
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -254,7 +254,7 @@ export default function StatsTab() {
             </div>
             <button
               onClick={handleSaveActivity}
-              className="w-full mt-3 py-2.5 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+              className="w-full mt-3 py-2.5 rounded-xl btn-primary text-sm font-semibold"
             >
               Save Activity
             </button>
@@ -262,7 +262,7 @@ export default function StatsTab() {
         )}
 
         {/* Apple Health connect note */}
-        <div className="bg-bg-card rounded-2xl border border-border p-4 shadow-[var(--shadow-card)]">
+        <div className="surface rounded-2xl p-4 shadow-[var(--shadow-card)]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-pink/8 flex items-center justify-center shrink-0">
               <Smartphone size={18} className="text-pink" />

@@ -12,17 +12,21 @@ A Progressive Web App for personal fitness transformation tracking. Built for a 
 - **PWA:** next-pwa with manifest.json + service worker
 
 ## Design Language
-- Clean, minimal white theme inspired by fitness app UI reference
-- Background: `#FFFFFF` (pure white), Cards: `#FFFFFF`, Surface: `#F5F6FA`
-- Primary accent: `#1A1A2E` (dark navy — buttons, active nav, CTAs)
-- Category colors: Orange `#F97316` (calories), Blue `#3B82F6` (protein), Green `#22C55E` (carbs/success), Pink `#F472B6` (fats)
-- Text: `#1A1A2E` (primary), `#6B7280` (muted), `#B0B5C0` (subtle)
-- White cards with subtle box shadows, minimal borders
-- Pastel icon backgrounds (orange/8, blue/8, etc.) for stat/macro icons
-- Font: Inter (sans-serif)
-- Border radius: 16px cards, 12px buttons/inputs
-- Bottom nav: dark rounded square behind active icon (white icon inside)
-- Tab selectors: underline style
+Premium dark. Tokens and utilities live in `src/app/globals.css`; components
+should use those rather than one-off colours.
+- Base: `#07070D` with an ambient radial wash (violet / pink / cyan) on `body::before`
+- Surfaces: `.surface` (raised, top-lit hairline), `.surface-sunken` (wells,
+  inputs), `.glass` (frosted chrome — nav, drawer)
+- Signature gradient: violet -> indigo -> blue (`--grad-primary`), used by
+  `.btn-primary`, `.grad-primary`, `.text-gradient`, `.ring-gradient`
+- Semantic gradients: `--grad-success`, `--grad-warn`, `--grad-danger`, `--grad-flame`
+- Muscle map states: worked `#34D399`->`#047857`, ready `#FBBF24`->`#B45309`,
+  needs work `#F43F5E`->`#9F1239`, each as an SVG gradient with a bloom on
+  trained and selected muscles
+- Text: `#F5F5F8` primary, `#9B9BB0` muted, `#61617C` subtle
+- Font: Inter. Headings `tracking-[-0.02em]`
+- Radius: 24px hero cards, 16px cards, 12px controls
+- Bottom nav: floating frosted pill, gradient behind the active tab
 
 ## Workout Split (default — fully customisable)
 The schedule below is the default plan. It lives in `src/lib/plan.ts` and users

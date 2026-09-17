@@ -91,6 +91,16 @@
 - [x] Tab switches start at the top of the new screen
 - [x] Deleted UserAvatar and InstallPrompt, both absorbed by the drawer
 
+## Phase 10: Premium Visual Pass [COMPLETE]
+- [x] Design system in globals.css: deepened tokens, surface/glass/gradient
+      utilities, ambient background wash
+- [x] Body map redrawn with per-state gradients and a bloom on trained muscles
+- [x] Floating frosted bottom nav with a gradient active pill
+- [x] Every primary button on one gradient treatment with a matching glow
+- [x] Inputs read as wells rather than raised chips
+- [x] Charts moved off the leftover white-theme colours
+- [x] Frosted side drawer
+
 ## Future
 - [ ] Native iOS wrapper (Capacitor) for automatic Apple Health sync
 - [ ] Workout history calendar view

@@ -162,9 +162,9 @@ export function musclesInRoutine(exerciseIds: string[]): MuscleId[] {
 }
 
 export const MUSCLE_STATE_COLORS: Record<MuscleState, string> = {
-  worked: "#22C55E",
-  ready: "#F59E0B",
-  due: "#EF4444",
+  worked: "#DCF64F",
+  ready: "#FBBF24",
+  due: "#5B606C",
 };
 
 export const MUSCLE_STATE_LABELS: Record<MuscleState, string> = {

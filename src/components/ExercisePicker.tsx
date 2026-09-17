@@ -81,7 +81,7 @@ export default function ExercisePicker({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search exercises"
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-bg-input border border-border text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-accent/20"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl surface-sunken text-sm text-text-primary placeholder:text-text-subtle outline-none focus:ring-2 focus:ring-violet/40"
           />
         </div>
 
@@ -92,7 +92,7 @@ export default function ExercisePicker({
               onClick={() => setGroup((prev) => (prev === g ? null : g))}
               className={`shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
                 group === g
-                  ? "bg-accent text-bg-primary"
+                  ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]"
                   : "bg-bg-surface text-text-muted"
               }`}
             >
@@ -148,8 +148,8 @@ export default function ExercisePicker({
                 onClick={() => onToggle(ex.id)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left transition-colors ${
                   isSelected
-                    ? "bg-success/8 border-success/30"
-                    : "bg-bg-card border-border"
+                    ? "bg-success/10 border-success/35"
+                    : "surface"
                 }`}
               >
                 <span
@@ -185,7 +185,7 @@ export default function ExercisePicker({
       <div className="px-4 py-3 border-b border-border">
         <button
           onClick={onClose}
-          className="w-full py-3 rounded-xl bg-accent text-bg-primary text-sm font-semibold"
+          className="w-full py-3.5 rounded-2xl btn-primary text-sm font-semibold"
         >
           Done
         </button>
