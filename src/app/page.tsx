@@ -44,7 +44,7 @@ export default function Home() {
     return (
       <main className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="w-14 h-14 rounded-3xl grad-primary flex items-center justify-center animate-pulse shadow-[var(--glow-primary)]">
-          <span className="text-[#0B0B14] text-xl font-black">F</span>
+          <span className="text-[#14151A] text-xl font-black">F</span>
         </div>
       </main>
     );
@@ -63,7 +63,7 @@ export default function Home() {
       <header className="px-4 pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-2xl grad-primary flex items-center justify-center shadow-[var(--glow-primary)]">
-            <span className="text-[#0B0B14] text-sm font-black">F</span>
+            <span className="text-[#14151A] text-sm font-black">F</span>
           </div>
           <span className="text-lg font-bold text-text-primary tracking-tight">
             FitForge

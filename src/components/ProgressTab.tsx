@@ -154,7 +154,7 @@ export default function ProgressTab() {
             onClick={() => setTimeRange(tr.value)}
             className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
               timeRange === tr.value
-                ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
+                ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]"
                 : "text-text-subtle"
             }`}
           >
@@ -224,19 +224,19 @@ export default function ProgressTab() {
 
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={selectedProgress}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(20,21,26,0.07)" vertical={false} />
               <XAxis
                 dataKey="date"
                 tickFormatter={(d: string) => {
                   const date = new Date(d);
                   return `${date.getDate()}/${date.getMonth() + 1}`;
                 }}
-                tick={{ fontSize: 10, fill: "#61617C" }}
+                tick={{ fontSize: 10, fill: "#9DA1AB" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: "#61617C" }}
+                tick={{ fontSize: 10, fill: "#9DA1AB" }}
                 axisLine={false}
                 tickLine={false}
                 width={35}
@@ -245,7 +245,7 @@ export default function ProgressTab() {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#15152A",
+                  backgroundColor: "#FFFFFF",
                   border: "1px solid #2A2A3E",
                   borderRadius: "12px",
                   fontSize: "12px",
@@ -260,10 +260,10 @@ export default function ProgressTab() {
               <Line
                 type="monotone"
                 dataKey="maxWeight"
-                stroke="#34D399"
+                stroke="#9BC61A"
                 strokeWidth={2}
-                dot={{ fill: "#34D399", r: 4 }}
-                activeDot={{ fill: "#34D399", r: 6 }}
+                dot={{ fill: "#9BC61A", r: 4 }}
+                activeDot={{ fill: "#9BC61A", r: 6 }}
               />
             </LineChart>
           </ResponsiveContainer>

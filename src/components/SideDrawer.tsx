@@ -91,7 +91,7 @@ export default function SideDrawer({ open, onClose, onOpenPlan }: SideDrawerProp
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[85] bg-black/60 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[85] bg-[#14151A]/35 backdrop-blur-[3px]"
           />
           <motion.aside
             initial={{ x: "100%" }}
@@ -104,14 +104,14 @@ export default function SideDrawer({ open, onClose, onOpenPlan }: SideDrawerProp
             onDragEnd={(_, info) => {
               if (info.offset.x > 80 || info.velocity.x > 500) onClose();
             }}
-            className="fixed top-0 right-0 bottom-0 z-[86] w-[82%] max-w-[320px] glass border-y-0 border-r-0 flex flex-col"
+            className="fixed top-0 right-0 bottom-0 z-[86] w-[82%] max-w-[320px] bg-bg-card border-l border-border flex flex-col shadow-[var(--shadow-card-lg)]"
           >
             <div className="h-[env(safe-area-inset-top)]" />
 
             {/* Account */}
             <div className="px-4 pt-4 pb-4 border-b border-border flex items-start gap-3">
               <div className="w-11 h-11 rounded-2xl grad-primary flex items-center justify-center shrink-0 shadow-[var(--glow-primary)]">
-                <span className="text-[#0B0B14] text-base font-black">
+                <span className="text-[#14151A] text-base font-black">
                   {user?.email?.charAt(0).toUpperCase() || "F"}
                 </span>
               </div>

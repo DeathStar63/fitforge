@@ -92,7 +92,7 @@ export default function ExercisePicker({
               onClick={() => setGroup((prev) => (prev === g ? null : g))}
               className={`shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
                 group === g
-                  ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
+                  ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]"
                   : "bg-bg-surface text-text-muted"
               }`}
             >

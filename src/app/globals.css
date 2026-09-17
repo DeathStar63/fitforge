@@ -1,64 +1,58 @@
 @import "tailwindcss";
 
 /*
- * Design system
- * -------------
- * Near-black base, layered translucent surfaces, one signature gradient for
- * anything primary, and semantic gradients for the states the body map and the
- * stats screens report. Colour lives in the tokens below rather than in
- * components, so the palette can move without touching markup.
+ * Design system — light, with a single acid-lime accent.
+ *
+ * Off-white page, pure white cards on soft diffuse shadows, near-black chrome
+ * for controls, and lime reserved for the one thing that matters on a screen.
+ * Colour lives in these tokens rather than in components.
  */
 
 @theme inline {
-  /* Surfaces, from deepest to most raised */
-  --color-bg-primary: #07070D;
-  --color-bg-card: #111120;
-  --color-bg-surface: #1A1A2B;
-  --color-bg-input: #15152A;
+  --color-bg-primary: #EEEFF2;
+  --color-bg-card: #FFFFFF;
+  --color-bg-surface: #F4F5F8;
+  --color-bg-input: #F4F5F8;
 
-  --color-accent: #F4F4F7;
-  --color-accent-dim: #B8B8C4;
+  /* Chrome: pills, segmented controls, the nav bar */
+  --color-ink: #16171D;
+  --color-ink-soft: #2A2C34;
 
-  /* Signature */
-  --color-violet: #8B5CF6;
-  --color-indigo: #6366F1;
+  /* The accent */
+  --color-lime: #DCF64F;
+  --color-lime-deep: #B6D62A;
 
-  /* Semantic */
-  --color-orange: #FB923C;
-  --color-success: #34D399;
-  --color-error: #FB7185;
-  --color-blue: #60A5FA;
-  --color-pink: #F472B6;
+  --color-accent: #16171D;
+  --color-accent-dim: #4A4D57;
 
-  --color-text-primary: #F5F5F8;
-  --color-text-muted: #9B9BB0;
-  --color-text-subtle: #61617C;
-  --color-border: #23233C;
+  --color-orange: #F97316;
+  --color-success: #4FAE4F;
+  --color-error: #E5484D;
+  --color-blue: #3B82F6;
+  --color-pink: #EC4899;
+  --color-violet: #7C6BF5;
+
+  --color-text-primary: #14151A;
+  --color-text-muted: #6B6F78;
+  --color-text-subtle: #9DA1AB;
+  --color-border: #E3E5EA;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
-  --shadow-card-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 1px 2px rgba(18, 20, 28, 0.04), 0 6px 20px -8px rgba(18, 20, 28, 0.1);
+  --shadow-card-lg: 0 2px 6px rgba(18, 20, 28, 0.05), 0 18px 40px -14px rgba(18, 20, 28, 0.18);
 }
 
 :root {
-  --grad-primary: linear-gradient(135deg, #A78BFA 0%, #7C6BF5 45%, #5B8DEF 100%);
-  --grad-success: linear-gradient(135deg, #6EE7B7 0%, #10B981 100%);
+  --grad-primary: linear-gradient(135deg, #E9FF72 0%, #DCF64F 45%, #C3E62F 100%);
+  --grad-success: linear-gradient(135deg, #A3E635 0%, #65A30D 100%);
   --grad-warn: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
   --grad-danger: linear-gradient(135deg, #FDA4AF 0%, #F43F5E 100%);
   --grad-flame: linear-gradient(135deg, #FDBA74 0%, #F97316 100%);
+  --grad-ink: linear-gradient(135deg, #24262F 0%, #16171D 100%);
 
-  --glow-primary: 0 10px 34px -10px rgba(124, 107, 245, 0.65);
-  --glow-success: 0 10px 30px -12px rgba(16, 185, 129, 0.55);
-
-  /* The hairline of light along the top edge of a raised surface */
-  --edge-light: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.16) 30%,
-    rgba(255, 255, 255, 0.16) 70%,
-    transparent
-  );
+  --glow-primary: 0 10px 28px -10px rgba(182, 214, 42, 0.55);
+  --glow-ink: 0 10px 28px -12px rgba(18, 20, 28, 0.45);
 }
 
 * {
@@ -75,7 +69,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Ambient wash so the near-black never reads as flat grey */
+/* A barely-there wash so the page is not a flat grey slab */
 body::before {
   content: "";
   position: fixed;
@@ -83,9 +77,8 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(70% 38% at 50% -8%, rgba(124, 107, 245, 0.2), transparent 72%),
-    radial-gradient(48% 30% at 102% 4%, rgba(236, 72, 153, 0.09), transparent 72%),
-    radial-gradient(60% 34% at -8% 22%, rgba(56, 189, 248, 0.07), transparent 72%);
+    radial-gradient(72% 40% at 50% -10%, rgba(220, 246, 79, 0.22), transparent 70%),
+    radial-gradient(50% 32% at 104% 6%, rgba(59, 130, 246, 0.07), transparent 72%);
 }
 
 input,
@@ -114,51 +107,33 @@ input[type="number"] {
 
 /* ---------------------------------------------------------------- surfaces */
 
-/**
- * A raised panel: a faint top-lit gradient, a hairline border, and a light
- * edge along the top. The edge is what stops a dark card reading as a flat
- * rectangle — it is the single biggest difference between "dark theme" and
- * something that looks lit.
- */
+/** A white card floating on the page. On light, depth comes from a soft
+ *  diffuse shadow rather than the top-lit hairline a dark theme needs. */
 .surface {
   position: relative;
-  background: linear-gradient(
-    168deg,
-    rgba(255, 255, 255, 0.062) 0%,
-    rgba(255, 255, 255, 0.022) 42%,
-    rgba(255, 255, 255, 0.012) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.075);
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 21, 26, 0.045);
   box-shadow: var(--shadow-card);
 }
 
-.surface::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 12%;
-  right: 12%;
-  height: 1px;
-  background: var(--edge-light);
-  pointer-events: none;
-}
-
-/* Same treatment, but reading as inset rather than raised — inputs, wells. */
+/* Inset well — inputs, the track behind a progress bar */
 .surface-sunken {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0%,
-    rgba(255, 255, 255, 0.025) 140%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.055);
+  background: #F1F2F6;
+  border: 1px solid rgba(20, 21, 26, 0.05);
 }
 
-/* Frosted bar for the nav and any sticky chrome */
+/* Frosted bar for sticky chrome */
 .glass {
-  background: rgba(12, 12, 22, 0.72);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(20, 21, 26, 0.06);
+}
+
+/* The near-black chrome from the reference: nav bar, segmented controls */
+.ink {
+  background-image: var(--grad-ink);
+  color: #FFFFFF;
 }
 
 /* ----------------------------------------------------------------- accents */
@@ -169,28 +144,47 @@ input[type="number"] {
 
 .btn-primary {
   background-image: var(--grad-primary);
-  color: #0B0B14;
+  color: #14151A;
   box-shadow: var(--glow-primary);
   transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 .btn-primary:active:not(:disabled) {
   transform: scale(0.985);
-  filter: brightness(1.05);
+  filter: brightness(1.04);
 }
 .btn-primary:disabled {
   box-shadow: none;
-  filter: grayscale(0.5);
+  filter: grayscale(0.6);
 }
 
-/* Gradient text, for figures worth looking at */
+/* Dark counterpart, for secondary actions and anything that must not compete */
+.btn-ink {
+  background-image: var(--grad-ink);
+  color: #FFFFFF;
+  box-shadow: var(--glow-ink);
+  transition: transform 0.15s ease, filter 0.2s ease;
+}
+.btn-ink:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+/* The reference's signature move: lime behind a word, like a marker pen */
+.text-marker {
+  background-image: linear-gradient(
+    180deg,
+    transparent 8%,
+    var(--color-lime) 8%,
+    var(--color-lime) 92%,
+    transparent 92%
+  );
+  padding: 0 0.18em;
+  border-radius: 4px;
+}
+
 .text-gradient {
-  background-image: var(--grad-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-text-primary);
 }
 
-/* A 1px gradient outline, drawn with a mask so the fill stays transparent */
 .ring-gradient {
   position: relative;
 }
@@ -199,7 +193,7 @@ input[type="number"] {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.5px;
   background: var(--grad-primary);
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,

@@ -21,10 +21,13 @@ import {
 
 /** [top stop, bottom stop] per state. */
 const STATE_GRADIENTS: Record<MuscleState | "none", [string, string]> = {
-  worked: ["#34D399", "#047857"],
-  ready: ["#FBBF24", "#B45309"],
-  due: ["#F43F5E", "#9F1239"],
-  none: ["#3B3B58", "#22223A"],
+  // Lime for trained, warm amber for recovered, and plain grey for dormant.
+  // "You have not trained this in five days" does not deserve an alarm colour
+  // on a dozen muscles at once, and grey lets the trained ones lead the eye.
+  worked: ["#DCF64F", "#93B81C"],
+  ready: ["#FDBA4A", "#D97706"],
+  due: ["#C7CBD4", "#A3A8B4"],
+  none: ["#D7DAE1", "#BFC3CC"],
 };
 
 interface BodyMapProps {
@@ -47,12 +50,12 @@ const LABEL_X = BODY_VIEWBOX.width + 16; // where the text sits
 const LABEL_MIN_GAP = 21; // smallest vertical gap between two stacked labels
 
 /** Untrained muscle and the body itself, as gradient stops. */
-const SILHOUETTE_TOP = "#20203A";
-const SILHOUETTE_BOTTOM = "#101020";
-const NEUTRAL_STROKE = "rgba(255,255,255,0.10)";
+const SILHOUETTE_TOP = "#E6E8ED";
+const SILHOUETTE_BOTTOM = "#D2D6DE";
+const NEUTRAL_STROKE = "rgba(20,21,26,0.10)";
 /** Separator between neighbouring muscles — without it, a row of muscles in
  *  the same state reads as one undifferentiated blob. */
-const SEPARATOR = "#07070D";
+const SEPARATOR = "#FFFFFF";
 
 /**
  * Draws a region plus, when `mirror` is set, its x-flipped twin.
@@ -196,7 +199,7 @@ const BodyMap = memo(function BodyMap({
             : isHighlighted
               ? "#60A5FA"
               : `url(#${clipId}-none)`;
-          const opacity = isSelected || isHighlighted ? 1 : status ? 0.9 : 0.55;
+          const opacity = isSelected || isHighlighted ? 1 : status ? 1 : 0.85;
           // Bloom only where there is something to celebrate, and on whatever
           // is selected — glowing all 21 at once is just noise.
           const lit = isSelected || status?.state === "worked";
@@ -215,12 +218,12 @@ const BodyMap = memo(function BodyMap({
                 regions={groupRegions}
                 fill={fill}
                 filter={lit ? `url(#${clipId}-glow)` : undefined}
-                stroke={isSelected ? "#FFFFFF" : SEPARATOR}
+                stroke={isSelected ? "#16171D" : SEPARATOR}
                 // A heavy outline on every selection turns a dozen picks into
                 // armour plating; the callout already names what is selected,
                 // so the outline only has to read as "this one".
-                strokeWidth={isSelected ? 1.3 : 0.9}
-                strokeOpacity={isSelected ? 0.95 : 0.65}
+                strokeWidth={isSelected ? 1.6 : 1}
+                strokeOpacity={isSelected ? 0.9 : 0.8}
                 strokeLinejoin="round"
               />
             </motion.g>
@@ -239,8 +242,8 @@ const BodyMap = memo(function BodyMap({
               key={id}
               regions={groupRegions}
               fill="none"
-              stroke="#93C5FD"
-              strokeWidth={1.6}
+              stroke="#16171D"
+              strokeWidth={1.4}
               strokeDasharray="3.5 3"
               strokeLinejoin="round"
             />
@@ -253,7 +256,7 @@ const BodyMap = memo(function BodyMap({
         <g pointerEvents="none">
           {callouts.map(({ id, anchor, labelY }) => {
             const status = statuses?.[id];
-            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#9CA3AF";
+            const color = status ? MUSCLE_STATE_COLORS[status.state] : "#9DA1AB";
             const elbowX = BODY_VIEWBOX.width + 4;
             return (
               <motion.g
@@ -279,7 +282,7 @@ const BodyMap = memo(function BodyMap({
                   x={LABEL_X}
                   y={labelY}
                   dominantBaseline="middle"
-                  fill="#F5F5F8"
+                  fill="#14151A"
                   fontSize={12}
                   fontWeight={600}
                   letterSpacing="-0.01em"

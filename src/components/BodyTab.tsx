@@ -122,8 +122,8 @@ export default function BodyTab({
           Body Map
         </h1>
         <p className="text-sm text-text-muted mt-1">
-          Green means recently trained, red means it needs work. Tap a muscle to
-          find exercises for it.
+          Lime means recently trained, grey means it needs work. Tap a muscle
+          to find exercises for it.
         </p>
       </div>
 
@@ -138,7 +138,7 @@ export default function BodyTab({
                 onClick={() => setView(v)}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-lg capitalize transition-colors flex items-center gap-1.5 ${
                   view === v
-                    ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]"
+                    ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]"
                     : "text-text-subtle"
                 }`}
               >
@@ -146,7 +146,7 @@ export default function BodyTab({
                 {count > 0 && (
                   <span
                     className={`px-1.5 rounded-full text-[10px] font-bold ${
-                      view === v ? "grad-primary text-[#0B0B14] shadow-[var(--glow-primary)]" : "bg-accent/25 text-accent"
+                      view === v ? "grad-primary text-[#14151A] shadow-[var(--glow-primary)]" : "bg-accent/25 text-accent"
                     }`}
                   >
                     {count}
