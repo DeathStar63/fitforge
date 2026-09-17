@@ -60,6 +60,17 @@
       animation is missing or fails to load
 - [x] Plan syncs to Supabase alongside logs, stats and InBody reports
 
+## Phase 7: Muscle Map Refinement [COMPLETE]
+- [x] Strict per-view rendering — a view draws only the muscles visible from it,
+      while a selection spans both, with a count badge per side
+- [x] Selected muscles grouped by front/back in the detail panel
+- [x] Name callouts beside the figure, with leader lines, for each selection
+- [x] Muscle groups 17 -> 21: adductors, neck, serratus, tibialis
+- [x] Exercise library 108 -> 131, topping up rear delts, side delts,
+      forearms and calves, plus a dedicated Neck group in the picker
+- [x] Fixed hit targets: an over-wide stroke let the delts swallow neighbouring
+      muscles; every region in both views is now click-verified
+
 ## Future
 - [ ] Native iOS wrapper (Capacitor) for automatic Apple Health sync
 - [ ] Workout history calendar view

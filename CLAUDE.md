@@ -27,7 +27,7 @@ A Progressive Web App for personal fitness transformation tracking. Built for a 
 ## Workout Split (default — fully customisable)
 The schedule below is the default plan. It lives in `src/lib/plan.ts` and users
 can reassign any workout to any day, build their own routines, and pick
-exercises from the library in `src/lib/exerciseLibrary.ts` (108 exercises).
+exercises from the library in `src/lib/exerciseLibrary.ts` (131 exercises).
 - **Mon & Thu:** Legs & Core (9 exercises)
 - **Tue & Fri:** Push - Chest, Shoulders, Triceps (9 exercises)
 - **Wed & Sat:** Pull - Back, Biceps, Rear Delts (9 exercises)
@@ -37,8 +37,10 @@ exercises from the library in `src/lib/exerciseLibrary.ts` (108 exercises).
 ## Key Features
 1. **Training Tab:** Workout dashboard with exercise GIFs, checkboxes, rep/weight logging, progressive overload tracking
 2. **Nutrition Tab:** Gemini AI conversational food logging + plate photo scanning, daily macro tracking
-3. **Body Tab:** Interactive front/back muscle map coloured by recovery state,
-   tap a muscle to find exercises for it, and suggestions for what to train next
+3. **Body Tab:** Interactive front/back muscle map over 21 muscle groups,
+   coloured by recovery state. Each view shows only the muscles visible from
+   it, while a selection spans both. Tap a muscle for a name callout and the
+   exercises that train it, plus suggestions for what to train next
 4. **Stats Tab:** BMI/body stats input, transformation progress, Gemini AI analysis
 5. **Plan Editor:** Reachable from the Training tab header — assign workouts to
    days, build routines, set per-exercise sets/reps, attach custom exercise GIFs

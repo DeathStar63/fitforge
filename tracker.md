@@ -97,3 +97,22 @@
   - Custom GIF URLs per exercise; muscle-map fallback when none loads
 - [x] Progress and Stats charts follow the user's routines instead of a
       hardcoded Legs/Push/Pull trio
+
+### Session 5 — 2026-09-17
+- [x] Front/back separation made explicit
+  - Each view renders only its own muscles; a selection persists across both
+  - The view toggle carries a per-side count, so a selection made on the back
+    is not invisible while the front is showing
+  - The Selected panel groups by front/back
+- [x] Name callouts beside the figure for the current selection
+  - `LABEL_ANCHORS` per muscle per view, leader lines, collision-avoiding stack
+- [x] Muscle coverage audited and widened: 17 -> 21 groups
+  - Added adductors, neck, serratus anterior, tibialis anterior
+  - Documented what is deliberately merged (gastroc/soleus, rhomboids,
+    brachialis, glute medius) and why
+- [x] Exercise library 108 -> 131, with a Neck group and band/smith equipment
+      filters in the picker
+- [x] Bug: transparent hit targets carried a 10-unit stroke, inflating every
+      region by 5 units in each direction — the side delt swallowed the front
+      delt, the front delt swallowed the trap and the pec. Narrowed to 3 and
+      moved three anchors; all 26 regions across both views now verified

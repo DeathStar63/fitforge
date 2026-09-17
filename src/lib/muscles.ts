@@ -24,7 +24,11 @@ export type MuscleId =
   | "glutes"
   | "quads"
   | "hamstrings"
-  | "calves";
+  | "calves"
+  | "adductors"
+  | "neck"
+  | "serratus"
+  | "tibialis";
 
 export type BodyView = "front" | "back";
 
@@ -40,7 +44,9 @@ export interface MuscleGroup {
 }
 
 export const MUSCLE_GROUPS: MuscleGroup[] = [
+  { id: "neck", label: "Neck", short: "Neck", views: ["front", "back"], weeklySetTarget: 4 },
   { id: "chest", label: "Chest", short: "Chest", views: ["front"], weeklySetTarget: 12 },
+  { id: "serratus", label: "Serratus", short: "Serratus", views: ["front"], weeklySetTarget: 4 },
   { id: "front-delts", label: "Front Delts", short: "F. Delts", views: ["front"], weeklySetTarget: 8 },
   { id: "side-delts", label: "Side Delts", short: "S. Delts", views: ["front", "back"], weeklySetTarget: 10 },
   { id: "rear-delts", label: "Rear Delts", short: "R. Delts", views: ["back"], weeklySetTarget: 10 },
@@ -55,8 +61,10 @@ export const MUSCLE_GROUPS: MuscleGroup[] = [
   { id: "lower-back", label: "Lower Back", short: "Lo. Back", views: ["back"], weeklySetTarget: 6 },
   { id: "glutes", label: "Glutes", short: "Glutes", views: ["back"], weeklySetTarget: 10 },
   { id: "quads", label: "Quads", short: "Quads", views: ["front"], weeklySetTarget: 12 },
+  { id: "adductors", label: "Adductors", short: "Adductors", views: ["front"], weeklySetTarget: 6 },
   { id: "hamstrings", label: "Hamstrings", short: "Hams", views: ["back"], weeklySetTarget: 10 },
   { id: "calves", label: "Calves", short: "Calves", views: ["front", "back"], weeklySetTarget: 8 },
+  { id: "tibialis", label: "Tibialis", short: "Tibialis", views: ["front"], weeklySetTarget: 4 },
 ];
 
 export const MUSCLE_BY_ID: Record<MuscleId, MuscleGroup> = Object.fromEntries(
@@ -126,6 +134,7 @@ export const SILHOUETTE: Region[] = [
 /** Muscle shapes for the front view. */
 export const FRONT_REGIONS: Partial<Record<MuscleId, Region[]>> = {
   traps: [{ d: "M101 57 L133 77 L127 90 L101 83 Z", mirror: true }],
+  neck: [{ d: "M88 53 L112 53 L113 66 L87 66 Z", mirror: false }],
   "front-delts": [
     {
       d: "M126 75 C139 77 148 88 149 102 C149 112 141 116 134 110 C126 102 122 84 126 75 Z",
@@ -141,6 +150,12 @@ export const FRONT_REGIONS: Partial<Record<MuscleId, Region[]>> = {
   chest: [
     {
       d: "M103 85 C114 84 123 86 130 91 C139 98 140 110 133 118 C125 126 111 126 103 122 Z",
+      mirror: true,
+    },
+  ],
+  serratus: [
+    {
+      d: "M117 112 L129 110 C132 120 131 131 128 139 L118 134 Z",
       mirror: true,
     },
   ],
@@ -174,9 +189,23 @@ export const FRONT_REGIONS: Partial<Record<MuscleId, Region[]>> = {
       mirror: true,
     },
   ],
+  adductors: [
+    {
+      d: "M101 216 L113 219 C114 243 111 266 105 282 L101 282 Z",
+      mirror: true,
+    },
+  ],
+  // The front of the lower leg is two muscles: the medial gastroc bulge on the
+  // inside, tibialis anterior down the outside of the shin.
   calves: [
     {
-      d: "M107 322 L124 322 C127 350 122 382 115 398 L107 398 C104 369 104 345 107 322 Z",
+      d: "M106 323 L117 323 C118 351 114 380 109 396 L105 394 C103 368 104 345 106 323 Z",
+      mirror: true,
+    },
+  ],
+  tibialis: [
+    {
+      d: "M117 326 L126 330 C129 355 123 381 118 394 L114 390 C117 366 117 346 117 326 Z",
       mirror: true,
     },
   ],
@@ -185,6 +214,7 @@ export const FRONT_REGIONS: Partial<Record<MuscleId, Region[]>> = {
 /** Muscle shapes for the back view. */
 export const BACK_REGIONS: Partial<Record<MuscleId, Region[]>> = {
   traps: [{ d: "M101 56 L136 79 L131 97 L101 97 Z", mirror: true }],
+  neck: [{ d: "M88 53 L112 53 L113 66 L87 66 Z", mirror: false }],
   "rear-delts": [
     {
       d: "M127 75 C141 78 150 90 150 105 C150 115 142 119 135 113 C127 105 123 85 127 75 Z",
@@ -249,10 +279,12 @@ export const BACK_REGIONS: Partial<Record<MuscleId, Region[]>> = {
  */
 export const PAINT_ORDER: MuscleId[] = [
   "traps",
+  "neck", // over the traps, which flare up either side of it
   "upper-back",
   "lats",
   "lower-back",
   "chest",
+  "serratus", // sits on the ribs below and lateral to the pec
   "abs",
   "obliques",
   "front-delts",
@@ -263,10 +295,53 @@ export const PAINT_ORDER: MuscleId[] = [
   "forearms",
   "glutes",
   "quads",
+  "adductors", // inner strip, drawn over the quad sweep
   "hamstrings",
   "calves",
+  "tibialis", // outer shin, drawn over the gastroc
 ];
 
 export function regionsForView(view: BodyView): Partial<Record<MuscleId, Region[]>> {
   return view === "front" ? FRONT_REGIONS : BACK_REGIONS;
 }
+
+/**
+ * Where a selected muscle's leader line starts, per view.
+ *
+ * These are points on the right-hand half of the figure, so every callout runs
+ * out to the right and none of them crosses the body. Hand-placed rather than
+ * derived from path centroids, which land in the wrong spot for the curved
+ * shapes (a centroid of the lat sweep sits off the muscle entirely).
+ */
+export const LABEL_ANCHORS: Record<BodyView, Partial<Record<MuscleId, { x: number; y: number }>>> = {
+  front: {
+    neck: { x: 110, y: 60 },
+    traps: { x: 115, y: 72 },
+    "front-delts": { x: 131, y: 95 },
+    "side-delts": { x: 152, y: 106 },
+    chest: { x: 124, y: 104 },
+    serratus: { x: 125, y: 124 },
+    biceps: { x: 146, y: 131 },
+    abs: { x: 104, y: 158 },
+    obliques: { x: 124, y: 162 },
+    forearms: { x: 152, y: 196 },
+    quads: { x: 119, y: 258 },
+    adductors: { x: 106, y: 248 },
+    calves: { x: 111, y: 356 },
+    tibialis: { x: 122, y: 358 },
+  },
+  back: {
+    neck: { x: 110, y: 60 },
+    traps: { x: 118, y: 78 },
+    "rear-delts": { x: 130, y: 95 },
+    "side-delts": { x: 152, y: 107 },
+    "upper-back": { x: 115, y: 110 },
+    triceps: { x: 146, y: 131 },
+    lats: { x: 124, y: 142 },
+    "lower-back": { x: 103, y: 176 },
+    forearms: { x: 152, y: 196 },
+    glutes: { x: 116, y: 212 },
+    hamstrings: { x: 117, y: 272 },
+    calves: { x: 115, y: 356 },
+  },
+};
