@@ -1,7 +1,14 @@
-// Bump this whenever the app shell or the icons change. The service worker
-// pre-caches manifest.json, so without a bump an installed PWA keeps serving
-// the old manifest and the old home screen icon.
-const CACHE_VERSION = "v4";
+// Cache key. Icons and the manifest are served from STATIC_CACHE, so a stale
+// key means an installed PWA keeps handing out the old home screen icon
+// however many times the artwork is redrawn.
+//
+// SHELL_VERSION is bumped by hand when the app shell changes. ICONS_VERSION is
+// a digest of public/icons, written by `npm run icons` — leave it alone, and
+// never let the icons change without the script running. It was left stale
+// across two icon redraws when this was one hand-edited constant.
+const SHELL_VERSION = "v5";
+const ICONS_VERSION = "51d62a60c75a2f44";
+const CACHE_VERSION = `${SHELL_VERSION}-${ICONS_VERSION}`;
 const STATIC_CACHE = `fitforge-static-${CACHE_VERSION}`;
 const GIF_CACHE = `fitforge-gifs-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `fitforge-dynamic-${CACHE_VERSION}`;

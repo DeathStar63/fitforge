@@ -16,6 +16,7 @@
  *   favicon-{32,16}.png + icon.svg      browser tabs.
  */
 
+import crypto from "crypto";
 import sharp from "sharp";
 import path from "path";
 import fs from "fs";
@@ -100,4 +101,31 @@ await png(16, { stroke: 56 }, "favicon-16.png");
 
 fs.writeFileSync(path.join(iconsDir, "icon.svg"), iconSvg(512));
 console.log("  icon.svg                     vector master");
+
+/**
+ * Stamp a digest of what we just wrote into the service worker's cache key.
+ *
+ * STATIC_CACHE holds the icons, and its name is built from that key, so an
+ * unchanged key means an installed PWA keeps serving the icons it already has.
+ * Doing this by hand failed twice, quietly, because nothing fails when you
+ * forget — the build is green and the old icon simply persists on the phone.
+ */
+const swPath = path.join(__dirname, "..", "public", "sw.js");
+const digest = crypto.createHash("sha256");
+for (const file of fs.readdirSync(iconsDir).sort()) {
+  digest.update(file);
+  digest.update(fs.readFileSync(path.join(iconsDir, file)));
+}
+const iconsVersion = digest.digest("hex").slice(0, 16);
+
+const sw = fs.readFileSync(swPath, "utf8");
+const stamped = sw.replace(
+  /const ICONS_VERSION = "[0-9a-f]*";/,
+  `const ICONS_VERSION = "${iconsVersion}";`
+);
+if (stamped === sw && !sw.includes(`"${iconsVersion}"`)) {
+  throw new Error("Could not stamp ICONS_VERSION into public/sw.js — has the constant been renamed?");
+}
+fs.writeFileSync(swPath, stamped);
+console.log(`  sw.js ICONS_VERSION          ${iconsVersion}`);
 console.log("Done.");

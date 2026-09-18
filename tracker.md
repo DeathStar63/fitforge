@@ -217,3 +217,14 @@
     shows the real thing; bumped to 40px there
   - Verified at 180/120/192/32/16px and under a circle crop; build and tsc
     clean, lint unchanged
+- [x] Fixed the service worker serving stale icons
+  - `CACHE_VERSION` was left at v4 across two icon redraws. Icons go through
+    stale-while-revalidate against `STATIC_CACHE`, which is named from that
+    key, so an installed PWA kept serving the old mark-only icon even though
+    the artwork on disk was correct
+  - Split into `SHELL_VERSION` (manual) and `ICONS_VERSION` (a sha256 digest of
+    public/icons, stamped in by `npm run icons`), so the key cannot go stale
+  - Verified: digest stable across re-runs, changes when any icon byte changes,
+    and restores when the icons are regenerated
+  - iOS caches home screen icons by URL, outside the service worker — that
+    still needs a delete and re-add

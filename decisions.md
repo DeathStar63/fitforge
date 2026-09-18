@@ -151,3 +151,10 @@
 **Maskable variants** now take a wider 19% margin instead of a separate framing, which keeps the whole lockup inside the central safe circle.
 **`LogoTile` reproduces the icon exactly**, lockup and all, so the drawer's install card shows what will actually land on the home screen.
 **Lesson:** "it will not be legible at that size" is a claim with a number behind it. Work the number out before it decides the design.
+
+## ADR-028: The Service Worker Cache Key Is Generated, Not Hand-Bumped
+**Decision:** `public/sw.js` splits its cache key into `SHELL_VERSION`, bumped by hand, and `ICONS_VERSION`, a sha256 digest of `public/icons` that `npm run icons` stamps in automatically.
+**Why:** the icons are served from `STATIC_CACHE` under a stale-while-revalidate rule, and that cache is named from the key — so an unchanged key means an installed PWA keeps handing out the icons it already has. ADR-025 established "bump `CACHE_VERSION` whenever the icons change" as a rule written at the top of the file, and it was then missed on two consecutive icon changes. The artwork shipped correct and the phone kept showing the old one.
+**Why automation rather than more discipline:** nothing fails when you forget. The build is green, the tests pass, the repo looks right, and the only symptom is on someone's home screen. A rule with no failure mode attached is not a rule.
+**Residual:** changing `src/lib/logo.ts` without re-running `npm run icons` still drifts the in-app logo from the icons. The script is the single point that keeps them together, so it has to run whenever the geometry moves.
+**Not in scope:** iOS caches home screen icons by URL, outside the service worker entirely. Nothing in the app can invalidate that — the icon has to be removed and re-added, or the icon URLs themselves have to change.
