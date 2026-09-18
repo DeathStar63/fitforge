@@ -204,3 +204,16 @@
     home-screen icon is the point
   - Verified: `text-accent` resolves through to the SVG's currentColor
     (rgb(220,246,79)); build and tsc clean, lint unchanged
+- [x] Put the lettering into the app icons
+  - The first icon set carried the mark alone, on the assumption the lettering
+    could not hold up small. Measured: at a 60pt tile the "FORGE" caps land
+    near 12.7pt, and iOS renders from the 180px asset — it reads fine
+  - Everything above favicon size is now the full lockup; mark weight raised
+    to 26 so the outline does not look thin beside the lettering
+  - Favicons (16/32) keep the mark-only crop — they are drawn at their stated
+    size, where the lettering is only texture
+  - Maskable variants take a 19% margin rather than a separate framing
+  - `LogoTile` now reproduces the icon exactly, so the drawer's install card
+    shows the real thing; bumped to 40px there
+  - Verified at 180/120/192/32/16px and under a circle crop; build and tsc
+    clean, lint unchanged

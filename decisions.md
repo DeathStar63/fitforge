@@ -143,3 +143,11 @@
 **Cost:** roughly 40px of header height. Worth it — this is the one place the brand appears on every screen.
 **The menu button is top-aligned**, not centred, so it reads as chrome beside the logo instead of floating at its mid-height.
 **The tile survives** in the drawer's install card, at 26px next to "Install FitForge", where showing the actual home-screen icon is the point.
+
+## ADR-027: The Lettering Belongs In The Icon Too
+**Decision:** Every icon above favicon size carries the full lockup, lettering included. Only the 16 and 32px favicons fall back to the mark-only crop.
+**Why the first version left it out, and why that was wrong:** the mark-only crop was chosen on the assumption that the lettering could not survive a launcher icon. Measured rather than assumed, it can: the lettering is 156 of the mark's 500 units tall, so in a 60pt tile at a 6% margin the "FORGE" caps land near 12.7pt — ordinary text size, and iOS renders it from the 180px asset. It reads on the home screen. Favicons are the real limit, because they are drawn at their stated 16 or 32 pixels rather than scaled from a larger asset.
+**Mark weight goes to 26** in the icons. At the artwork's own 19.5 the outline looks thin beside the heavy lettering once both are small.
+**Maskable variants** now take a wider 19% margin instead of a separate framing, which keeps the whole lockup inside the central safe circle.
+**`LogoTile` reproduces the icon exactly**, lockup and all, so the drawer's install card shows what will actually land on the home screen.
+**Lesson:** "it will not be legible at that size" is a claim with a number behind it. Work the number out before it decides the design.
