@@ -8,9 +8,12 @@
  * IMPORTANT: ids are persisted inside workout logs. Never rename an existing
  * id — add a new entry instead.
  *
- * GIFs: entries that ship with a `gifUrl` use a known-good static URL. The rest
- * resolve a GIF lazily at runtime (see `lib/gifs.ts`) and fall back to a drawn
- * muscle illustration, so an exercise is always usable even with no animation.
+ * GIFs: `gifUrl` points at an animation that was checked to exist when it was
+ * added. Most come from the ExerciseDB media set, served over jsDelivr from a
+ * GitHub mirror so the URLs are pinned rather than at the mercy of a live API.
+ * A handful of movements have no honest match in that set and deliberately
+ * carry no `gifUrl` — those fall back to a drawn muscle illustration, as does
+ * any GIF that fails to load, so an exercise is always usable (see ADR-013).
  */
 
 import type { MuscleId } from "./muscles";
@@ -133,6 +136,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes", "abs", "upper-back"],
     equipment: "barbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/zG0zs85.gif",
     ...HEAVY,
   },
   {
@@ -143,6 +147,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes"],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/Qa55kX1.gif",
     ...S,
   },
   {
@@ -153,6 +158,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["abs"],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/yn8yg1r.gif",
     ...S,
   },
   {
@@ -163,6 +169,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["hamstrings"],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/qx4fgX7.gif",
     ...S,
   },
   {
@@ -173,6 +180,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["hamstrings", "calves", "adductors"],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/IZVHb27.gif",
     ...S,
   },
   {
@@ -183,6 +191,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["hamstrings"],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/SSsBDwB.gif",
     ...S,
   },
   {
@@ -193,6 +202,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["calves"],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/aXtJhlg.gif",
     ...S,
   },
   {
@@ -203,6 +213,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["traps", "lats", "forearms", "quads"],
     equipment: "barbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/ila4NZS.gif",
     ...HEAVY,
   },
   {
@@ -213,6 +224,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["lower-back", "traps", "forearms", "adductors"],
     equipment: "barbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/KgI0tqW.gif",
     ...HEAVY,
   },
   {
@@ -223,6 +235,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes", "lower-back"],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/5eLRITT.gif",
     ...S,
   },
   {
@@ -233,6 +246,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["calves"],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/hamstrings/lever-lying-leg-curl.gif",
     ...S,
   },
   {
@@ -243,6 +257,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes"],
     equipment: "bodyweight",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/GwYwElT.gif",
     defaultSets: 3,
     defaultRepsMin: 5,
     defaultRepsMax: 10,
@@ -255,6 +270,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes"],
     equipment: "barbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/XlZ4lAC.gif",
     ...S,
   },
   {
@@ -265,6 +281,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["hamstrings", "lower-back"],
     equipment: "cable",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/OM46QHm.gif",
     ...S,
   },
   {
@@ -275,6 +292,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["hamstrings"],
     equipment: "cable",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/Kpajagk.gif",
     ...S,
   },
   {
@@ -285,6 +303,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/abductors/lever-seated-hip-abduction.gif",
     ...HIGH,
   },
   {
@@ -295,6 +314,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/ykUOVze.gif",
     ...HIGH,
   },
   {
@@ -305,6 +325,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/ykHcWme.gif",
     ...HIGH,
   },
   {
@@ -315,6 +336,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/1kB3Wmk.gif",
     ...HIGH,
   },
 
@@ -426,6 +448,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["triceps"],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/3TZduzM.gif",
     ...HEAVY,
   },
   {
@@ -436,6 +459,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["triceps"],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/GrO65fd.gif",
     ...S,
   },
   {
@@ -446,6 +470,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["triceps", "front-delts"],
     equipment: "dumbbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/SpYC0Kp.gif",
     ...S,
   },
   {
@@ -456,6 +481,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["triceps", "front-delts"],
     equipment: "machine",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/pectorals/lever-chest-press.gif",
     ...S,
   },
   {
@@ -466,6 +492,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["front-delts"],
     equipment: "machine",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/pectorals/lever-seated-fly.gif",
     ...S,
   },
   {
@@ -476,6 +503,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["front-delts"],
     equipment: "dumbbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/yz9nUhF.gif",
     ...S,
   },
   {
@@ -486,6 +514,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["front-delts"],
     equipment: "cable",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/FVmZVhk.gif",
     ...S,
   },
   {
@@ -496,6 +525,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["triceps", "front-delts", "abs", "serratus"],
     equipment: "bodyweight",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/I4hDWkc.gif",
     ...HIGH,
   },
   {
@@ -506,6 +536,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["front-delts"],
     equipment: "bodyweight",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/9WTm7dq.gif",
     ...S,
   },
   {
@@ -516,6 +547,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["side-delts", "triceps", "abs"],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/wdRZISl.gif",
     ...HEAVY,
   },
   {
@@ -526,6 +558,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["triceps"],
     equipment: "dumbbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/Xy4jlWA.gif",
     ...S,
   },
   {
@@ -536,6 +569,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["side-delts", "triceps"],
     equipment: "machine",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/67n3r98.gif",
     ...S,
   },
   {
@@ -546,6 +580,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "cable",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/goJ6ezq.gif",
     ...HIGH,
   },
   {
@@ -556,6 +591,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "machine",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/delts/lever-lateral-raise.gif",
     ...HIGH,
   },
   {
@@ -566,6 +602,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/e4aFmFY.gif",
     ...S,
   },
   {
@@ -576,6 +613,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps"],
     equipment: "cable",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/cALKspW.gif",
     ...S,
   },
   {
@@ -586,6 +624,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["forearms", "neck"],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/dG7tG5y.gif",
     ...S,
   },
   {
@@ -596,6 +635,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/h8LFzo9.gif",
     ...S,
   },
   {
@@ -606,6 +646,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["chest", "front-delts"],
     equipment: "barbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/J6Dx1Mu.gif",
     ...HEAVY,
   },
   {
@@ -616,6 +657,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["front-delts"],
     equipment: "bodyweight",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/RrLske5.gif",
     ...HIGH,
   },
   {
@@ -626,6 +668,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "cable",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/qRZ5S1N.gif",
     ...S,
   },
   {
@@ -636,6 +679,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/W6PxUkg.gif",
     ...HIGH,
   },
 
@@ -747,6 +791,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps", "upper-back", "forearms"],
     equipment: "bodyweight",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/lBDjFxJ.gif",
     ...HEAVY,
   },
   {
@@ -757,6 +802,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["upper-back"],
     equipment: "bodyweight",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/T2mxWqc.gif",
     ...HEAVY,
   },
   {
@@ -767,6 +813,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["rear-delts", "biceps", "lower-back"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/r0z6xzQ.gif",
     ...HEAVY,
   },
   {
@@ -777,6 +824,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps", "rear-delts"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/aaXr7ld.gif",
     ...S,
   },
   {
@@ -787,6 +835,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps", "rear-delts"],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/C0MA9bC.gif",
     ...S,
   },
   {
@@ -797,6 +846,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["lats", "rear-delts", "biceps"],
     equipment: "machine",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/7I6LNUG.gif",
     ...S,
   },
   {
@@ -807,6 +857,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["lats", "biceps"],
     equipment: "bodyweight",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/upper-back/inverted-row.gif",
     ...HIGH,
   },
   {
@@ -817,6 +868,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps", "upper-back"],
     equipment: "cable",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/rkg41Fb.gif",
     ...S,
   },
   {
@@ -827,6 +879,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps"],
     equipment: "machine",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/oROuvrX.gif",
     ...S,
   },
   {
@@ -837,6 +890,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["upper-back"],
     equipment: "machine",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/myfUsKf.gif",
     ...HIGH,
   },
   {
@@ -847,6 +901,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["upper-back"],
     equipment: "cable",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/aqvSOQE.gif",
     ...HIGH,
   },
   {
@@ -857,6 +912,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["forearms"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/MzNnwx9.gif",
     ...S,
   },
   {
@@ -867,6 +923,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes", "hamstrings"],
     equipment: "bodyweight",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/spine/hyperextension.gif",
     ...HIGH,
   },
   {
@@ -877,6 +934,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["lats", "glutes", "forearms"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/za9Ni4z.gif",
     ...HEAVY,
   },
   {
@@ -887,6 +945,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["forearms"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/25GPyDY.gif",
     ...S,
   },
   {
@@ -897,6 +956,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["forearms"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/biceps/ez-barbell-curl.gif",
     ...S,
   },
   {
@@ -907,6 +967,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/ae9UoXQ.gif",
     ...S,
   },
   {
@@ -917,6 +978,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/gvsWLQw.gif",
     ...S,
   },
   {
@@ -927,6 +989,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["forearms"],
     equipment: "cable",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/G08RZcQ.gif",
     ...S,
   },
   {
@@ -937,6 +1000,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/biceps/ez-barbell-spider-curl.gif",
     ...S,
   },
   {
@@ -947,6 +1011,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["biceps"],
     equipment: "barbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/xNrS20v.gif",
     ...S,
   },
   {
@@ -957,6 +1022,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/q8aHNoF.gif",
     ...HIGH,
   },
   {
@@ -967,6 +1033,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["abs", "glutes"],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/quads/farmers-walk.gif",
     defaultSets: 3,
     defaultRepsMin: 1,
     defaultRepsMax: 1,
@@ -1003,6 +1070,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["obliques", "forearms"],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/abs/hanging-straight-leg-raise.gif",
     ...S,
   },
   {
@@ -1013,6 +1081,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["obliques"],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/weoDEpH.gif",
     ...S,
   },
   {
@@ -1023,6 +1092,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["obliques", "lower-back"],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/VBAWRPG.gif",
     defaultSets: 3,
     defaultRepsMin: 1,
     defaultRepsMax: 1,
@@ -1035,6 +1105,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["abs"],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/5VXmnV5.gif",
     defaultSets: 3,
     defaultRepsMin: 1,
     defaultRepsMax: 1,
@@ -1047,6 +1118,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["abs"],
     equipment: "dumbbell",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/fZFZ704.gif",
     ...HIGH,
   },
   {
@@ -1067,6 +1139,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["lats", "lower-back", "serratus"],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/NAgVB3t.gif",
     ...S,
   },
   {
@@ -1077,6 +1150,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/1ZFqTDN.gif",
     ...HIGH,
   },
   {
@@ -1087,6 +1161,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["lower-back"],
     equipment: "bodyweight",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/iny3m5y.gif",
     ...HIGH,
   },
   {
@@ -1097,6 +1172,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["abs"],
     equipment: "cable",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/9pa4H5m.gif",
     ...S,
   },
   {
@@ -1107,6 +1183,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["obliques"],
     equipment: "dumbbell",
     group: "core",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/EZeDVzO.gif",
     ...S,
   },
   {
@@ -1131,6 +1208,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.2.0/adductors/lever-seated-hip-adduction.gif",
     ...HIGH,
   },
   {
@@ -1141,6 +1219,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes", "hamstrings"],
     equipment: "barbell",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/dzz6BiV.gif",
     ...S,
   },
   {
@@ -1151,6 +1230,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["quads", "glutes"],
     equipment: "bodyweight",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/GWoKnIm.gif",
     ...S,
   },
   {
@@ -1175,6 +1255,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["chest", "triceps"],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/9XjtHvS.gif",
     ...S,
   },
   {
@@ -1195,6 +1276,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["chest"],
     equipment: "bodyweight",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/jV65tKx.gif",
     ...HIGH,
   },
 
@@ -1281,6 +1363,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["upper-back"],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/vYk8lqw.gif",
     ...S,
   },
   {
@@ -1291,6 +1374,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "cable",
     group: "push",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/wEulIzp.gif",
     ...S,
   },
   {
@@ -1301,6 +1385,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "machine",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/u5ESqzH.gif",
     ...HIGH,
   },
   {
@@ -1311,6 +1396,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "smith",
     group: "legs",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/6MaEjVA.gif",
     ...HIGH,
   },
   {
@@ -1321,6 +1407,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: [],
     equipment: "dumbbell",
     group: "pull",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/BwSNDGt.gif",
     ...HIGH,
   },
   {
@@ -1375,6 +1462,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["calves", "quads"],
     equipment: "machine",
     group: "cardio",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/rjiM4L3.gif",
     defaultSets: 1,
     defaultRepsMin: 1,
     defaultRepsMax: 1,
@@ -1387,6 +1475,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes", "quads", "calves"],
     equipment: "machine",
     group: "cardio",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/j9Q5crt.gif",
     defaultSets: 1,
     defaultRepsMin: 1,
     defaultRepsMax: 1,
@@ -1399,6 +1488,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["quads", "calves"],
     equipment: "machine",
     group: "cardio",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/a8VDgLw.gif",
     defaultSets: 1,
     defaultRepsMin: 1,
     defaultRepsMax: 1,
@@ -1423,6 +1513,7 @@ export const EXERCISE_LIBRARY: LibraryExercise[] = [
     secondary: ["glutes", "hamstrings", "calves"],
     equipment: "machine",
     group: "cardio",
+    gifUrl: "https://cdn.jsdelivr.net/gh/mohamedatef90/exercise-library@main/gifs/rjiM4L3.gif",
     defaultSets: 1,
     defaultRepsMin: 1,
     defaultRepsMax: 1,

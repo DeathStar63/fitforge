@@ -267,3 +267,19 @@
   - Verified by rendering and looking: the icons carry "FIT FORGE" at 180, 120,
     192 and maskable-192; a clean production build serves those bytes over
     HTTP; the previous digest and unversioned paths both 404
+
+### Session 11 — 2026-09-18
+- [x] Exercise animations filled in: library GIF coverage 27/131 → 115/131
+  - 88 entries gained a `gifUrl`; every one was fetched and confirmed to return
+    `200 image/gif` before it was committed, none inferred from an id pattern
+  - Served over jsDelivr from pinned GitHub mirrors of the ExerciseDB media set
+    (`mohamedatef90/exercise-library@main`, 76) plus
+    `JahelCuadrado/ExerciseGymGifsDB@v1.2.0` (12) for what the first one lacks
+  - 16 left deliberately without one — neck work, tibialis raises, banded
+    dorsiflexion, Copenhagen planks, plate pinches, Meadows and seal rows,
+    landmine press, band pull-aparts, cable woodchoppers, serratus punches,
+    Superman holds, rowing machine. No honest match exists in the set, and the
+    muscle-map fallback beats an animation of a different movement
+  - Stale header comment in `exerciseLibrary.ts` fixed: it pointed at a
+    `lib/gifs.ts` runtime resolver that was never built
+  - See ADR-031
