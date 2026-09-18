@@ -1,4 +1,7 @@
-const CACHE_VERSION = "v2";
+// Bump this whenever the app shell or the icons change. The service worker
+// pre-caches manifest.json, so without a bump an installed PWA keeps serving
+// the old manifest and the old home screen icon.
+const CACHE_VERSION = "v4";
 const STATIC_CACHE = `fitforge-static-${CACHE_VERSION}`;
 const GIF_CACHE = `fitforge-gifs-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `fitforge-dynamic-${CACHE_VERSION}`;

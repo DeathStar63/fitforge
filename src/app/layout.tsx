@@ -16,10 +16,28 @@ export const metadata: Metadata = {
   description:
     "Your personal transformation tracker — workouts, nutrition, and AI-powered insights",
   manifest: "/manifest.json",
+  applicationName: "FitForge",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
+    // Becomes apple-mobile-web-app-title: the caption under the home screen
+    // icon. Without it iOS falls back to the page title.
     title: "FitForge",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+    ],
+    // iOS reads these for "Add to Home Screen". They are deliberately opaque
+    // and full-bleed: iOS ignores alpha and applies its own squircle mask.
+    apple: [
+      { url: "/icons/apple-touch-icon-180.png", sizes: "180x180" },
+      { url: "/icons/apple-touch-icon-167.png", sizes: "167x167" },
+      { url: "/icons/apple-touch-icon-152.png", sizes: "152x152" },
+      { url: "/icons/apple-touch-icon-120.png", sizes: "120x120" },
+    ],
   },
 };
 
@@ -28,7 +46,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#0F0F17",
+  themeColor: "#08080C",
 };
 
 export default function RootLayout({
@@ -39,7 +57,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <link rel="dns-prefetch" href="https://static.exercisedb.dev" />
         <link rel="preconnect" href="https://static.exercisedb.dev" crossOrigin="anonymous" />
       </head>

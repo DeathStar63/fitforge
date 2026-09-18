@@ -160,3 +160,36 @@
   - Charts: replaced leftover white-theme colours (white tooltips, light grid
     lines) that predate the dark redesign
   - Added a reduced-motion media query
+
+### Session 9 — 2026-09-17
+- [x] App icon
+  - `scripts/generate-icons.mjs` (`npm run icons`) renders every size from one
+    vector master; replaced the old Arial "F" on the stale `#0F0F17`
+  - iOS: opaque full-bleed apple-touch icons at 180/167/152/120, declared
+    through Next's metadata API, plus `apple-mobile-web-app-title`
+  - Android: maskable variants at a wider inset so the mark survives a circle
+    crop; favicons at 16/32 and an SVG master
+  - manifest and `themeColor` moved to `#08080C`; stale `favicon.ico` removed
+  - `sw.js` CACHE_VERSION -> v3, since it pre-caches manifest.json and an
+    installed PWA would otherwise keep the old icon
+  - Verified: tags present in the served HTML, every file returns 200, and all
+    PNGs are 3-channel with no alpha (iOS composites alpha onto black)
+
+### Session 10 — 2026-09-18
+- [x] Replaced the logo with the supplied FitForge artwork
+  - Traced it off a thresholded raster rather than by eye: scanlines gave the
+    vertices, and every stroke measured ~19.5 units in a 620x500 box
+  - `src/lib/logo.ts` holds the geometry — the mark as centrelines plus a
+    stroke width, the lettering as one vectorised path
+  - `src/components/Logo.tsx`: `LogoMark`, `LogoTile` (mark on the signature
+    gradient, squircle radius in proportion to its size) and `LogoLockup`
+  - Auth screen now shows the full lockup; the header and the loading splash
+    show the tile, replacing the old lime "F"
+  - `scripts/generate-icons.mjs` renders every icon from the same module, so
+    the icons and the in-app logo cannot drift. Icons crop into the box corner
+    and let the arm bleed off the edge; the line weight goes to 28 (44/56 for
+    the favicons) so the mark survives at 40px and below
+  - `sw.js` CACHE_VERSION -> v4
+  - Verified: trace overlaid on the reference matches; icons checked at
+    180/120/76/60/40px and under a circle crop; `npm run build` and `tsc`
+    clean, lint unchanged (same 9 pre-existing errors)

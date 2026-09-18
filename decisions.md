@@ -119,3 +119,20 @@
 ## ADR-024: Charts Were Still Light-Themed
 **Decision:** Recharts grids, axes and tooltips moved to the dark palette.
 **Why:** they carried `#FFFFFF` tooltip backgrounds, `#E5E7EB` grid lines and `#1A1A2E` label text — left over from the white theme described in ADR-004 and never updated when the app went dark. A white tooltip card on a near-black chart is the most obvious possible seam.
+
+## ADR-025: Brand Mark and App Icon
+**Decision:** The logo is the supplied FitForge artwork — an isometric open box with the "FIT FORGE" lettering set into its right-hand face — rebuilt as vectors in `src/lib/logo.ts`. `src/components/Logo.tsx` renders it in the app and `scripts/generate-icons.mjs` (`npm run icons`) renders every icon size from the same module, so the two can never drift.
+
+**Traced, not eyeballed.** The artwork was measured off a thresholded raster: scanlines gave the edge positions, and every stroke came back ~19.5 units wide in a 620x500 box. Three earlier logos were designed from scratch and all three were rejected; the conversation only converged once there was a reference to reproduce.
+
+**Centrelines plus a stroke width, not filled outlines.** The original line is ~19.5/620 of the mark's width, which is under a pixel at a 60px launcher icon. Storing the mark as a path plus a `stroke` argument lets the icons carry a heavier line (28) than the display lockup without maintaining a second drawing.
+
+**The lettering is a separate traced path.** It is geometric and only ever appears above ~120px wide, so a potrace-style vectorisation is faithful and needs no font dependency. It ships only in `LogoLockup`, which the auth screen uses; chrome uses the mark alone.
+
+**Icons crop into the mark.** The mark is 620x500 — wide and short — so scaling the whole thing into a square tile leaves it small and stranded. The icons instead frame the box corner and let the long arm bleed off the right edge, which reads as a mark rather than a shrunken lockup and still resolves at 40px.
+
+**Lime field rather than the inverse:** a near-black icon disappears against a dark wallpaper, and the brief was that it be visible on the home screen. It also matches the in-app logo tile, so the two read as the same brand.
+**iOS specifics:** the apple-touch icons are flattened to fully opaque, because iOS ignores alpha and composites transparency onto black. They are full-bleed, because iOS applies its own squircle mask. `appleWebApp.title` supplies `apple-mobile-web-app-title`, the caption under the icon; without it iOS falls back to the page title.
+**Maskable variants** use a pulled-back framing (`ICON_MASKABLE_VIEWBOX`) rather than a scaled-down copy, so the whole box sits inside the central safe circle that Android may crop to.
+**Cache:** `sw.js` pre-caches `manifest.json`, so `CACHE_VERSION` has to move whenever the icons do. Bumped to v4 — otherwise an already-installed PWA keeps serving the old manifest and the old icon.
+**Node version:** the icon script imports `src/lib/logo.ts` directly and leans on Node's type stripping, so `npm run icons` needs Node >= 22.18. It is a dev-only script; the app build is unaffected.

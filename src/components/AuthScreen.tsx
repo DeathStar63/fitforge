@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { LogoLockup } from "@/components/Logo";
 
 type Mode = "signin" | "signup" | "forgot" | "new-password";
 
@@ -92,11 +93,8 @@ export default function AuthScreen() {
       >
         {/* Logo & branding */}
         <div className="text-center mb-10">
-          <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl font-black">F</span>
-          </div>
-          <h1 className="text-2xl font-bold text-text-primary">FitForge</h1>
-          <p className="text-sm text-text-muted mt-1">
+          <LogoLockup width={196} className="mx-auto text-text-primary" />
+          <p className="text-sm text-text-muted mt-4">
             Your personal transformation tracker
           </p>
         </div>

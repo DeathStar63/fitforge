@@ -101,6 +101,14 @@
 - [x] Charts moved off the leftover white-theme colours
 - [x] Frosted side drawer
 
+## Phase 11: App Icon [COMPLETE]
+- [x] New mark: near-black "F" on a lime field, matching the in-app lockup
+- [x] One generator (`npm run icons`) renders every size from a vector master
+- [x] iOS home screen: opaque, full-bleed apple-touch icons at 180/167/152/120
+- [x] Maskable variants for Android, favicons, SVG master
+- [x] Manifest and theme colour moved onto the current palette
+- [x] Service worker cache bumped so installed PWAs pick the new icon up
+
 ## Future
 - [ ] Native iOS wrapper (Capacitor) for automatic Apple Health sync
 - [ ] Workout history calendar view

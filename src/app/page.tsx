@@ -4,6 +4,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import BottomNav, { type NavTab } from "@/components/BottomNav";
+import { LogoTile } from "@/components/Logo";
 import TrainingTab from "@/components/TrainingTab";
 import SideDrawer from "@/components/SideDrawer";
 import AuthScreen from "@/components/AuthScreen";
@@ -43,9 +44,7 @@ export default function Home() {
   if (loading) {
     return (
       <main className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="w-14 h-14 rounded-3xl grad-primary flex items-center justify-center animate-pulse shadow-[var(--glow-primary)]">
-          <span className="text-[#14151A] text-xl font-black">F</span>
-        </div>
+        <LogoTile size={56} className="animate-pulse shadow-[var(--glow-primary)]" />
       </main>
     );
   }
@@ -62,9 +61,7 @@ export default function Home() {
       {/* App header */}
       <header className="px-4 pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-2xl grad-primary flex items-center justify-center shadow-[var(--glow-primary)]">
-            <span className="text-[#14151A] text-sm font-black">F</span>
-          </div>
+          <LogoTile size={36} className="shadow-[var(--glow-primary)]" />
           <span className="text-lg font-bold text-text-primary tracking-tight">
             FitForge
           </span>
