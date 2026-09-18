@@ -13,13 +13,16 @@ const inter = Inter({
 });
 
 /**
- * Icon URLs carry a digest of the artwork. iOS keys home screen icons by URL
- * and will not re-fetch one it already holds — deleting and re-adding the app
- * is not enough — so a redrawn icon has to arrive at a URL nobody has asked
- * for before. Safari's own cache and any CDN in front of the site behave the
- * same way. `npm run icons` regenerates the digest.
+ * Icon filenames carry a digest of the artwork.
+ *
+ * iOS keys home screen icons by URL and will not re-fetch one it already
+ * holds, so deleting and re-adding the app is not enough on its own; Safari
+ * and any CDN in front of the site behave the same way. A query string is not
+ * reliably enough either, because it is not part of the resource's identity
+ * everywhere it is handled — a distinct path is. `npm run icons` regenerates
+ * both the files and the digest.
  */
-const icon = (file: string) => `/icons/${file}?v=${ICON_VERSION}`;
+const icon = (stem: string, ext: string) => `/icons/${stem}.${ICON_VERSION}.${ext}`;
 
 export const metadata: Metadata = {
   title: "FitForge",
@@ -36,17 +39,17 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: icon("favicon-32.png"), sizes: "32x32", type: "image/png" },
-      { url: icon("favicon-16.png"), sizes: "16x16", type: "image/png" },
-      { url: icon("icon.svg"), type: "image/svg+xml" },
+      { url: icon("favicon-32", "png"), sizes: "32x32", type: "image/png" },
+      { url: icon("favicon-16", "png"), sizes: "16x16", type: "image/png" },
+      { url: icon("icon", "svg"), type: "image/svg+xml" },
     ],
     // iOS reads these for "Add to Home Screen". They are deliberately opaque
     // and full-bleed: iOS ignores alpha and applies its own squircle mask.
     apple: [
-      { url: icon("apple-touch-icon-180.png"), sizes: "180x180" },
-      { url: icon("apple-touch-icon-167.png"), sizes: "167x167" },
-      { url: icon("apple-touch-icon-152.png"), sizes: "152x152" },
-      { url: icon("apple-touch-icon-120.png"), sizes: "120x120" },
+      { url: icon("apple-touch-icon-180", "png"), sizes: "180x180" },
+      { url: icon("apple-touch-icon-167", "png"), sizes: "167x167" },
+      { url: icon("apple-touch-icon-152", "png"), sizes: "152x152" },
+      { url: icon("apple-touch-icon-120", "png"), sizes: "120x120" },
     ],
   },
 };

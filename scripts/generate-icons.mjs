@@ -71,39 +71,81 @@ function iconSvg(size, { maskable = false, stroke = ICON_STROKE } = {}) {
 </svg>`;
 }
 
-async function png(size, opts, file) {
-  await sharp(Buffer.from(iconSvg(size, opts)))
+/**
+ * Render everything to memory first. Filenames carry a digest of the artwork,
+ * so nothing can be written until every byte is known.
+ */
+async function render(size, opts) {
+  return sharp(Buffer.from(iconSvg(size, opts)))
     .resize(size, size)
     .flatten({ background: LIME }) // opaque: iOS will not honour alpha
     .png({ compressionLevel: 9 })
-    .toFile(path.join(iconsDir, file));
-  console.log(`  ${file.padEnd(28)} ${size}x${size}`);
+    .toBuffer();
 }
 
 console.log("Generating icons…");
 
+/** Logical name -> bytes. The digest goes between the stem and the extension. */
+const assets = new Map();
+
 // iOS home screen — full bleed, iOS masks its own corners
 for (const s of [180, 167, 152, 120]) {
-  await png(s, {}, `apple-touch-icon-${s}.png`);
+  assets.set(`apple-touch-icon-${s}.png`, await render(s, {}));
 }
 
 // PWA / Android
-await png(192, {}, "icon-192.png");
-await png(512, {}, "icon-512.png");
+assets.set("icon-192.png", await render(192, {}));
+assets.set("icon-512.png", await render(512, {}));
 
-// Maskable: pulled back so a circular crop keeps the whole box
-await png(512, { maskable: true }, "icon-maskable-512.png");
-await png(192, { maskable: true }, "icon-maskable-192.png");
+// Maskable: a wider margin, so the whole lockup sits inside the central safe
+// circle that Android may crop a maskable icon down to
+assets.set("icon-maskable-512.png", await render(512, { pad: 0.19 }));
+assets.set("icon-maskable-192.png", await render(192, { pad: 0.19 }));
 
-// Browser tabs — a couple of dozen pixels, so the heaviest line
-await png(32, { stroke: 44 }, "favicon-32.png");
-await png(16, { stroke: 56 }, "favicon-16.png");
+// Browser tabs are drawn at their stated size, where the lettering is only
+// texture — so these carry the mark alone
+assets.set("favicon-32.png", await render(32, { crop: true }));
+assets.set("favicon-16.png", await render(16, { crop: true }));
 
-fs.writeFileSync(path.join(iconsDir, "icon.svg"), iconSvg(512));
-console.log("  icon.svg                     vector master");
+assets.set("icon.svg", Buffer.from(iconSvg(512)));
 
 /**
- * Stamp a digest of what we just wrote into the service worker's cache key.
+ * The digest of the artwork, and the reason it is in the filename rather than
+ * a query string.
+ *
+ * Three caches sit between this directory and a phone's home screen: our own
+ * service worker, Safari, and iOS's home screen icon store — and iOS keys that
+ * store by URL, so it will not re-fetch an icon it already holds even after
+ * the app is deleted and re-added. A query string is not reliably enough,
+ * because a query string is not part of the resource's identity everywhere it
+ * is handled. A distinct path is: nothing can collapse
+ * `apple-touch-icon-180.<digest>.png` back onto the file it replaced.
+ */
+const digest = crypto.createHash("sha256");
+for (const name of [...assets.keys()].sort()) {
+  digest.update(name);
+  digest.update(assets.get(name));
+}
+const iconsVersion = digest.digest("hex").slice(0, 16);
+
+/** `icon-192.png` -> `icon-192.<digest>.png` */
+const stamp = (name) => {
+  const ext = path.extname(name);
+  return `${name.slice(0, -ext.length)}.${iconsVersion}${ext}`;
+};
+
+// Anything left from a previous digest is dead weight that a cache could still
+// be holding a reference to, so clear the directory before writing.
+for (const stale of fs.readdirSync(iconsDir)) {
+  fs.unlinkSync(path.join(iconsDir, stale));
+}
+for (const [name, bytes] of assets) {
+  fs.writeFileSync(path.join(iconsDir, stamp(name)), bytes);
+  console.log(`  ${stamp(name)}`);
+}
+
+/**
+ * Stamp the digest into the service worker's cache key.
  *
  * STATIC_CACHE holds the icons, and its name is built from that key, so an
  * unchanged key means an installed PWA keeps serving the icons it already has.
@@ -111,13 +153,6 @@ console.log("  icon.svg                     vector master");
  * forget — the build is green and the old icon simply persists on the phone.
  */
 const swPath = path.join(__dirname, "..", "public", "sw.js");
-const digest = crypto.createHash("sha256");
-for (const file of fs.readdirSync(iconsDir).sort()) {
-  digest.update(file);
-  digest.update(fs.readFileSync(path.join(iconsDir, file)));
-}
-const iconsVersion = digest.digest("hex").slice(0, 16);
-
 const sw = fs.readFileSync(swPath, "utf8");
 const stamped = sw.replace(
   /const ICONS_VERSION = "[0-9a-f]*";/,
@@ -127,39 +162,32 @@ if (stamped === sw && !sw.includes(`"${iconsVersion}"`)) {
   throw new Error("Could not stamp ICONS_VERSION into public/sw.js — has the constant been renamed?");
 }
 fs.writeFileSync(swPath, stamped);
-console.log(`  sw.js ICONS_VERSION          ${iconsVersion}`);
+console.log(`\n  sw.js ICONS_VERSION          ${iconsVersion}`);
 
-/**
- * Publish the same digest as a module the app can import, and hang it off the
- * icon URLs.
- *
- * Our own service worker is only one of the caches in the way. iOS keys its
- * home screen icons by URL and will not re-fetch one it has already taken,
- * even after the app is deleted and re-added; Safari and any CDN in front of
- * the site hold their own copies. A digest in the query string makes every
- * one of them see a URL they have never fetched, which is the only lever that
- * reaches all three.
- */
-const versionModule = `// Generated by scripts/generate-icons.mjs — do not edit.
-//
-// A digest of public/icons, hung off the icon URLs as a query string. iOS keys
-// home screen icons by URL and will not re-fetch one it already holds, so a
-// redrawn icon needs a URL that has never been requested before.
-export const ICON_VERSION = "${iconsVersion}";
-`;
+// Publish the digest as a module, so the metadata in layout.tsx builds the
+// same filenames without repeating the scheme.
 const versionPath = path.join(__dirname, "..", "src", "lib", "icon-version.ts");
-fs.writeFileSync(versionPath, versionModule);
+fs.writeFileSync(
+  versionPath,
+  `// Generated by scripts/generate-icons.mjs — do not edit.
+//
+// A digest of the icon artwork. It is part of every icon's filename, because
+// iOS keys home screen icons by URL and will not re-fetch one it already
+// holds — so redrawn artwork has to arrive at a path nobody has requested.
+export const ICON_VERSION = "${iconsVersion}";
+`
+);
 console.log(`  src/lib/icon-version.ts      ${iconsVersion}`);
 
-// The manifest is served as a static file, so its icon URLs are stamped here
-// rather than at render time.
+// The manifest is a static file, so its icon URLs are stamped here rather than
+// at render time.
 const manifestPath = path.join(__dirname, "..", "public", "manifest.json");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-manifest.icons = manifest.icons.map((icon) => ({
-  ...icon,
-  src: `${icon.src.split("?")[0]}?v=${iconsVersion}`,
-}));
+manifest.icons = manifest.icons.map((icon) => {
+  const bare = path.basename(icon.src.split("?")[0]).replace(/\.[0-9a-f]{16}\./, ".");
+  return { ...icon, src: `/icons/${stamp(bare)}` };
+});
 fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-console.log(`  manifest.json icon urls      ?v=${iconsVersion}`);
+console.log(`  manifest.json icon urls      stamped`);
 
 console.log("Done.");

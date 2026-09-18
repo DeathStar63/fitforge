@@ -241,3 +241,14 @@
     the artwork was never the problem — only its delivery
   - Open question for the user: which commit Vercel has actually deployed.
     The Vercel API 403s on this scope, so it cannot be checked from here
+- [x] Moved the icon digest from the query string into the filename
+  - `?v=<digest>` was not enough: a query string is not part of a resource's
+    identity everywhere it is handled, and iOS's home screen icon store is one
+    of the places it is not
+  - Icons are now `<stem>.<digest>.<ext>`, and `public/icons` is emptied on
+    each run so no unversioned file survives for a cache to keep serving
+  - Verified on a clean production build: link tags carry the digest names,
+    those URLs return the lettered bytes (180/120/192 all checked), and the
+    old unversioned paths 404
+  - Note: a stale dev server had been serving an old build during the previous
+    check — cleared `.next` and rebuilt before trusting the output

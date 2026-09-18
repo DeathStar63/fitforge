@@ -7,7 +7,7 @@
 // never let the icons change without the script running. It was left stale
 // across two icon redraws when this was one hand-edited constant.
 const SHELL_VERSION = "v5";
-const ICONS_VERSION = "51d62a60c75a2f44";
+const ICONS_VERSION = "b76f0f0da9cd4d6f";
 const CACHE_VERSION = `${SHELL_VERSION}-${ICONS_VERSION}`;
 const STATIC_CACHE = `fitforge-static-${CACHE_VERSION}`;
 const GIF_CACHE = `fitforge-gifs-${CACHE_VERSION}`;
