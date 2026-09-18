@@ -218,7 +218,7 @@ export default function SideDrawer({ open, onClose, onOpenPlan }: SideDrawerProp
                     {/* The real icon, so it is obvious what lands on the
                         home screen */}
                     <div className="flex items-center gap-2.5 mb-1.5">
-                      <LogoTile size={26} />
+                      <LogoTile size={40} />
                       <p className="text-sm font-medium text-text-primary">
                         Install FitForge
                       </p>

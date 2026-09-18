@@ -146,11 +146,20 @@
 
 ## ADR-027: The Lettering Belongs In The Icon Too
 **Decision:** Every icon above favicon size carries the full lockup, lettering included. Only the 16 and 32px favicons fall back to the mark-only crop.
-**Why the first version left it out, and why that was wrong:** the mark-only crop was chosen on the assumption that the lettering could not survive a launcher icon. Measured rather than assumed, it can: the lettering is 156 of the mark's 500 units tall, so in a 60pt tile at a 6% margin the "FORGE" caps land near 12.7pt — ordinary text size, and iOS renders it from the 180px asset. It reads on the home screen. Favicons are the real limit, because they are drawn at their stated 16 or 32 pixels rather than scaled from a larger asset.
+**Why the first version left it out, and why that was wrong:** the mark-only crop was chosen on the assumption that the lettering could not survive a launcher icon. Measured rather than assumed, it can: the lettering is 156 of the mark's 500 units tall, so in a 60pt tile at a 6% margin the "FORGE" caps land near 12.7pt — ordinary text size, and iOS renders it from the 180px asset. Favicons are the real limit, because they are drawn at their stated 16 or 32 pixels rather than scaled from a larger asset.
 **Mark weight goes to 26** in the icons. At the artwork's own 19.5 the outline looks thin beside the heavy lettering once both are small.
-**Maskable variants** now take a wider 19% margin instead of a separate framing, which keeps the whole lockup inside the central safe circle.
 **`LogoTile` reproduces the icon exactly**, lockup and all, so the drawer's install card shows what will actually land on the home screen.
-**Lesson:** "it will not be legible at that size" is a claim with a number behind it. Work the number out before it decides the design.
+
+**This decision was recorded before it was implemented, and then was not implemented for four commits.** See ADR-030.
+
+## ADR-030: Two Ways I Shipped Nothing And Believed Otherwise
+**What happened:** ADR-027 was written, the code was edited, the icons were regenerated — and the commit that claims to carry all of it, `0d74718`, contains two documentation files and no code. The lettering did not reach the repository until four commits later. Three rounds of cache fixes were then built on top, each one correctly delivering an icon that had never had text in it.
+
+**Cause one — `git reset --hard` in a commit step.** The commit command began with `git reset -q --hard HEAD~0`. `HEAD~0` is `HEAD`, so that is `reset --hard HEAD`: it discards every uncommitted change in the working tree. It ran before `git add -A`, so it threw away the source edits and the regenerated icons, and then committed only the documentation written after it. **Never put `reset --hard` in a commit path.** There is no version of "clean up before committing" that is worth a silent discard of the work being committed.
+
+**Cause two — a verification that could not fail.** The check for "does this icon have lettering?" counted dark pixels in the right-hand 45% of the image. The mark's long arm crosses that exact region, so a mark-only icon scores just as high as a lettered one. It reported a pass four times on artwork that had no lettering at all. **A metric that cannot distinguish the two states it is asked to distinguish is worse than no check**, because it converts an open question into false confidence. The icon was only ever settled by rendering it and looking at it.
+
+**Both failures share a shape:** the artifact was never inspected. `git show --stat` on the commit, or one look at the PNG, would have caught either in seconds. Confirm the thing itself, not a proxy for it.
 
 ## ADR-028: The Service Worker Cache Key Is Generated, Not Hand-Bumped
 **Decision:** `public/sw.js` splits its cache key into `SHELL_VERSION`, bumped by hand, and `ICONS_VERSION`, a sha256 digest of `public/icons` that `npm run icons` stamps in automatically.

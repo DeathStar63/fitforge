@@ -64,3 +64,12 @@ export function markMarkup({ stroke = MARK_STROKE, ink = "currentColor" } = {}):
     `</g>`
   );
 }
+
+/** Mark plus lettering, as SVG markup. Same audience as `markMarkup`. */
+export function lockupMarkup({ stroke = MARK_STROKE, ink = "currentColor" } = {}): string {
+  return (
+    markMarkup({ stroke, ink }) +
+    `<g transform="${WORDMARK_TRANSFORM}">` +
+    `<path d="${WORDMARK_D}" fill="${ink}" fill-rule="evenodd"/></g>`
+  );
+}

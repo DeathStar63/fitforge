@@ -22,9 +22,10 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import {
-  ICON_MASKABLE_VIEWBOX,
   ICON_STROKE,
   ICON_VIEWBOX,
+  LOGO_BOX,
+  lockupMarkup,
   markMarkup,
 } from "../src/lib/logo.ts";
 
@@ -38,17 +39,35 @@ const LIME = "#DCF64F";
 const LIME_DEEP = "#BFE22C";
 
 /**
- * A near-black mark on a lime field rather than the inverse: a dark icon
+ * A near-black logo on a lime field rather than the inverse: a dark icon
  * disappears against a dark wallpaper, and the lime field is the same
  * gradient the in-app logo tile carries.
  *
- * `maskable` swaps in the wider framing. `stroke` is in mark units; the
- * smallest icons take a heavier line so the box still reads at 16px.
+ * Everything above a favicon carries the full lockup, lettering included. At a
+ * 180px asset the "FORGE" caps land around 12.7pt on screen — ordinary text
+ * size — so it reads on the home screen. `pad` is the fraction of the tile
+ * left empty around it.
+ *
+ * `crop` swaps in the mark alone, framed so the corner fills the tile and the
+ * arm bleeds off the right edge. That is for the 16 and 32px favicons, which
+ * are drawn at their stated size and where the lettering is only texture.
  */
-function iconSvg(size, { maskable = false, stroke = ICON_STROKE } = {}) {
-  const viewBox = maskable ? ICON_MASKABLE_VIEWBOX : ICON_VIEWBOX;
-  const [vx, vy, vw] = viewBox.split(" ").map(Number);
-  const s = size / vw;
+function iconSvg(size, { crop = false, pad = 0.06, stroke = 26 } = {}) {
+  let inner;
+  if (crop) {
+    const [vx, vy, vw] = ICON_VIEWBOX.split(" ").map(Number);
+    const k = size / vw;
+    inner = `<g transform="translate(${(-vx * k).toFixed(2)} ${(-vy * k).toFixed(2)}) scale(${k.toFixed(5)})">`
+      + markMarkup({ stroke: ICON_STROKE, ink: INK })
+      + `</g>`;
+  } else {
+    const k = (size * (1 - pad * 2)) / LOGO_BOX.w;
+    const ox = (size - LOGO_BOX.w * k) / 2;
+    const oy = (size - LOGO_BOX.h * k) / 2;
+    inner = `<g transform="translate(${ox.toFixed(2)} ${oy.toFixed(2)}) scale(${k.toFixed(5)})">`
+      + lockupMarkup({ stroke, ink: INK })
+      + `</g>`;
+  }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <defs>
@@ -65,9 +84,7 @@ function iconSvg(size, { maskable = false, stroke = ICON_STROKE } = {}) {
   </defs>
   <rect width="${size}" height="${size}" fill="url(#lime)"/>
   <circle cx="${size / 2}" cy="${size * 1.02}" r="${size * 0.75}" fill="url(#glow)"/>
-  <g transform="translate(${(-vx * s).toFixed(2)} ${(-vy * s).toFixed(2)}) scale(${s.toFixed(5)})">
-    ${markMarkup({ stroke, ink: INK })}
-  </g>
+  ${inner}
 </svg>`;
 }
 

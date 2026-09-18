@@ -252,3 +252,18 @@
     old unversioned paths 404
   - Note: a stale dev server had been serving an old build during the previous
     check — cleared `.next` and rebuilt before trusting the output
+- [x] Actually shipped the lettering in the icons
+  - `0d74718`, titled "Put the lettering into the app icons", contained only
+    decisions.md and tracker.md. Its commit step began with
+    `git reset -q --hard HEAD~0`, which discarded the source edits and the
+    regenerated icons before `git add -A` ran
+  - The lettering check counted dark pixels in the right 45% of the image, but
+    the mark's arm crosses that region, so mark-only icons passed it too. It
+    gave a false pass on four separate occasions
+  - Restored `lockupMarkup` in logo.ts, the lockup renderer in
+    generate-icons.mjs, `LogoTile` rendering the lockup, and the 40px install
+    tile. Also fixed a regression where maskable icons were byte-identical to
+    the regular ones because `pad` was not reaching the renderer
+  - Verified by rendering and looking: the icons carry "FIT FORGE" at 180, 120,
+    192 and maskable-192; a clean production build serves those bytes over
+    HTTP; the previous digest and unversioned paths both 404

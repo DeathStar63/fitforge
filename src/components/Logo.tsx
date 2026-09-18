@@ -1,6 +1,4 @@
 import {
-  ICON_STROKE,
-  ICON_VIEWBOX,
   LOGO_BOX,
   MARK_OUTLINE_D,
   MARK_PLANES_D,
@@ -35,61 +33,35 @@ function MarkPaths({ stroke }: { stroke: number }) {
 }
 
 /**
- * The mark alone, cropped square the way the app icon is, drawn in
- * `currentColor`. Small sizes get the heavier icon weight because the display
- * weight thins out to a hairline below about 40px.
+ * The launcher icon, reproduced in the app: the full lockup on the signature
+ * gradient. The gradient comes from the design system rather than an SVG
+ * `<linearGradient>` so there is no generated id to collide with, and the
+ * corner radius is in proportion to the tile so it keeps the home screen
+ * squircle at every size.
  */
-export function LogoMark({
-  size = 24,
-  stroke = ICON_STROKE,
-  className,
-}: {
-  size?: number;
-  stroke?: number;
-  className?: string;
-}) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={ICON_VIEWBOX}
-      className={className}
-      role="presentation"
-      aria-hidden="true"
-    >
-      <MarkPaths stroke={stroke} />
-    </svg>
-  );
-}
-
-/**
- * The mark on the signature gradient — the app's avatar, matching the home
- * screen icon. The gradient comes from the design system rather than an SVG
- * `<linearGradient>` so there is no generated id to collide with.
- */
-export function LogoTile({ size = 36, className = "" }: { size?: number; className?: string }) {
+export function LogoTile({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
     <div
-      className={`grad-primary overflow-hidden shrink-0 ${className}`}
-      // Corner radius in proportion to the tile, so it keeps the squircle of
-      // the home screen icon at every size instead of rounding to a circle.
+      className={`grad-primary overflow-hidden shrink-0 flex items-center justify-center ${className}`}
       style={{ width: size, height: size, borderRadius: Math.round(size * 0.28) }}
     >
-      <LogoMark size={size} className="text-[#0B0B10]" />
+      <LogoLockup width={Math.round(size * 0.88)} stroke={26} className="text-[#0B0B10]" />
     </div>
   );
 }
 
 /**
  * Mark plus lettering, in the artwork's original proportions. The lettering
- * only resolves above roughly 120px wide, so this is for entry screens rather
- * than chrome.
+ * reads down to roughly 60px wide and turns to texture below that.
  */
 export function LogoLockup({
   width = 220,
+  stroke = MARK_STROKE,
   className,
 }: {
   width?: number;
+  /** Heavier than the artwork's own weight where the lockup is drawn small. */
+  stroke?: number;
   className?: string;
 }) {
   return (
@@ -101,7 +73,7 @@ export function LogoLockup({
       role="img"
       aria-label="FitForge"
     >
-      <MarkPaths stroke={MARK_STROKE} />
+      <MarkPaths stroke={stroke} />
       <g transform={WORDMARK_TRANSFORM}>
         <path d={WORDMARK_D} fill="currentColor" fillRule="evenodd" />
       </g>

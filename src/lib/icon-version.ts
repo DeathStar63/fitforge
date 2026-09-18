@@ -3,4 +3,4 @@
 // A digest of the icon artwork. It is part of every icon's filename, because
 // iOS keys home screen icons by URL and will not re-fetch one it already
 // holds — so redrawn artwork has to arrive at a path nobody has requested.
-export const ICON_VERSION = "b76f0f0da9cd4d6f";
+export const ICON_VERSION = "9ee0ca35dc753e12";
