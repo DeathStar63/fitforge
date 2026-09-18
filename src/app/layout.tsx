@@ -4,12 +4,22 @@ import PWARegister from "@/components/PWARegister";
 import { AuthProvider } from "@/context/AuthContext";
 import { SyncProvider } from "@/context/SyncContext";
 import { PlanProvider } from "@/context/PlanContext";
+import { ICON_VERSION } from "@/lib/icon-version";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
+
+/**
+ * Icon URLs carry a digest of the artwork. iOS keys home screen icons by URL
+ * and will not re-fetch one it already holds — deleting and re-adding the app
+ * is not enough — so a redrawn icon has to arrive at a URL nobody has asked
+ * for before. Safari's own cache and any CDN in front of the site behave the
+ * same way. `npm run icons` regenerates the digest.
+ */
+const icon = (file: string) => `/icons/${file}?v=${ICON_VERSION}`;
 
 export const metadata: Metadata = {
   title: "FitForge",
@@ -26,17 +36,17 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: icon("favicon-32.png"), sizes: "32x32", type: "image/png" },
+      { url: icon("favicon-16.png"), sizes: "16x16", type: "image/png" },
+      { url: icon("icon.svg"), type: "image/svg+xml" },
     ],
     // iOS reads these for "Add to Home Screen". They are deliberately opaque
     // and full-bleed: iOS ignores alpha and applies its own squircle mask.
     apple: [
-      { url: "/icons/apple-touch-icon-180.png", sizes: "180x180" },
-      { url: "/icons/apple-touch-icon-167.png", sizes: "167x167" },
-      { url: "/icons/apple-touch-icon-152.png", sizes: "152x152" },
-      { url: "/icons/apple-touch-icon-120.png", sizes: "120x120" },
+      { url: icon("apple-touch-icon-180.png"), sizes: "180x180" },
+      { url: icon("apple-touch-icon-167.png"), sizes: "167x167" },
+      { url: icon("apple-touch-icon-152.png"), sizes: "152x152" },
+      { url: icon("apple-touch-icon-120.png"), sizes: "120x120" },
     ],
   },
 };

@@ -158,3 +158,10 @@
 **Why automation rather than more discipline:** nothing fails when you forget. The build is green, the tests pass, the repo looks right, and the only symptom is on someone's home screen. A rule with no failure mode attached is not a rule.
 **Residual:** changing `src/lib/logo.ts` without re-running `npm run icons` still drifts the in-app logo from the icons. The script is the single point that keeps them together, so it has to run whenever the geometry moves.
 **Not in scope:** iOS caches home screen icons by URL, outside the service worker entirely. Nothing in the app can invalidate that — the icon has to be removed and re-added, or the icon URLs themselves have to change.
+
+## ADR-029: Icon URLs Carry The Artwork's Digest
+**Decision:** Every icon URL ends in `?v=<digest of public/icons>` — in the `<link>` tags via `src/lib/icon-version.ts`, and in `manifest.json`, both written by `npm run icons`.
+**Why:** ADR-028 fixed our own service worker, and the icon still did not change on the phone. Our cache was one of three. iOS keys home screen icons by URL and will not re-fetch one it already holds — deleting and re-adding the app is not reliably enough — and Safari's HTTP cache and any CDN in front of the site behave the same way. A digest in the query string is the only lever that reaches all three at once, because it makes every layer see a URL it has never fetched.
+**Why the digest rather than a timestamp or a counter:** it changes exactly when the artwork does. A build-time timestamp would bust caches on every deploy for no reason; a counter is the hand-bumped constant that already failed twice.
+**Verified** against a production build: the versioned URL returns 200, the bytes it serves carry the lettering, and the manifest's icon URLs are stamped to match.
+**Still outside our reach:** whether the deploy ran at all. If Vercel's production branch is not `main`, none of this reaches the phone, and nothing in the repo can tell us.

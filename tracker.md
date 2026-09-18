@@ -228,3 +228,16 @@
     and restores when the icons are regenerated
   - iOS caches home screen icons by URL, outside the service worker — that
     still needs a delete and re-add
+- [x] Versioned the icon URLs
+  - Fixing our own service worker was not enough: iOS keys home screen icons
+    by URL and will not re-fetch one it already holds, and Safari and any CDN
+    do the same
+  - Icon URLs now end in `?v=<digest>`, in the `<link>` tags via the generated
+    `src/lib/icon-version.ts` and in `manifest.json`, both written by
+    `npm run icons`
+  - Verified on a production build: `/icons/apple-touch-icon-180.png?v=…`
+    returns 200 and the served bytes carry the lettering; manifest srcs match
+  - Confirmed every icon on disk (120 through 512) contains the lettering, so
+    the artwork was never the problem — only its delivery
+  - Open question for the user: which commit Vercel has actually deployed.
+    The Vercel API 403s on this scope, so it cannot be checked from here
