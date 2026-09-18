@@ -136,3 +136,10 @@
 **Maskable variants** use a pulled-back framing (`ICON_MASKABLE_VIEWBOX`) rather than a scaled-down copy, so the whole box sits inside the central safe circle that Android may crop to.
 **Cache:** `sw.js` pre-caches `manifest.json`, so `CACHE_VERSION` has to move whenever the icons do. Bumped to v4 — otherwise an already-installed PWA keeps serving the old manifest and the old icon.
 **Node version:** the icon script imports `src/lib/logo.ts` directly and leans on Node's type stripping, so `npm run icons` needs Node >= 22.18. It is a dev-only script; the app build is unaffected.
+
+## ADR-026: The Logo Goes In The Header, Not A Badge
+**Decision:** The app header shows the full lockup — mark plus "FIT FORGE" lettering — at 110px wide in the accent colour, and the wordmark set in Inter beside it is gone. The loading splash shows the same lockup at 150px.
+**Why:** the header first carried the mark alone on a 36px gradient tile, with "FitForge" in Inter next to it. At that size the crop that makes the icon work against it — the arm bleeds off the tile, so only the box corner is left — and it reads as an abstract badge rather than as the logo. The lettering is 156 of the mark's 500 units tall, so at 110px wide it sets at a 34px cap height and is perfectly legible; the logo can simply carry the name itself.
+**Cost:** roughly 40px of header height. Worth it — this is the one place the brand appears on every screen.
+**The menu button is top-aligned**, not centred, so it reads as chrome beside the logo instead of floating at its mid-height.
+**The tile survives** in the drawer's install card, at 26px next to "Install FitForge", where showing the actual home-screen icon is the point.

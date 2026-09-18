@@ -4,7 +4,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import BottomNav, { type NavTab } from "@/components/BottomNav";
-import { LogoTile } from "@/components/Logo";
+import { LogoLockup } from "@/components/Logo";
 import TrainingTab from "@/components/TrainingTab";
 import SideDrawer from "@/components/SideDrawer";
 import AuthScreen from "@/components/AuthScreen";
@@ -44,7 +44,7 @@ export default function Home() {
   if (loading) {
     return (
       <main className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <LogoTile size={56} className="animate-pulse shadow-[var(--glow-primary)]" />
+        <LogoLockup width={150} className="text-accent animate-pulse" />
       </main>
     );
   }
@@ -59,13 +59,9 @@ export default function Home() {
       <div className="h-[env(safe-area-inset-top)]" />
 
       {/* App header */}
-      <header className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <LogoTile size={36} className="shadow-[var(--glow-primary)]" />
-          <span className="text-lg font-bold text-text-primary tracking-tight">
-            FitForge
-          </span>
-        </div>
+      <header className="px-4 pt-4 pb-2 flex items-start justify-between">
+        {/* The logo carries the name, so there is no wordmark beside it */}
+        <LogoLockup width={110} className="text-accent" />
         <button
           onClick={() => setDrawerOpen(true)}
           className="w-9 h-9 rounded-xl surface flex items-center justify-center"

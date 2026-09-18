@@ -193,3 +193,14 @@
   - Verified: trace overlaid on the reference matches; icons checked at
     180/120/76/60/40px and under a circle crop; `npm run build` and `tsc`
     clean, lint unchanged (same 9 pre-existing errors)
+- [x] Moved the logo into the header
+  - The 36px tile read as an abstract badge: at that size the icon crop leaves
+    only the box corner, with the arm bleeding off the edge
+  - Header now shows the full lockup at 110px in the accent colour and drops
+    the Inter "FitForge" beside it — the lettering sets at a 34px cap height
+    there, so the logo carries the name. Menu button top-aligned
+  - Loading splash shows the same lockup at 150px
+  - The tile moved to the drawer's install card, where showing the real
+    home-screen icon is the point
+  - Verified: `text-accent` resolves through to the SVG's currentColor
+    (rgb(220,246,79)); build and tsc clean, lint unchanged

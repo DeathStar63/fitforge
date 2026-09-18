@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   Cloud,
-  Download,
   ExternalLink,
   LogOut,
   Plus,
@@ -14,6 +13,7 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
+import { LogoTile } from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { useSync } from "@/context/SyncContext";
 import { usePlan } from "@/context/PlanContext";
@@ -215,8 +215,10 @@ export default function SideDrawer({ open, onClose, onOpenPlan }: SideDrawerProp
                 <>
                   <div className="h-px bg-border my-3 mx-3" />
                   <div className="px-3 py-3 rounded-2xl bg-bg-surface">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Download size={14} className="text-text-muted" />
+                    {/* The real icon, so it is obvious what lands on the
+                        home screen */}
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <LogoTile size={26} />
                       <p className="text-sm font-medium text-text-primary">
                         Install FitForge
                       </p>
